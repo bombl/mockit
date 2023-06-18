@@ -40,6 +40,10 @@ curl --location --request POST 'http://localhost:8080/mock' \
 ## Features
 - Non-intrusive: Java probe-based mock frameworks offer a convenient, flexible, and powerful way to simulate and test code, helping developers build reliable and high-quality applications;
 - 无侵入性：基于Java探针的mock框架提供了一种方便、灵活且强大的方式来模拟和测试代码，帮助开发人员构建可靠和高质量的应用程序；
+- Persistence: Mock data persistence and support for canceling mocks (not yet implemented)；
+- 持久化：Mock数据持久化，并支持取消Mock(暂未实现)；
+- Unified Management: Unified management of mock data for multiple projects (not yet implemented)；
+- 统一管理：多项目Mock数据统一管理(暂未实现)；
 
 ## Contributing
 Contributions are welcome! Open a pull request to fix a bug, or open an [Issue](https://github.com/bombl/mockit/issues/) to discuss a new feature or change.
