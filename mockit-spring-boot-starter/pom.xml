@@ -4,9 +4,10 @@
     <parent>
         <groupId>cn.thinkinginjava</groupId>
         <artifactId>mockit</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
+    <name>mockit-spring-boot-starter</name>
     <artifactId>mockit-spring-boot-starter</artifactId>
     <dependencies>
         <dependency>
@@ -17,7 +18,7 @@
         <dependency>
             <groupId>cn.thinkinginjava</groupId>
             <artifactId>mockit-core</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.1</version>
         </dependency>
 
         <dependency>
@@ -40,6 +41,7 @@
     </dependencies>
 
     <build>
+        <finalName>${project.name}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
