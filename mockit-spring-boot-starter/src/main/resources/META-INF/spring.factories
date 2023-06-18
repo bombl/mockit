@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+cn.thinkinginjava.mockit.springboot.starter.config.MockitConfiguration

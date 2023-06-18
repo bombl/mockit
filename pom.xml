@@ -10,6 +10,8 @@
     <description>Non-invasive mock framework</description>
     <modules>
         <module>mockit-core</module>
+        <module>mockit-example</module>
+        <module>mockit-spring-boot-starter</module>
     </modules>
 
     <licenses>
@@ -56,9 +58,11 @@
         <byte-buddy.version>1.14.5</byte-buddy.version>
         <byte-buddy-agent.version>1.14.5</byte-buddy-agent.version>
         <javassist.version>3.19.0-GA</javassist.version>
-        <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+        <servlet-api.version>2.5</servlet-api.version>
+        <lombok.version>1.18.20</lombok.version>
         <skipTests>false</skipTests>
         <!--maven plugin version-->
+        <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
         <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
         <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
@@ -104,6 +108,21 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>${servlet-api.version}</version>
+                <scope>provided</scope>
+                <optional>true</optional>
+            </dependency>
+
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

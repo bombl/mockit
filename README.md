@@ -3,7 +3,7 @@
     <p align="center">
         Mockit, an Non-invasive mock framework.
         <br>
-        一个非侵入性的Mock框架。
+        一种非侵入性的Mock框架。
         <br>
         <a href="https://github.com/bombl/mockit/"><strong>-- Home Page --</strong></a>
         <br>

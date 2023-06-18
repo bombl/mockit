@@ -1,0 +1,49 @@
+/**
+ *
+ * Mockit is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Mockit is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Mockit. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package cn.thinkinginjava.mockit.springboot.starter.config;
+
+import cn.thinkinginjava.mockit.springboot.starter.support.MockServlet;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import javax.servlet.Servlet;
+
+/**
+ * The type Mockit configuration.
+ */
+@Configuration
+@ConditionalOnProperty(value = "mockit.plugin.enabled", havingValue = "true")
+public class MockitConfiguration {
+
+    /**
+     * The mockServlet() method is a Spring Bean configuration method that registers a servlet.
+     * It is annotated with @Bean, which indicates that this method produces a bean that can be managed by the Spring container.
+     * The returned bean is a ServletRegistrationBean that allows for custom configuration and registration of a servlet.
+     * This method is responsible for creating and configuring the mock servlet to be used in the application.
+     *
+     * @return  the mock servlet to be used in the application
+     */
+    @Bean
+    public ServletRegistrationBean<Servlet> mockServlet() {
+        ServletRegistrationBean<Servlet> servletRegistrationBean = new ServletRegistrationBean<>();
+        servletRegistrationBean.setServlet(new MockServlet());
+        servletRegistrationBean.addUrlMappings("/mock/*");
+        return servletRegistrationBean;
+    }
+}
