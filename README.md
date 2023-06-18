@@ -1,1 +1,30 @@
-# mockit
+<p align="center" >
+    <h3 align="center">Mockit</h3>
+    <p align="center">
+        Mockit, an Non-invasive mock framework.
+        <br>
+        一个非侵入性的Mock框架。
+        <br>
+        <a href="https://github.com/bombl/mockit/"><strong>-- Home Page --</strong></a>
+        <br>
+        <br>
+    </p>
+</p>
+
+## Features
+- Non-intrusive: Java probe-based mock frameworks offer a convenient, flexible, and powerful way to simulate and test code, helping developers build reliable and high-quality applications;
+- 无侵入性：基于Java探针的mock框架提供了一种方便、灵活且强大的方式来模拟和测试代码，帮助开发人员构建可靠和高质量的应用程序；
+
+## Contributing
+Contributions are welcome! Open a pull request to fix a bug, or open an [Issue](https://github.com/bombl/mockit/issues/) to discuss a new feature or change.
+
+欢迎参与项目贡献！比如提交PR修复一个bug，或者新建 [Issue](https://github.com/bombl/mockit/issues/) 讨论新特性或者变更。
+
+
+## Copyright and License
+This product is open source and free, and will continue to provide free community technical support. Individual or enterprise users are free to access and use.
+
+- Licensed under the GNU General Public License (GPL) v3.
+- Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>.
+
+产品开源免费，并且将持续提供免费的社区技术支持。个人或企业内部可自由的接入和使用。如有需要可邮件联系作者免费获取项目授权。
