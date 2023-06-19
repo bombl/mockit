@@ -24,7 +24,7 @@
 1. Add `mockit.plugin.enabled=true` to your project.</br>
    将配置：`mockit.plugin.enabled=true`添加到你的项目中。</br></br>
    
-2. Mock the return value of a method by requesting the `http://IP:PORT/mock path`.</br>
+2. Mock the return value of a method by requesting the `http://IP:PORT/mock` path.</br>
    请求`http://IP:PORT/mock`路径对方法返回值进行Mock。
 
 ```
@@ -36,6 +36,15 @@ curl --location --request POST 'http://localhost:8080/mock' \
     "mockValue":"{\"code\":\"111\",\"result\":\"aaa\"}"
 }'
 ```
+
+## Module Relationship Diagram
+![img](https://github.com/bombl/ImageHost/blob/main/Mockit.png?raw=true)
+
+- mockit-core :Core dependency of the framework
+- mockit-example :Example project
+- mockit-spring-boot-starter :Integration entry point
+- mockit-client :Communicates with mockit-admin
+- mockit-admin :Management console
 
 ## Features
 - Non-intrusive: Java probe-based mock frameworks offer a convenient, flexible, and powerful way to simulate and test code, helping developers build reliable and high-quality applications;
