@@ -38,7 +38,7 @@ curl --location --request POST 'http://localhost:8080/mock' \
 ```
 
 ## Module Relationship Diagram
-![img](https://github.com/bombl/ImageHost/blob/main/Mockit.png?raw=true)
+![](https://github.com/bombl/ImageHost/blob/main/Mockit.png?raw=true)
 
 - mockit-core :Core dependency of the framework
 - mockit-example :Example project

@@ -8,6 +8,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>mockit-core</artifactId>
+    <name>mockit-core</name>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

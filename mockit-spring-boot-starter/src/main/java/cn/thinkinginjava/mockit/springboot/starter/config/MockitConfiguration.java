@@ -16,8 +16,11 @@
 
 package cn.thinkinginjava.mockit.springboot.starter.config;
 
+import cn.thinkinginjava.mockit.client.communication.MockitClient;
 import cn.thinkinginjava.mockit.springboot.starter.support.MockServlet;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,10 +43,26 @@ public class MockitConfiguration {
      * @return  the mock servlet to be used in the application
      */
     @Bean
+    @ConditionalOnMissingBean
     public ServletRegistrationBean<Servlet> mockServlet() {
         ServletRegistrationBean<Servlet> servletRegistrationBean = new ServletRegistrationBean<>();
         servletRegistrationBean.setServlet(new MockServlet());
         servletRegistrationBean.addUrlMappings("/mock/*");
         return servletRegistrationBean;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public MockitClient mockitClient(MockitPluginConfig mockitPluginConfig) {
+        MockitClient mockitClient = new MockitClient();
+        mockitClient.setAddresses(mockitPluginConfig.getAddresses());
+        mockitClient.setAlias(mockitPluginConfig.getAlias());
+        return mockitClient;
+    }
+
+    @Bean
+    @ConfigurationProperties(prefix = "mockit.plugin")
+    public MockitPluginConfig mockitPluginConfig() {
+        return new MockitPluginConfig();
     }
 }

@@ -7,8 +7,8 @@
         <version>0.0.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <name>mockit-spring-boot-starter</name>
-    <artifactId>mockit-spring-boot-starter</artifactId>
+    <artifactId>mockit-admin</artifactId>
+    <name>mockit-admin</name>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -16,21 +16,31 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>cn.thinkinginjava</groupId>
-            <artifactId>mockit-client</artifactId>
+            <artifactId>mockit-common</artifactId>
             <version>0.0.1</version>
         </dependency>
 
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <scope>provided</scope>
-            <optional>true</optional>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>${netty.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>${commons-collections4.version}</version>
         </dependency>
 
         <dependency>
@@ -41,7 +51,6 @@
     </dependencies>
 
     <build>
-        <finalName>${project.name}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

@@ -14,7 +14,7 @@
  * along with Mockit. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cn.thinkinginjava.mockit.core.utils;
+package cn.thinkinginjava.mockit.core.instrumentation;
 
 import net.bytebuddy.agent.ByteBuddyAgent;
 
