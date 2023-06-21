@@ -15,8 +15,10 @@
 
 package cn.thinkinginjava.mockit.client.handler;
 
+import cn.thinkinginjava.mockit.client.communication.MockitClient;
 import cn.thinkinginjava.mockit.client.transform.OptionStrategy;
 import cn.thinkinginjava.mockit.client.transform.OptionStrategyFactory;
+import cn.thinkinginjava.mockit.client.utils.AddressUtil;
 import cn.thinkinginjava.mockit.common.constant.MockConstants;
 import cn.thinkinginjava.mockit.common.enums.OptionTypeEnum;
 import cn.thinkinginjava.mockit.common.utils.GsonUtil;
@@ -43,14 +45,27 @@ public class WebSocketClientHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketClientHandler.class);
 
+    private final String ip;
+
+    private final Integer port;
+
+    private final MockitClient mockitClient;
+
     private final WebSocketClientHandshaker webSocketClientHandshaker;
 
     /**
-     * Constructs a new WebSocketClientHandler with the specified URI.
+     * Constructs a WebSocketClientHandler instance.
      *
-     * @param uri The URI of the WebSocket server.
+     * @param mockitClient the MockitClient instance associated with this handler
+     * @param ip           the IP address of the server to connect to
+     * @param port         the port of the server to connect to
+     * @throws Exception if an error occurs during the construction
      */
-    public WebSocketClientHandler(URI uri) {
+    public WebSocketClientHandler(MockitClient mockitClient, String ip, Integer port) throws Exception {
+        this.mockitClient = mockitClient;
+        this.ip = ip;
+        this.port = port;
+        URI uri = AddressUtil.getUri(ip, port, mockitClient.getAlias());
         this.webSocketClientHandshaker = WebSocketClientHandshakerFactory.newHandshaker(
                 uri,
                 WebSocketVersion.V13,
@@ -68,6 +83,17 @@ public class WebSocketClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
         webSocketClientHandshaker.handshake(ctx.channel());
+    }
+
+    /**
+     * Invoked when the channel becomes inactive (i.e., disconnected from the server).
+     * This method is called when the channel's connection is closed or lost.
+     *
+     * @param ctx the channel handler context
+     */
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) {
+        mockitClient.start(ip, port);
     }
 
     /**

@@ -15,10 +15,12 @@
 
 package cn.thinkinginjava.mockit.common.dto;
 
+import java.io.Serializable;
+
 /**
  * Base entity class representing common attributes for entities.
  */
-public class BaseEntity {
+public class BaseEntity implements Serializable {
 
     private String optionType;
 

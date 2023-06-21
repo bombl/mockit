@@ -15,6 +15,7 @@
 
 package cn.thinkinginjava.mockit.admin.controller;
 
+import cn.thinkinginjava.mockit.admin.model.dto.Result;
 import cn.thinkinginjava.mockit.admin.model.dto.Session;
 import cn.thinkinginjava.mockit.admin.session.SessionHolder;
 import cn.thinkinginjava.mockit.common.dto.CancelMockData;
@@ -22,33 +23,34 @@ import cn.thinkinginjava.mockit.common.dto.MockData;
 import cn.thinkinginjava.mockit.common.enums.OptionTypeEnum;
 import cn.thinkinginjava.mockit.common.utils.GsonUtil;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
-@RestController("/api")
+@RestController
+@RequestMapping("/api")
 public class MockApiController {
 
-    @GetMapping("/mock")
-    public void mock(@RequestBody MockData mockData) {
+    @PostMapping("/mock")
+    public Result<String> mock(@RequestBody MockData mockData) {
         Map<String, List<Session>> sessionMap = SessionHolder.getSessionMap();
         mockData.setOptionType(OptionTypeEnum.MOCK.getType());
         String reqData = GsonUtil.toJson(mockData);
         TextWebSocketFrame responseFrame = new TextWebSocketFrame(reqData);
         Session session = sessionMap.get("mockit-example").get(0);
         session.getChannel().writeAndFlush(responseFrame);
+        return Result.successful();
     }
 
-    @GetMapping("/cancelMock")
-    public void mock(@RequestBody CancelMockData cancelMockData) {
+    @PostMapping("/cancelMock")
+    public Result<String> mock(@RequestBody CancelMockData cancelMockData) {
         Map<String, List<Session>> sessionMap = SessionHolder.getSessionMap();
         cancelMockData.setOptionType(OptionTypeEnum.CANCEL_MOCK.getType());
         String reqData = GsonUtil.toJson(cancelMockData);
         TextWebSocketFrame responseFrame = new TextWebSocketFrame(reqData);
         Session session = sessionMap.get("mockit-example").get(0);
         session.getChannel().writeAndFlush(responseFrame);
+        return Result.successful();
     }
 }

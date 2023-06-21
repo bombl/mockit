@@ -9,6 +9,9 @@
     <name>mockit</name>
     <description>Non-invasive mock framework</description>
     <modules>
+        <module>mockit-admin</module>
+        <module>mockit-client</module>
+        <module>mockit-common</module>
         <module>mockit-core</module>
         <module>mockit-example</module>
         <module>mockit-spring-boot-starter</module>
