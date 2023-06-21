@@ -60,6 +60,7 @@ public class MockitConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
+    @ConditionalOnProperty(value = "mockit.plugin.addresses")
     public MockitClient mockitClient(MockitPluginConfig mockitPluginConfig) {
         MockitClient mockitClient = new MockitClient();
         mockitClient.setAddresses(mockitPluginConfig.getAddresses());
