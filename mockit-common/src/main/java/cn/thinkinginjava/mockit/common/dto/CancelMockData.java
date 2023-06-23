@@ -16,13 +16,31 @@
 package cn.thinkinginjava.mockit.common.dto;
 
 /**
- * Represents the cancel mock data entity, extending the {@link BaseEntity}.
+ * Represents the cancel mock data entity, extending the {@link Message}.
  */
-public class CancelMockData extends BaseEntity {
+public class CancelMockData {
+
+    private String alias;
 
     private String className;
-    private String methodName;
-    private String methodContent;
+
+    /**
+     * Get the alias name.
+     *
+     * @return The alias name.
+     */
+    public String getAlias() {
+        return alias;
+    }
+
+    /**
+     * Set the alias name.
+     *
+     * @param alias The alias name to set.
+     */
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
 
     /**
      * Get the class name.
@@ -42,39 +60,4 @@ public class CancelMockData extends BaseEntity {
         this.className = className;
     }
 
-    /**
-     * Get the method name.
-     *
-     * @return The method name.
-     */
-    public String getMethodName() {
-        return methodName;
-    }
-
-    /**
-     * Set the method name.
-     *
-     * @param methodName The method name to set.
-     */
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
-    }
-
-    /**
-     * Get the method content.
-     *
-     * @return The method content.
-     */
-    public String getMethodContent() {
-        return methodContent;
-    }
-
-    /**
-     * Set the method content.
-     *
-     * @param methodContent The method content to set.
-     */
-    public void setMethodContent(String methodContent) {
-        this.methodContent = methodContent;
-    }
 }

@@ -15,15 +15,25 @@
 
 package cn.thinkinginjava.mockit.admin.controller;
 
+import cn.thinkinginjava.mockit.admin.context.MockitContext;
+import cn.thinkinginjava.mockit.admin.context.ResponseCallback;
 import cn.thinkinginjava.mockit.admin.model.dto.Result;
 import cn.thinkinginjava.mockit.admin.model.dto.Session;
 import cn.thinkinginjava.mockit.admin.session.SessionHolder;
+import cn.thinkinginjava.mockit.admin.utils.MessageUtil;
 import cn.thinkinginjava.mockit.common.dto.CancelMockData;
+import cn.thinkinginjava.mockit.common.dto.Message;
+import cn.thinkinginjava.mockit.common.dto.MethodInfo;
 import cn.thinkinginjava.mockit.common.dto.MockData;
-import cn.thinkinginjava.mockit.common.enums.OptionTypeEnum;
+import cn.thinkinginjava.mockit.common.enums.MessageTypeEnum;
 import cn.thinkinginjava.mockit.common.utils.GsonUtil;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
-import org.springframework.web.bind.annotation.*;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
@@ -32,25 +42,80 @@ import java.util.Map;
 @RequestMapping("/api")
 public class MockApiController {
 
+    /**
+     * retrieves a list of method information based on the provided mock data.
+     *
+     * @param mockData The mock data containing the necessary information.
+     * @return The result containing a list of method information.
+     */
+    @PostMapping("/methodList")
+    public Result<List<MethodInfo>> methodInfo(@RequestBody MockData mockData) {
+        Message<String> sendMessage = new Message<>();
+        sendMessage.setData(mockData.getClassName());
+        sendMessage.setMessageType(MessageTypeEnum.GET_METHODS.getType());
+        Map<String, List<Session>> sessionMap = SessionHolder.getSessionMap();
+        if (MapUtils.isEmpty(sessionMap)) {
+            return Result.successful();
+        }
+        List<Session> sessionList = sessionMap.get(mockData.getAlias());
+        if (CollectionUtils.isEmpty(sessionList)) {
+            return Result.successful();
+        }
+        Session session = sessionList.get(0);
+        MessageUtil.sendMessage(session.getChannel(), sendMessage);
+        ResponseCallback responseCallback = MockitContext.getContext().registerCallback();
+        String response = responseCallback.getResponse();
+        Message<List<MethodInfo>> repMessage = GsonUtil.fromJsonToMessageList(response, MethodInfo.class);
+        return Result.successful(repMessage.getData());
+    }
+
+    /**
+     * Controller method that performs mocking based on the provided mock data.
+     *
+     * @param mockData The mock data containing the necessary information.
+     * @return The result containing the mocked response as a string.
+     */
     @PostMapping("/mock")
     public Result<String> mock(@RequestBody MockData mockData) {
+        Message<MockData> sendMessage = new Message<>();
+        sendMessage.setData(mockData);
+        sendMessage.setMessageType(MessageTypeEnum.MOCK.getType());
+
         Map<String, List<Session>> sessionMap = SessionHolder.getSessionMap();
-        mockData.setOptionType(OptionTypeEnum.MOCK.getType());
-        String reqData = GsonUtil.toJson(mockData);
-        TextWebSocketFrame responseFrame = new TextWebSocketFrame(reqData);
-        Session session = sessionMap.get("mockit-example").get(0);
-        session.getChannel().writeAndFlush(responseFrame);
+        if (MapUtils.isEmpty(sessionMap)) {
+            return Result.successful();
+        }
+        List<Session> sessionList = sessionMap.get(mockData.getAlias());
+        if (CollectionUtils.isEmpty(sessionList)) {
+            return Result.successful();
+        }
+        Session session = sessionList.get(0);
+        MessageUtil.sendMessage(session.getChannel(), sendMessage);
         return Result.successful();
     }
 
+    /**
+     * Controller method that performs mocking cancellation based on the provided cancel mock data.
+     *
+     * @param cancelMockData The cancel mock data containing the necessary information.
+     * @return The result containing the status of the mock cancellation as a string.
+     */
     @PostMapping("/cancelMock")
-    public Result<String> mock(@RequestBody CancelMockData cancelMockData) {
+    public Result<String> cancelMock(@RequestBody CancelMockData cancelMockData) {
+        Message<CancelMockData> sendMessage = new Message<>();
+        sendMessage.setData(cancelMockData);
+        sendMessage.setMessageType(MessageTypeEnum.CANCEL_MOCK.getType());
+
         Map<String, List<Session>> sessionMap = SessionHolder.getSessionMap();
-        cancelMockData.setOptionType(OptionTypeEnum.CANCEL_MOCK.getType());
-        String reqData = GsonUtil.toJson(cancelMockData);
-        TextWebSocketFrame responseFrame = new TextWebSocketFrame(reqData);
-        Session session = sessionMap.get("mockit-example").get(0);
-        session.getChannel().writeAndFlush(responseFrame);
+        if (MapUtils.isEmpty(sessionMap)) {
+            return Result.successful();
+        }
+        List<Session> sessionList = sessionMap.get(cancelMockData.getAlias());
+        if (CollectionUtils.isEmpty(sessionList)) {
+            return Result.successful();
+        }
+        Session session = sessionList.get(0);
+        MessageUtil.sendMessage(session.getChannel(), sendMessage);
         return Result.successful();
     }
 }

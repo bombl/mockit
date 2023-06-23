@@ -15,7 +15,7 @@
 
 package cn.thinkinginjava.mockit.client.communication;
 
-import cn.thinkinginjava.mockit.client.handler.WebSocketClientHandler;
+import cn.thinkinginjava.mockit.client.handler.websocket.WebSocketClientHandler;
 import cn.thinkinginjava.mockit.client.utils.AddressUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;

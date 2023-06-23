@@ -16,19 +16,12 @@
 package cn.thinkinginjava.mockit.core.transformer;
 
 import cn.thinkinginjava.mockit.core.exception.MockitException;
-import cn.thinkinginjava.mockit.core.model.MockInfo;
-import cn.thinkinginjava.mockit.core.model.MockMethodInfo;
 import cn.thinkinginjava.mockit.core.utils.ClassPoolUtil;
-import cn.thinkinginjava.mockit.core.utils.JsonUtil;
 import javassist.CtClass;
-import javassist.CtMethod;
-import org.apache.commons.lang3.ClassUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.security.ProtectionDomain;
-import java.util.List;
 
 /**
  * ResultMockClassFileTransformer is a class that extends AbstractClassFileTransformer.
@@ -45,11 +38,9 @@ import java.util.List;
  * Note: ResultMockClassFileTransformer is designed specifically for result mocking and may not be suitable
  * for other types of class transformations or modifications.
  */
-public class ResultMockClassFileTransformer extends AbstractClassFileTransformer {
+public class CancelMockClassFileTransformer extends AbstractClassFileTransformer {
 
-    private static final Logger logger = LoggerFactory.getLogger(ResultMockClassFileTransformer.class);
-
-    private final MockInfo mockInfo;
+    private static final Logger logger = LoggerFactory.getLogger(CancelMockClassFileTransformer.class);
 
     /**
      * Constructs a new ResultMockClassFileTransformer with the specified full class name, method name, and mock value.
@@ -57,11 +48,10 @@ public class ResultMockClassFileTransformer extends AbstractClassFileTransformer
      * method name, and mock value. It is used to configure the transformer for intercepting method calls in the
      * specified class and replacing their results with the provided mock value during runtime.
      *
-     * @param mockInfo The mock information containing the details of the result mocking.
+     * @param fullClassName The fully qualified name of the class to be transformed.
      */
-    public ResultMockClassFileTransformer(MockInfo mockInfo) {
-        super(mockInfo.getClassName());
-        this.mockInfo = mockInfo;
+    public CancelMockClassFileTransformer(String fullClassName) {
+        super(fullClassName);
     }
 
     /**
@@ -88,39 +78,8 @@ public class ResultMockClassFileTransformer extends AbstractClassFileTransformer
     protected byte[] doTransform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer, CtClass ctClass) {
         try {
             ClassPoolUtil.removeCachedClass(className);
-            List<MockMethodInfo> mockMethodInfoList = mockInfo.getMockMethodInfoList();
-            for (MockMethodInfo mockMethodInfo : mockMethodInfoList) {
-                String mockValue = mockMethodInfo.getMockValue();
-                CtClass[] ctClasses = mockMethodInfo.getCtClasses();
-                CtMethod ctMethod = ctClass.getDeclaredMethod(mockMethodInfo.getMethodName(), ctClasses);
-                if (StringUtils.isEmpty(mockValue)) {
-                    continue;
-                }
-                Class<?> returnType = Class.forName(ctMethod.getReturnType().getName());
-                if (ClassUtils.isPrimitiveOrWrapper(returnType) || ClassUtils.isAssignable(returnType, String.class)) {
-                    ctMethod.insertAt(0, "return \"" + mockValue + "\";");
-                    continue;
-                }
-                if (!JsonUtil.isJson(mockValue)) {
-                    logger.error("Unsupported data format");
-                    continue;
-                }
-                String newCode = String.format(
-                        "String json = \"%s\";%n" +
-                                "com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();%n" +
-                                "mapper.configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);%n" +
-                                "mapper.configure(com.fasterxml.jackson.databind.SerializationFeature.FAIL_ON_EMPTY_BEANS, false);%n" +
-                                "Class returnType = Class.forName(\"%s\");%n" +
-                                "Object obj = mapper.readValue(json, returnType);%n" +
-                                "return obj;",
-                        mockValue.replace("\"", "\\\""),
-                        ctMethod.getReturnType().getName()
-                );
-                ctMethod.insertAt(0, newCode);
-            }
-            return ctClass.toBytecode();
+            return null;
         } catch (Exception e) {
-            e.printStackTrace();
             throw new MockitException("Transformation error occurred", e);
         }
     }

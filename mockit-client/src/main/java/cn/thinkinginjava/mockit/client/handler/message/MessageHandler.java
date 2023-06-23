@@ -13,19 +13,20 @@
  * along with Mockit. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cn.thinkinginjava.mockit.client.transform;
+package cn.thinkinginjava.mockit.client.handler.message;
+
+import io.netty.channel.ChannelHandlerContext;
 
 /**
-
- Interface representing a strategy for handling different options.
+ * Interface for message handlers.
  */
-public interface OptionStrategy {
-
+public interface MessageHandler {
     /**
-     * Executes the option strategy with the given text.
+     * Handles a message received by the channel.
      *
-     * @param text The text containing the option information.
-     * @throws Exception if an error occurs during execution.
+     * @param ctx     The channel handler context.
+     * @param message The received message.
+     * @throws Exception if an error occurs during message handling.
      */
-    void execute(String text) throws Exception;
+    void handle(ChannelHandlerContext ctx, String message) throws Exception;
 }

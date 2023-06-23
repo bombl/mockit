@@ -46,5 +46,9 @@ public class MockTestController {
     public ResultDTO hello(String name) {
         return mockTestService.say(name);
     }
+    @GetMapping("hello2")
+    public ResultDTO hello2(String name) {
+        return mockTestService.say2(name);
+    }
 
 }

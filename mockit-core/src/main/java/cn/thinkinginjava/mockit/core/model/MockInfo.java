@@ -13,36 +13,17 @@
  * along with Mockit. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cn.thinkinginjava.mockit.common.dto;
+package cn.thinkinginjava.mockit.core.model;
 
 import java.util.List;
 
 /**
- * Represents the mock data entity, extending the {@link Message}.
+ * Information about a mock class.
  */
-public class MockData {
+public class MockInfo {
 
-    private String alias;
     private String className;
-    private List<MethodMockData> methodMockDataList;
-
-    /**
-     * Get the alias name.
-     *
-     * @return The alias name.
-     */
-    public String getAlias() {
-        return alias;
-    }
-
-    /**
-     * Set the alias name.
-     *
-     * @param alias The alias name to set.
-     */
-    public void setAlias(String alias) {
-        this.alias = alias;
-    }
+    private List<MockMethodInfo> mockMethodInfoList;
 
     /**
      * Get the class name.
@@ -63,20 +44,21 @@ public class MockData {
     }
 
     /**
-     * Get the list of method mock data.
+     * Get the list of mock method information.
      *
-     * @return The list of method mock data.
+     * @return The list of mock method information.
      */
-    public List<MethodMockData> getMethodMockDataList() {
-        return methodMockDataList;
+    public List<MockMethodInfo> getMockMethodInfoList() {
+        return mockMethodInfoList;
     }
 
     /**
-     * Set the list of method mock data.
+     * Set the list of mock method information.
      *
-     * @param methodMockDataList The list of method mock data to set.
+     * @param mockMethodInfoList The list of mock method information to set.
      */
-    public void setMethodMockDataList(List<MethodMockData> methodMockDataList) {
-        this.methodMockDataList = methodMockDataList;
+    public void setMockMethodInfoList(List<MockMethodInfo> mockMethodInfoList) {
+        this.mockMethodInfoList = mockMethodInfoList;
     }
 }
+

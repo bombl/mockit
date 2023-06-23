@@ -78,6 +78,7 @@ public abstract class AbstractClassFileTransformer implements ClassFileTransform
                 return classfileBuffer;
             }
             CtClass ctClass = ClassPoolHolder.getClassPool().get(className);
+
             if (ctClass.isFrozen()) {
                 ctClass.defrost();
             }

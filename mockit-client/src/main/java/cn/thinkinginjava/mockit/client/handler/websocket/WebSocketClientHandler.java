@@ -13,14 +13,14 @@
  * along with Mockit. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cn.thinkinginjava.mockit.client.handler;
+package cn.thinkinginjava.mockit.client.handler.websocket;
 
 import cn.thinkinginjava.mockit.client.communication.MockitClient;
-import cn.thinkinginjava.mockit.client.transform.OptionStrategy;
-import cn.thinkinginjava.mockit.client.transform.OptionStrategyFactory;
+import cn.thinkinginjava.mockit.client.handler.message.MessageHandler;
+import cn.thinkinginjava.mockit.client.handler.message.MessageHandlerManager;
 import cn.thinkinginjava.mockit.client.utils.AddressUtil;
 import cn.thinkinginjava.mockit.common.constant.MockConstants;
-import cn.thinkinginjava.mockit.common.enums.OptionTypeEnum;
+import cn.thinkinginjava.mockit.common.enums.MessageTypeEnum;
 import cn.thinkinginjava.mockit.common.utils.GsonUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -172,16 +172,19 @@ public class WebSocketClientHandler extends ChannelInboundHandlerAdapter {
             channel.writeAndFlush(new PongWebSocketFrame(frame.content().retain()));
             return;
         }
-        if (frame instanceof TextWebSocketFrame) {
-            String text = ((TextWebSocketFrame) frame).text();
-            String optionType = GsonUtil.getFieldValue(text, MockConstants.OPTION_TYPE);
-            OptionTypeEnum optionTypeEnum = OptionTypeEnum.getByType(optionType);
-            if (optionTypeEnum == null) {
-                logger.error("mockit unsupported operation type: {}", optionType);
-                return;
-            }
-            OptionStrategy optionStrategy = OptionStrategyFactory.createOptionStrategy(optionTypeEnum);
-            optionStrategy.execute(text);
+        if (!(frame instanceof TextWebSocketFrame)) {
+            return;
+        }
+        String message = ((TextWebSocketFrame) frame).text();
+        String optionType = GsonUtil.getFieldValue(message, MockConstants.MESSAGE_TYPE);
+        MessageTypeEnum messageTypeEnum = MessageTypeEnum.getByType(optionType);
+        if (messageTypeEnum == null) {
+            logger.error("mockit unsupported operation type: {}", optionType);
+            return;
+        }
+        MessageHandler messageHandler = MessageHandlerManager.getHandler(messageTypeEnum);
+        if (messageHandler != null) {
+            messageHandler.handle(ctx, message);
         }
     }
 }

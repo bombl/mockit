@@ -13,7 +13,10 @@
  * along with Mockit. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cn.thinkinginjava.mockit.common.dto;
+package cn.thinkinginjava.mockit.springboot.starter.model;
+
+import cn.thinkinginjava.mockit.common.dto.Message;
+import cn.thinkinginjava.mockit.common.dto.MethodMockData;
 
 import java.util.List;
 
@@ -24,7 +27,7 @@ public class MockData {
 
     private String alias;
     private String className;
-    private List<MethodMockData> methodMockDataList;
+    private List<cn.thinkinginjava.mockit.common.dto.MethodMockData> methodMockDataList;
 
     /**
      * Get the alias name.
@@ -62,20 +65,10 @@ public class MockData {
         this.className = className;
     }
 
-    /**
-     * Get the list of method mock data.
-     *
-     * @return The list of method mock data.
-     */
-    public List<MethodMockData> getMethodMockDataList() {
+    public List<cn.thinkinginjava.mockit.common.dto.MethodMockData> getMethodMockDataList() {
         return methodMockDataList;
     }
 
-    /**
-     * Set the list of method mock data.
-     *
-     * @param methodMockDataList The list of method mock data to set.
-     */
     public void setMethodMockDataList(List<MethodMockData> methodMockDataList) {
         this.methodMockDataList = methodMockDataList;
     }

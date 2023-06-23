@@ -37,6 +37,15 @@ public class MockTestService {
      * @return A ResultDTO object containing the response based on the provided name.
      */
     public ResultDTO say(String name) {
-        return null;
+        System.out.println("name");
+        ResultDTO resultDTO = new ResultDTO();
+        resultDTO.setResult("hello");
+        return resultDTO;
+    }
+    public ResultDTO say2(String name) {
+        System.out.println("name");
+        ResultDTO resultDTO = new ResultDTO();
+        resultDTO.setResult("hello");
+        return resultDTO;
     }
 }

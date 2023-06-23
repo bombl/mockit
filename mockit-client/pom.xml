@@ -18,13 +18,11 @@
         <dependency>
             <groupId>cn.thinkinginjava</groupId>
             <artifactId>mockit-core</artifactId>
-            <version>0.0.1</version>
         </dependency>
 
         <dependency>
             <groupId>cn.thinkinginjava</groupId>
             <artifactId>mockit-common</artifactId>
-            <version>0.0.1</version>
         </dependency>
 
         <dependency>
@@ -43,6 +41,13 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.12</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.slf4j</groupId>

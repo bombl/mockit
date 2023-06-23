@@ -13,32 +13,25 @@
  * along with Mockit. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cn.thinkinginjava.mockit.common.dto;
+package cn.thinkinginjava.mockit.client.annotation;
 
-import java.io.Serializable;
+import cn.thinkinginjava.mockit.common.enums.MessageTypeEnum;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Base entity class representing common attributes for entities.
+ * Annotation used to mark a message handler class with a specific message type.
  */
-public class BaseEntity implements Serializable {
-
-    private String optionType;
-
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface MessageType {
     /**
-     * Get the option type.
+     * The message type enum value associated with the annotated handler class.
      *
-     * @return The option type.
+     * @return The message type enum value.
      */
-    public String getOptionType() {
-        return optionType;
-    }
-
-    /**
-     * Set the option type.
-     *
-     * @param optionType The option type to set.
-     */
-    public void setOptionType(String optionType) {
-        this.optionType = optionType;
-    }
+    MessageTypeEnum value();
 }

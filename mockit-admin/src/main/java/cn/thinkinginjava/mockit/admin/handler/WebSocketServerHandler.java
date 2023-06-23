@@ -15,6 +15,7 @@
 
 package cn.thinkinginjava.mockit.admin.handler;
 
+import cn.thinkinginjava.mockit.admin.context.MockitContextManager;
 import cn.thinkinginjava.mockit.admin.session.SessionHolder;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -22,6 +23,8 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.*;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
+
+import static cn.thinkinginjava.mockit.common.constant.MockConstants.PONG;
 
 /**
  * Handles WebSocket frames received from clients.
@@ -37,12 +40,16 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<WebSocke
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame msg) {
         if (msg instanceof PingWebSocketFrame) {
-            WebSocketFrame webSocketFrame = new TextWebSocketFrame("pong");
+            WebSocketFrame webSocketFrame = new TextWebSocketFrame(PONG);
             ctx.writeAndFlush(new PongWebSocketFrame(webSocketFrame.content().retain()));
             return;
         }
         if (msg instanceof CloseWebSocketFrame) {
             ctx.writeAndFlush(msg.retainedDuplicate()).addListener(ChannelFutureListener.CLOSE);
+        }
+        if (msg instanceof TextWebSocketFrame) {
+            String response = ((TextWebSocketFrame) msg).text();
+            MockitContextManager.notifyCallback(response);
         }
     }
 
@@ -74,4 +81,5 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<WebSocke
     public void channelInactive(ChannelHandlerContext ctx) {
         SessionHolder.removeSession(ctx.channel());
     }
+
 }

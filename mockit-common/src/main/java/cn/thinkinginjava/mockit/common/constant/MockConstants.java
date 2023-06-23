@@ -21,9 +21,9 @@ package cn.thinkinginjava.mockit.common.constant;
 public class MockConstants {
 
     /**
-     * The option type field name.
+     * The message type field name.
      */
-    public static final String OPTION_TYPE = "optionType";
+    public static final String MESSAGE_TYPE = "messageType";
     /**
      * The request path for mock operations.
      */
@@ -45,7 +45,19 @@ public class MockConstants {
      */
     public static final String PING = "ping";
     /**
+     * The pong message.
+     */
+    public static final String PONG = "pong";
+    /**
      * The STOMP protocol.
      */
     public static final String STOMP = "stomp";
+    /**
+     * The success field name.
+     */
+    public static final String SUCCESS = "success";
+    /**
+     * The request field name.
+     */
+    public static final String REQUEST_ID = "requestId";
 }

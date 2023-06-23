@@ -18,7 +18,7 @@ package cn.thinkinginjava.mockit.common.enums;
 /**
  * Enumeration representing different types of options.
  */
-public enum OptionTypeEnum {
+public enum MessageTypeEnum {
 
     /**
      * mock
@@ -30,6 +30,11 @@ public enum OptionTypeEnum {
      */
     CANCEL_MOCK("1002"),
 
+    /**
+     * get methods
+     */
+    GET_METHODS("1003"),
+
     ;
 
     private String type;
@@ -40,8 +45,8 @@ public enum OptionTypeEnum {
      * @param optionType The option type.
      * @return The OptionTypeEnum associated with the option type, or null if not found.
      */
-    public static OptionTypeEnum getByType(String optionType) {
-        for (OptionTypeEnum value : OptionTypeEnum.values()) {
+    public static MessageTypeEnum getByType(String optionType) {
+        for (MessageTypeEnum value : MessageTypeEnum.values()) {
             if (value.getType().equals(optionType)) {
                 return value;
             }
@@ -72,7 +77,7 @@ public enum OptionTypeEnum {
      *
      * @param type The option type.
      */
-    OptionTypeEnum(String type) {
+    MessageTypeEnum(String type) {
         this.type = type;
     }
 }
