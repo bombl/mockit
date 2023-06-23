@@ -3,7 +3,7 @@
     <p align="center">
         Mockit, an Non-invasive mock framework.
         <br>
-        一种非侵入性的Mock框架。
+        一个非侵入性的Mock框架。
         <br>
         <a href="https://github.com/bombl/mockit/"><strong>-- Home Page --</strong></a>
         <br>
@@ -11,7 +11,12 @@
     </p>
 </p>
 
-## Maven dependency
+## Introduction
+Mockit is a non-invasive mocking framework that aims to provide a convenient, flexible, and powerful way to simulate and test code. Its core design objective is to assist developers in building reliable and high-quality applications.
+
+Mockit是一个非侵入性的Mock框架，其核心设计目标是提供了一种方便、灵活且强大的方式来模拟和测试代码，帮助开发人员构建可靠和高质量的应用程序。
+
+## Maven Dependency
 ```xml
 <dependency>
     <groupId>cn.thinkinginjava</groupId>
@@ -21,20 +26,203 @@
 ```
 
 ## Quick Start
-1. Add `mockit.plugin.enabled=true` to your project.</br>
-   将配置：`mockit.plugin.enabled=true`添加到你的项目中。</br></br>
-   
-2. Mock the return value of a method by requesting the `http://IP:PORT/mock` path.</br>
-   请求`http://IP:PORT/mock`路径对方法返回值进行Mock。
-
+1. Add the mockit-spring-boot-starter Maven dependency to your project.
+2. Add the following configuration to your project:
+- mockit.plugin.enabled=true: Enable Mockit (true to enable, false to disable).
+- mockit.plugin.alias=mockit-example: The project name registered in the console.
+- mockit.plugin.addresses=10.37.129.2:8889: Console IP address and port.
+3. Start the console (mockit-admin project) for mocking. The console currently does not support page operations (under development). You can perform mocking through the API. The following API is provided:
+* **Get all methods in a class** ：http://localhost:9999/mockit-admin/api/methodList.
 ```
-curl --location --request POST 'http://localhost:8080/mock' \
+## Request Information：
+curl --location --request POST 'http://localhost:9999/mockit-admin/api/methodList' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "className":"cn.thinkinginjava.mockit.example.service.MockTestService",
-    "methodName":"say",
-    "mockValue":"{\"code\":\"111\",\"result\":\"aaa\"}"
+    "alias":"mockit-example",
+    "className":"cn.thinkinginjava.mockit.example.service.MockTestService"
 }'
+```
+
+
+```
+## Response Information：
+{
+    "code": 200,
+    "message": null,
+    "data": [
+        {
+            "accessModifier": "public",
+            "returnType": "cn.thinkinginjava.mockit.example.model.ResultDTO",
+            "methodName": "say",
+            "parameters": [
+                "java.lang.String"
+            ]
+        },
+        {
+            "accessModifier": "public",
+            "returnType": "cn.thinkinginjava.mockit.example.model.ResultDTO",
+            "methodName": "say2",
+            "parameters": [
+                "java.lang.String"
+            ],
+            "methodContent": "AbA="
+        }
+    ]
+}
+```
+* **Mock a method** ：http://localhost:9999/mockit-admin/api/mock,
+```
+## Request Information：
+curl --location --request POST 'http://localhost:9999/mockit-admin/api/mock' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "alias": "mockit-example",
+    "className": "cn.thinkinginjava.mockit.example.service.MockTestService",
+    "methodMockDataList": [
+        {
+            "methodName": "say",
+            "parameters": [
+                "java.lang.String"
+            ],
+            "mockValue": "{\"code\":\"111\",\"result\":\"aaa\"}"
+        },
+        {
+            "methodName": "say2",
+            "parameters": [
+                "java.lang.String"
+            ],
+            "mockValue": "{\"code\":\"444\",\"result\":\"aaa\"}"
+        }
+    ]
+}'
+```
+
+```
+## Response Information：
+{
+    "code": 200,
+    "message": null,
+    "data": null
+}
+```
+* **Cancel MOCK**  ：http://localhost:9999/mockit-admin/api/cancelMock,
+```
+## Request Information：
+curl --location --request POST 'http://localhost:9999/mockit-admin/api/cancelMock' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "alias": "mockit-example",
+    "className": "cn.thinkinginjava.mockit.example.service.MockTestService"
+}'
+```
+
+```
+## Response Information：
+{
+    "code": 200,
+    "message": null,
+    "data": null
+}
+```
+
+1. 将`mockit-spring-boot-starter`maven依赖添加到你的项目中;
+2. 将下面的配置添加到你的项目中：
+- mockit.plugin.enabled=true : 是否启用Mockit（ture.启用｜false.不启用）
+- mockit.plugin.alias=mockit-example : 注册到控制台的项目名称
+- mockit.plugin.addresses=10.37.129.2:8889 : 控制台IP、端口
+
+3. 启动控制台（mockit-admin项目）进行mock，控制台暂时不支持页面操作（开发中...），可以通过接口进行mock，提供接口如下：
+* **获取类中所有方法**  ：http://localhost:9999/mockit-admin/api/methodList,
+```
+## 请求信息：
+curl --location --request POST 'http://localhost:9999/mockit-admin/api/methodList' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "alias":"mockit-example",
+    "className":"cn.thinkinginjava.mockit.example.service.MockTestService"
+}'
+```
+
+
+```
+## 响应信息：
+{
+    "code": 200,
+    "message": null,
+    "data": [
+        {
+            "accessModifier": "public",
+            "returnType": "cn.thinkinginjava.mockit.example.model.ResultDTO",
+            "methodName": "say",
+            "parameters": [
+                "java.lang.String"
+            ]
+        },
+        {
+            "accessModifier": "public",
+            "returnType": "cn.thinkinginjava.mockit.example.model.ResultDTO",
+            "methodName": "say2",
+            "parameters": [
+                "java.lang.String"
+            ],
+            "methodContent": "AbA="
+        }
+    ]
+}
+```
+* **对方法进行MOCK**  ：http://localhost:9999/mockit-admin/api/mock,
+```
+## 请求信息：
+curl --location --request POST 'http://localhost:9999/mockit-admin/api/mock' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "alias": "mockit-example",
+    "className": "cn.thinkinginjava.mockit.example.service.MockTestService",
+    "methodMockDataList": [
+        {
+            "methodName": "say",
+            "parameters": [
+                "java.lang.String"
+            ],
+            "mockValue": "{\"code\":\"111\",\"result\":\"aaa\"}"
+        },
+        {
+            "methodName": "say2",
+            "parameters": [
+                "java.lang.String"
+            ],
+            "mockValue": "{\"code\":\"444\",\"result\":\"aaa\"}"
+        }
+    ]
+}'
+```
+
+```
+## 响应信息：
+{
+    "code": 200,
+    "message": null,
+    "data": null
+}
+```
+* **取消MOCK**  ：http://localhost:9999/mockit-admin/api/cancelMock,
+```
+## 请求信息：
+curl --location --request POST 'http://localhost:9999/mockit-admin/api/cancelMock' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "alias": "mockit-example",
+    "className": "cn.thinkinginjava.mockit.example.service.MockTestService"
+}'
+```
+
+```
+## 响应信息：
+{
+    "code": 200,
+    "message": null,
+    "data": null
+}
 ```
 
 ## Module Relationship Diagram
@@ -48,10 +236,10 @@ curl --location --request POST 'http://localhost:8080/mock' \
 
 ## Features
 - Non-intrusive: Java probe-based mock frameworks offer a convenient, flexible, and powerful way to simulate and test code, helping developers build reliable and high-quality applications;
-- 无侵入性：基于Java探针的mock框架提供了一种方便、灵活且强大的方式来模拟和测试代码，帮助开发人员构建可靠和高质量的应用程序；
-- Persistence: Mock data persistence and support for canceling mocks (not yet implemented)；
-- 持久化：Mock数据持久化，并支持取消Mock(暂未实现)；
+- Persistence: Mock data persistence and support for canceling mocks；
 - Unified Management: Unified management of mock data for multiple projects (not yet implemented)；
+- 无侵入性：基于Java探针的mock框架提供了一种方便、灵活且强大的方式来模拟和测试代码，帮助开发人员构建可靠和高质量的应用程序；
+- 持久化：Mock数据持久化，并支持取消Mock；
 - 统一管理：多项目Mock数据统一管理(暂未实现)；
 
 ## Contributing
