@@ -236,10 +236,10 @@ curl --location --request POST 'http://localhost:9999/mockit-admin/api/cancelMoc
 
 ## Features
 - Non-intrusive: Java probe-based mock frameworks offer a convenient, flexible, and powerful way to simulate and test code, helping developers build reliable and high-quality applications;
-- Persistence: Mock data persistence and support for canceling mocks；
+- Persistence: Mock data persistence and support for canceling mocks (not yet implemented)；
 - Unified Management: Unified management of mock data for multiple projects (not yet implemented)；
 - 无侵入性：基于Java探针的mock框架提供了一种方便、灵活且强大的方式来模拟和测试代码，帮助开发人员构建可靠和高质量的应用程序；
-- 持久化：Mock数据持久化，并支持取消Mock；
+- 持久化：Mock数据持久化(暂未实现)；
 - 统一管理：多项目Mock数据统一管理(暂未实现)；
 
 ## Contributing
