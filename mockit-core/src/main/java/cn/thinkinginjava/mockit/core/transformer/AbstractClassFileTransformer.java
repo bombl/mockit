@@ -16,7 +16,7 @@
 
 package cn.thinkinginjava.mockit.core.transformer;
 
-import cn.thinkinginjava.mockit.core.exception.MockitException;
+import cn.thinkinginjava.mockit.common.exception.MockitException;
 import cn.thinkinginjava.mockit.core.utils.ClassPoolHolder;
 import javassist.CtClass;
 

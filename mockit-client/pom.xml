@@ -18,11 +18,13 @@
         <dependency>
             <groupId>cn.thinkinginjava</groupId>
             <artifactId>mockit-core</artifactId>
+            <version>${mockit.version}</version>
         </dependency>
 
         <dependency>
             <groupId>cn.thinkinginjava</groupId>
             <artifactId>mockit-common</artifactId>
+            <version>${mockit.version}</version>
         </dependency>
 
         <dependency>
@@ -46,13 +48,6 @@
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <version>0.9.12</version>
-        </dependency>
-
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j-api.version}</version>
         </dependency>
 
         <dependency>

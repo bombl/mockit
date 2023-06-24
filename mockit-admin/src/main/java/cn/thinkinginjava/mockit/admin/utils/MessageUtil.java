@@ -16,10 +16,15 @@
 package cn.thinkinginjava.mockit.admin.utils;
 
 import cn.thinkinginjava.mockit.admin.context.MockitContext;
+import cn.thinkinginjava.mockit.admin.context.ResponseCallback;
+import cn.thinkinginjava.mockit.admin.context.ResponseCallbackManager;
 import cn.thinkinginjava.mockit.common.dto.Message;
+import cn.thinkinginjava.mockit.common.exception.MockitException;
 import cn.thinkinginjava.mockit.common.utils.GsonUtil;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+
+import java.util.UUID;
 
 /**
  * Utility class for sending messages over channels.
@@ -44,18 +49,22 @@ public class MessageUtil {
      * @param channel The channel to send the message on.
      * @param object  The message object to send.
      */
-    public static <T> void sendMessage(Channel channel, T object) {
+    public static <T> ResponseCallback sendMessage(Channel channel, T object) {
         if (channel.isActive()) {
+            String requestId = UUID.randomUUID().toString();
             if (object instanceof Message) {
                 MockitContext context = MockitContext.getContext();
                 Message<?> message = (Message<?>) object;
                 if (context != null) {
-                    message.setRequestId(context.getRequestId());
+                    message.setRequestId(requestId);
                     message.setAttachments(context.getAttachments());
                 }
             }
             String messageJson = GsonUtil.toJson(object);
             channel.writeAndFlush(new TextWebSocketFrame(messageJson));
+            return ResponseCallbackManager.registerCallback(requestId);
+        } else {
+            throw new MockitException("Channel is inactive.");
         }
     }
 }

@@ -31,16 +31,13 @@ public class MockitContext {
 
     private static final ThreadLocal<MockitContext> LOCAL = ThreadLocal.withInitial(MockitContext::new);
 
-    private ResponseCallback responseCallback;
-    private final String requestId;
     protected final Map<String, Object> attachments = new HashMap<>();
 
     /**
      * Creates a new MockitContext and sets it in the MockitContextManager.
      */
     public MockitContext() {
-        this.requestId = UUID.randomUUID().toString();
-        MockitContextManager.setMockitContext(requestId, this);
+
     }
 
     /**
@@ -50,25 +47,6 @@ public class MockitContext {
      */
     public static MockitContext getContext() {
         return LOCAL.get();
-    }
-
-    /**
-     * Registers a new ResponseCallback for this MockitContext.
-     *
-     * @return The registered ResponseCallback.
-     */
-    public ResponseCallback registerCallback() {
-        this.responseCallback = new ResponseCallback(this.requestId);
-        return responseCallback;
-    }
-
-    /**
-     * Retrieves the ResponseCallback associated with this MockitContext.
-     *
-     * @return The ResponseCallback.
-     */
-    public ResponseCallback getResponseCallback() {
-        return responseCallback;
     }
 
     /**
@@ -94,14 +72,5 @@ public class MockitContext {
      */
     public Map<String, Object> getAttachments() {
         return this.attachments;
-    }
-
-    /**
-     * Retrieves the request ID associated with this MockitContext.
-     *
-     * @return The request ID.
-     */
-    public String getRequestId() {
-        return requestId;
     }
 }

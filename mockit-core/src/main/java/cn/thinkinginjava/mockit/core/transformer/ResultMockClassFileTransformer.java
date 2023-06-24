@@ -15,7 +15,7 @@
 
 package cn.thinkinginjava.mockit.core.transformer;
 
-import cn.thinkinginjava.mockit.core.exception.MockitException;
+import cn.thinkinginjava.mockit.common.exception.MockitException;
 import cn.thinkinginjava.mockit.core.model.MockInfo;
 import cn.thinkinginjava.mockit.core.model.MockMethodInfo;
 import cn.thinkinginjava.mockit.core.utils.ClassPoolUtil;

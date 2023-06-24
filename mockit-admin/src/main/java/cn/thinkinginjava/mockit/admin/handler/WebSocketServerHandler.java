@@ -15,7 +15,7 @@
 
 package cn.thinkinginjava.mockit.admin.handler;
 
-import cn.thinkinginjava.mockit.admin.context.MockitContextManager;
+import cn.thinkinginjava.mockit.admin.context.ResponseCallbackManager;
 import cn.thinkinginjava.mockit.admin.session.SessionHolder;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -49,7 +49,7 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<WebSocke
         }
         if (msg instanceof TextWebSocketFrame) {
             String response = ((TextWebSocketFrame) msg).text();
-            MockitContextManager.notifyCallback(response);
+            ResponseCallbackManager.notifyCallback(response);
         }
     }
 

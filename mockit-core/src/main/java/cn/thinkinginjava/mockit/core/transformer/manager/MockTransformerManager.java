@@ -15,7 +15,7 @@
 
 package cn.thinkinginjava.mockit.core.transformer.manager;
 
-import cn.thinkinginjava.mockit.core.exception.MockitException;
+import cn.thinkinginjava.mockit.common.exception.MockitException;
 import cn.thinkinginjava.mockit.core.instrumentation.InstrumentationHolder;
 
 import java.lang.instrument.ClassFileTransformer;

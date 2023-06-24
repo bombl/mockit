@@ -27,10 +27,14 @@ import java.util.concurrent.TimeUnit;
 public class ResponseCallback {
 
     private static final Logger logger = LoggerFactory.getLogger(ResponseCallback.class);
-    private static final long EXPIRATION_TIME_MS = 100;
+
+    public static final long EXPIRATION_TIME_MS = 100;
 
     private final CompletableFuture<String> future;
+
     private final String requestId;
+
+    private final long timestamp;
 
     /**
      * Constructs a new ResponseCallback with the specified request ID.
@@ -40,6 +44,7 @@ public class ResponseCallback {
     public ResponseCallback(String requestId) {
         this.requestId = requestId;
         this.future = new CompletableFuture<>();
+        this.timestamp = System.currentTimeMillis();
     }
 
     /**
@@ -68,11 +73,11 @@ public class ResponseCallback {
      */
     public String getResponse() {
         try {
-            return future.get(EXPIRATION_TIME_MS, TimeUnit.MILLISECONDS);
+            return future.get(EXPIRATION_TIME_MS, TimeUnit.SECONDS);
         } catch (Exception e) {
             logger.error("Error occurred while getting response", e);
         } finally {
-            MockitContextManager.removeMockitContext(this.requestId);
+            ResponseCallbackManager.removeCallback(this.requestId);
         }
         return null;
     }
@@ -93,5 +98,9 @@ public class ResponseCallback {
      */
     public CompletableFuture<String> getFuture() {
         return future;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
     }
 }

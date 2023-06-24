@@ -32,7 +32,7 @@ Mockit是一个非侵入性的Mock框架，其核心设计目标是提供了一�
 - mockit.plugin.alias=mockit-example: The project name registered in the console.
 - mockit.plugin.addresses=10.37.129.2:8889: Console IP address and port.
 3. Start the console (mockit-admin project) for mocking. The console currently does not support page operations (under development). You can perform mocking through the API. The following API is provided:
-* **Get all methods in a class** ：http://localhost:9999/mockit-admin/api/methodList.
+* **Get all methods in a class** ：http://localhost:9999/mockit-admin/api/methodList
 ```
 ## Request Information：
 curl --location --request POST 'http://localhost:9999/mockit-admin/api/methodList' \
@@ -70,7 +70,7 @@ curl --location --request POST 'http://localhost:9999/mockit-admin/api/methodLis
     ]
 }
 ```
-* **Mock a method** ：http://localhost:9999/mockit-admin/api/mock,
+* **Mock a method** ：http://localhost:9999/mockit-admin/api/mock
 ```
 ## Request Information：
 curl --location --request POST 'http://localhost:9999/mockit-admin/api/mock' \
@@ -105,7 +105,7 @@ curl --location --request POST 'http://localhost:9999/mockit-admin/api/mock' \
     "data": null
 }
 ```
-* **Cancel MOCK**  ：http://localhost:9999/mockit-admin/api/cancelMock,
+* **Cancel Mock**  ：http://localhost:9999/mockit-admin/api/cancelMock
 ```
 ## Request Information：
 curl --location --request POST 'http://localhost:9999/mockit-admin/api/cancelMock' \
@@ -132,7 +132,7 @@ curl --location --request POST 'http://localhost:9999/mockit-admin/api/cancelMoc
 - mockit.plugin.addresses=10.37.129.2:8889 : 控制台IP、端口
 
 3. 启动控制台（mockit-admin项目）进行mock，控制台暂时不支持页面操作（开发中...），可以通过接口进行mock，提供接口如下：
-* **获取类中所有方法**  ：http://localhost:9999/mockit-admin/api/methodList,
+* **获取类中所有方法**  ：http://localhost:9999/mockit-admin/api/methodList
 ```
 ## 请求信息：
 curl --location --request POST 'http://localhost:9999/mockit-admin/api/methodList' \
@@ -164,13 +164,12 @@ curl --location --request POST 'http://localhost:9999/mockit-admin/api/methodLis
             "methodName": "say2",
             "parameters": [
                 "java.lang.String"
-            ],
-            "methodContent": "AbA="
+            ]
         }
     ]
 }
 ```
-* **对方法进行MOCK**  ：http://localhost:9999/mockit-admin/api/mock,
+* **对方法进行Mock**  ：http://localhost:9999/mockit-admin/api/mock
 ```
 ## 请求信息：
 curl --location --request POST 'http://localhost:9999/mockit-admin/api/mock' \
@@ -205,7 +204,7 @@ curl --location --request POST 'http://localhost:9999/mockit-admin/api/mock' \
     "data": null
 }
 ```
-* **取消MOCK**  ：http://localhost:9999/mockit-admin/api/cancelMock,
+* **取消Mock**  ：http://localhost:9999/mockit-admin/api/cancelMock
 ```
 ## 请求信息：
 curl --location --request POST 'http://localhost:9999/mockit-admin/api/cancelMock' \

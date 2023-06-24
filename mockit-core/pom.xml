@@ -16,6 +16,12 @@
         </dependency>
 
         <dependency>
+            <groupId>cn.thinkinginjava</groupId>
+            <artifactId>mockit-common</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+
+        <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
         </dependency>

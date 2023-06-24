@@ -15,9 +15,8 @@
 
 package cn.thinkinginjava.mockit.admin.controller;
 
-import cn.thinkinginjava.mockit.admin.context.MockitContext;
 import cn.thinkinginjava.mockit.admin.context.ResponseCallback;
-import cn.thinkinginjava.mockit.admin.model.dto.Result;
+import cn.thinkinginjava.mockit.admin.model.dto.MockitResult;
 import cn.thinkinginjava.mockit.admin.model.dto.Session;
 import cn.thinkinginjava.mockit.admin.session.SessionHolder;
 import cn.thinkinginjava.mockit.admin.utils.MessageUtil;
@@ -26,10 +25,12 @@ import cn.thinkinginjava.mockit.common.dto.Message;
 import cn.thinkinginjava.mockit.common.dto.MethodInfo;
 import cn.thinkinginjava.mockit.common.dto.MockData;
 import cn.thinkinginjava.mockit.common.enums.MessageTypeEnum;
+import cn.thinkinginjava.mockit.common.exception.MockitException;
 import cn.thinkinginjava.mockit.common.utils.GsonUtil;
-import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,6 +43,8 @@ import java.util.Map;
 @RequestMapping("/api")
 public class MockApiController {
 
+    private static final Logger logger = LoggerFactory.getLogger(MockApiController.class);
+
     /**
      * retrieves a list of method information based on the provided mock data.
      *
@@ -49,24 +52,16 @@ public class MockApiController {
      * @return The result containing a list of method information.
      */
     @PostMapping("/methodList")
-    public Result<List<MethodInfo>> methodInfo(@RequestBody MockData mockData) {
+    public MockitResult<List<MethodInfo>> methodInfo(@RequestBody MockData mockData) {
         Message<String> sendMessage = new Message<>();
         sendMessage.setData(mockData.getClassName());
         sendMessage.setMessageType(MessageTypeEnum.GET_METHODS.getType());
-        Map<String, List<Session>> sessionMap = SessionHolder.getSessionMap();
-        if (MapUtils.isEmpty(sessionMap)) {
-            return Result.successful();
-        }
-        List<Session> sessionList = sessionMap.get(mockData.getAlias());
-        if (CollectionUtils.isEmpty(sessionList)) {
-            return Result.successful();
-        }
-        Session session = sessionList.get(0);
-        MessageUtil.sendMessage(session.getChannel(), sendMessage);
-        ResponseCallback responseCallback = MockitContext.getContext().registerCallback();
+        List<Session> sessions = getSessions(mockData.getAlias());
+        Session session = sessions.get(0);
+        ResponseCallback responseCallback = MessageUtil.sendMessage(session.getChannel(), sendMessage);
         String response = responseCallback.getResponse();
         Message<List<MethodInfo>> repMessage = GsonUtil.fromJsonToMessageList(response, MethodInfo.class);
-        return Result.successful(repMessage.getData());
+        return MockitResult.successful(repMessage.getData());
     }
 
     /**
@@ -76,22 +71,20 @@ public class MockApiController {
      * @return The result containing the mocked response as a string.
      */
     @PostMapping("/mock")
-    public Result<String> mock(@RequestBody MockData mockData) {
+    public MockitResult<String> mock(@RequestBody MockData mockData) {
         Message<MockData> sendMessage = new Message<>();
         sendMessage.setData(mockData);
         sendMessage.setMessageType(MessageTypeEnum.MOCK.getType());
-
-        Map<String, List<Session>> sessionMap = SessionHolder.getSessionMap();
-        if (MapUtils.isEmpty(sessionMap)) {
-            return Result.successful();
-        }
-        List<Session> sessionList = sessionMap.get(mockData.getAlias());
-        if (CollectionUtils.isEmpty(sessionList)) {
-            return Result.successful();
-        }
-        Session session = sessionList.get(0);
-        MessageUtil.sendMessage(session.getChannel(), sendMessage);
-        return Result.successful();
+        List<Session> sessions = getSessions(mockData.getAlias());
+        sessions.forEach(session -> {
+            try {
+                ResponseCallback responseCallback = MessageUtil.sendMessage(session.getChannel(), sendMessage);
+                // TODO UPDATE DB
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        });
+        return MockitResult.successful();
     }
 
     /**
@@ -101,21 +94,28 @@ public class MockApiController {
      * @return The result containing the status of the mock cancellation as a string.
      */
     @PostMapping("/cancelMock")
-    public Result<String> cancelMock(@RequestBody CancelMockData cancelMockData) {
+    public MockitResult<String> cancelMock(@RequestBody CancelMockData cancelMockData) {
         Message<CancelMockData> sendMessage = new Message<>();
         sendMessage.setData(cancelMockData);
         sendMessage.setMessageType(MessageTypeEnum.CANCEL_MOCK.getType());
+        List<Session> sessions = getSessions(cancelMockData.getAlias());
+        sessions.forEach(session -> {
+            try {
+                ResponseCallback responseCallback = MessageUtil.sendMessage(session.getChannel(), sendMessage);
+                // TODO UPDATE DB
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        });
+        return MockitResult.successful();
+    }
 
+    private List<Session> getSessions(String alias) {
         Map<String, List<Session>> sessionMap = SessionHolder.getSessionMap();
-        if (MapUtils.isEmpty(sessionMap)) {
-            return Result.successful();
+        if (MapUtils.isEmpty(sessionMap)
+                || CollectionUtils.isEmpty(sessionMap.get(alias))) {
+            throw new MockitException("Alias is not online.");
         }
-        List<Session> sessionList = sessionMap.get(cancelMockData.getAlias());
-        if (CollectionUtils.isEmpty(sessionList)) {
-            return Result.successful();
-        }
-        Session session = sessionList.get(0);
-        MessageUtil.sendMessage(session.getChannel(), sendMessage);
-        return Result.successful();
+        return sessionMap.get(alias);
     }
 }

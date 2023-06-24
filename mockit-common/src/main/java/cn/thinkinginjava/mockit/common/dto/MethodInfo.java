@@ -18,9 +18,6 @@ package cn.thinkinginjava.mockit.common.dto;
 import java.io.Serializable;
 import java.util.List;
 
-import java.io.Serializable;
-import java.util.List;
-
 /**
  * Information about a method.
  */
@@ -31,7 +28,6 @@ public class MethodInfo implements Serializable {
     private String returnType;
     private String methodName;
     private List<String> parameters;
-    private byte[] methodContent;
 
     /**
      * Default constructor.
@@ -111,22 +107,5 @@ public class MethodInfo implements Serializable {
         this.parameters = parameters;
     }
 
-    /**
-     * Get the method content.
-     *
-     * @return The method content.
-     */
-    public byte[] getMethodContent() {
-        return methodContent;
-    }
-
-    /**
-     * Set the method content.
-     *
-     * @param methodContent The method content to set.
-     */
-    public void setMethodContent(byte[] methodContent) {
-        this.methodContent = methodContent;
-    }
 }
 

@@ -14,7 +14,7 @@
  * along with Mockit. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cn.thinkinginjava.mockit.core.exception;
+package cn.thinkinginjava.mockit.common.exception;
 
 /**
  * Mockit Exception.

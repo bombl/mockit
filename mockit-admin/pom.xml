@@ -9,6 +9,19 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>mockit-admin</artifactId>
     <name>mockit-admin</name>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-parent</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -28,12 +41,13 @@
         <dependency>
             <groupId>cn.thinkinginjava</groupId>
             <artifactId>mockit-common</artifactId>
+            <version>0.0.1</version>
         </dependency>
 
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
-            <version>${netty.version}</version>
+            <version>4.1.93.Final</version>
         </dependency>
 
         <dependency>
@@ -44,7 +58,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
-            <version>${commons-collections4.version}</version>
+            <version>4.4</version>
         </dependency>
 
         <dependency>

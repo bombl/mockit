@@ -18,8 +18,9 @@ package cn.thinkinginjava.mockit.admin.context;
 import cn.thinkinginjava.mockit.common.utils.GsonUtil;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -27,43 +28,45 @@ import java.util.concurrent.TimeUnit;
 import static cn.thinkinginjava.mockit.common.constant.MockConstants.REQUEST_ID;
 
 /**
- * Manager class for MockitContext objects.
+ * Manager class for ResponseCallback objects.
  */
-public class MockitContextManager {
+public class ResponseCallbackManager {
 
-    private static final long EXPIRATION_TIME_MS = 100;
-    private static final Map<String, MockitContext> mockitContextMap = new HashMap<>();
+    private static final Map<String, ResponseCallback> callbackMap = new ConcurrentHashMap<>();
+
     private static final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+
+    public ResponseCallbackManager() {
+        scheduler.scheduleWithFixedDelay(this::cleanupExpiredKeys, ResponseCallback.EXPIRATION_TIME_MS, ResponseCallback.EXPIRATION_TIME_MS, TimeUnit.SECONDS);
+    }
 
     /**
      * Sets the MockitContext associated with the specified request ID.
      * The MockitContext will be automatically removed after a specified expiration time.
-     *
-     * @param requestId     The request ID.
-     * @param mockitContext The MockitContext to set.
      */
-    public static void setMockitContext(String requestId, MockitContext mockitContext) {
-        mockitContextMap.put(requestId, mockitContext);
-        scheduler.schedule(() -> removeMockitContext(requestId), EXPIRATION_TIME_MS, TimeUnit.MILLISECONDS);
+    public static ResponseCallback registerCallback(String requestId) {
+        ResponseCallback responseCallback = new ResponseCallback(requestId);
+        callbackMap.put(requestId, responseCallback);
+        return responseCallback;
     }
 
     /**
-     * Retrieves the MockitContext associated with the specified request ID.
+     * Retrieves the ResponseCallback associated with the specified request ID.
      *
      * @param requestId The request ID.
-     * @return The MockitContext, or null if not found.
+     * @return The ResponseCallback, or null if not found.
      */
-    public static MockitContext getMockitContext(String requestId) {
-        return mockitContextMap.get(requestId);
+    public static ResponseCallback getCallback(String requestId) {
+        return callbackMap.get(requestId);
     }
 
     /**
-     * Removes the MockitContext associated with the specified request ID.
+     * Removes the ResponseCallback associated with the specified request ID.
      *
      * @param requestId The request ID.
      */
-    public static void removeMockitContext(String requestId) {
-        mockitContextMap.remove(requestId);
+    public static void removeCallback(String requestId) {
+        callbackMap.remove(requestId);
     }
 
     /**
@@ -76,14 +79,23 @@ public class MockitContextManager {
         if (StringUtils.isEmpty(requestId)) {
             return;
         }
-        MockitContext mockitContext = getMockitContext(requestId);
-        if (mockitContext == null) {
-            return;
-        }
-        ResponseCallback responseCallback = mockitContext.getResponseCallback();
+        ResponseCallback responseCallback = getCallback(requestId);
         if (responseCallback == null) {
             return;
         }
         responseCallback.done(response);
+    }
+
+    /**
+     * Cleans up expired keys by removing them from the callbackMap.
+     * Keys are considered expired if the time elapsed since their creation exceeds the expiration time.
+     */
+    private void cleanupExpiredKeys() {
+        long currentTimestamp = System.currentTimeMillis();
+        callbackMap.entrySet().removeIf(entry -> {
+            ResponseCallback callback = entry.getValue();
+            long keyTimestamp = callback.getTimestamp();
+            return (currentTimestamp - keyTimestamp) > (ResponseCallback.EXPIRATION_TIME_MS * 1000);
+        });
     }
 }

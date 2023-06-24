@@ -22,7 +22,7 @@ import java.io.Serializable;
  *
  * @param <T> The type of the data contained in the result.
  */
-public class Result<T> implements Serializable {
+public class MockitResult<T> implements Serializable {
 
     private static final long serialVersionUID = -5777465139846605810L;
 
@@ -36,7 +36,7 @@ public class Result<T> implements Serializable {
     /**
      * Default constructor.
      */
-    public Result() {
+    public MockitResult() {
     }
 
     /**
@@ -45,7 +45,7 @@ public class Result<T> implements Serializable {
      * @param code    The result code.
      * @param message The result message.
      */
-    public Result(int code, String message) {
+    public MockitResult(int code, String message) {
         this.code = code;
         this.message = message;
     }
@@ -55,7 +55,7 @@ public class Result<T> implements Serializable {
      *
      * @param data The result data.
      */
-    public Result(T data) {
+    public MockitResult(T data) {
         this.code = SUCCESS_CODE;
         this.data = data;
     }
@@ -67,8 +67,8 @@ public class Result<T> implements Serializable {
      * @param <T>  The type of the data.
      * @return The successful result.
      */
-    public static <T> Result<T> successful(T data) {
-        return new Result<T>().setCode(SUCCESS_CODE).setData(data);
+    public static <T> MockitResult<T> successful(T data) {
+        return new MockitResult<T>().setCode(SUCCESS_CODE).setData(data);
     }
 
     /**
@@ -77,8 +77,8 @@ public class Result<T> implements Serializable {
      * @param <T> The type of the data.
      * @return The successful result.
      */
-    public static <T> Result<T> successful() {
-        return new Result<T>().setCode(SUCCESS_CODE);
+    public static <T> MockitResult<T> successful() {
+        return new MockitResult<T>().setCode(SUCCESS_CODE);
     }
 
     /**
@@ -88,8 +88,8 @@ public class Result<T> implements Serializable {
      * @param <T>     The type of the data.
      * @return The failed result.
      */
-    public static <T> Result<T> fail(String message) {
-        return new Result<T>().setCode(FAIL_CODE).setMessage(message);
+    public static <T> MockitResult<T> fail(String message) {
+        return new MockitResult<T>().setCode(FAIL_CODE).setMessage(message);
     }
 
     /**
@@ -107,7 +107,7 @@ public class Result<T> implements Serializable {
      * @param code The result code to set.
      * @return This result object.
      */
-    public Result<T> setCode(int code) {
+    public MockitResult<T> setCode(int code) {
         this.code = code;
         return this;
     }
@@ -127,7 +127,7 @@ public class Result<T> implements Serializable {
      * @param message The result message to set.
      * @return This result object.
      */
-    public Result<T> setMessage(String message) {
+    public MockitResult<T> setMessage(String message) {
         this.message = message;
         return this;
     }
@@ -147,7 +147,7 @@ public class Result<T> implements Serializable {
      * @param data The result data to set.
      * @return This result object.
      */
-    public Result<T> setData(T data) {
+    public MockitResult<T> setData(T data) {
         this.data = data;
         return this;
     }
