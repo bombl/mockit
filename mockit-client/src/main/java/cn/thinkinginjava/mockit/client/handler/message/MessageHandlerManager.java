@@ -16,7 +16,7 @@
 package cn.thinkinginjava.mockit.client.handler.message;
 
 import cn.thinkinginjava.mockit.client.annotation.MessageType;
-import cn.thinkinginjava.mockit.common.enums.MessageTypeEnum;
+import cn.thinkinginjava.mockit.common.model.enums.MessageTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;

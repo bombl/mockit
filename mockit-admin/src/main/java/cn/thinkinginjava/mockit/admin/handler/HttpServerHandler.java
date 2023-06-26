@@ -15,7 +15,10 @@
 
 package cn.thinkinginjava.mockit.admin.handler;
 
+import cn.thinkinginjava.mockit.admin.model.dto.Session;
+import cn.thinkinginjava.mockit.admin.service.IMockitServiceRegistryService;
 import cn.thinkinginjava.mockit.admin.session.SessionHolder;
+import cn.thinkinginjava.mockit.admin.utils.SpringContextUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
@@ -25,6 +28,8 @@ import io.netty.handler.codec.http.websocketx.WebSocketFrameAggregator;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 import io.netty.util.CharsetUtil;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,7 +59,8 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
             return;
         }
         Channel channel = ctx.channel();
-        WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(getWebSocketLocation(request), "stomp", true, 5 * 1024 * 1024);
+        WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(
+                getWebSocketLocation(request), "stomp", true, 5 * 1024 * 1024);
         WebSocketServerHandshaker handshaker = wsFactory.newHandshaker(request);
         if (handshaker == null) {
             WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(channel);
@@ -70,7 +76,14 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
                 return;
             }
             Map<String, String> paraMap = getParaMap(ctx, request);
-            SessionHolder.addSession(Objects.requireNonNull(paraMap).get(ALIAS), channel, paraMap.get(IP));
+            if (MapUtils.isEmpty(paraMap) || StringUtils.isEmpty(paraMap.get(ALIAS))) {
+                return;
+            }
+            Session session = new Session(channel, paraMap.get(ALIAS), paraMap.get(IP));
+            SessionHolder.addSession(session);
+
+            IMockitServiceRegistryService iMockitServiceRegistryService = SpringContextUtil.getBean(IMockitServiceRegistryService.class);
+            iMockitServiceRegistryService.online(session);
         });
     }
 

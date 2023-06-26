@@ -13,7 +13,7 @@
  * along with Mockit. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cn.thinkinginjava.mockit.common.dto;
+package cn.thinkinginjava.mockit.common.model.dto;
 
 import java.util.List;
 

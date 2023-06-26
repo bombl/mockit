@@ -1,9 +1,8 @@
 package cn.thinkinginjava.mockit.common.utils;
 
-import cn.thinkinginjava.mockit.common.dto.Message;
+import cn.thinkinginjava.mockit.common.model.dto.Message;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
-import com.google.gson.reflect.*;
 
 import java.lang.reflect.Type;
 import java.util.List;

@@ -10,6 +10,16 @@
     <artifactId>mockit-admin</artifactId>
     <name>mockit-admin</name>
 
+    <properties>
+        <mybatisplus.version>3.3.1</mybatisplus.version>
+        <mysql.version>8.0.33</mysql.version>
+        <druid.version>1.2.11</druid.version>
+        <pagehelper.version>5.3.1</pagehelper.version>
+        <ojdbc8.version>19.3.0.0</ojdbc8.version>
+        <h2.version>1.4.200</h2.version>
+        <guava.version>31.1-jre</guava.version>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -39,6 +49,49 @@
         </dependency>
 
         <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>${mybatisplus.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper</artifactId>
+            <version>${pagehelper.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>${druid.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.oracle.ojdbc</groupId>
+            <artifactId>ojdbc8</artifactId>
+            <version>${ojdbc8.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>cn.thinkinginjava</groupId>
             <artifactId>mockit-common</artifactId>
             <version>0.0.1</version>
@@ -59,6 +112,13 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
             <version>4.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.14</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>

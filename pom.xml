@@ -5,7 +5,7 @@
     <groupId>cn.thinkinginjava</groupId>
     <artifactId>mockit</artifactId>
     <packaging>pom</packaging>
-    <version>${mockit.version}</version>
+    <version>0.0.1</version>
     <name>mockit</name>
     <description>Non-invasive mock framework</description>
     <modules>
@@ -68,7 +68,6 @@
         <gson.version>2.10.1</gson.version>
         <slf4j-api.version>1.7.36</slf4j-api.version>
         <commons-collections4.version>4.4</commons-collections4.version>
-        <mockit.version>0.0.1</mockit.version>
         <!--maven plugin version-->
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>

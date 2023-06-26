@@ -15,7 +15,7 @@
 
 package cn.thinkinginjava.mockit.client.annotation;
 
-import cn.thinkinginjava.mockit.common.enums.MessageTypeEnum;
+import cn.thinkinginjava.mockit.common.model.enums.MessageTypeEnum;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

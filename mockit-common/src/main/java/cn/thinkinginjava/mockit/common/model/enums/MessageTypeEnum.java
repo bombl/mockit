@@ -13,7 +13,7 @@
  * along with Mockit. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cn.thinkinginjava.mockit.common.enums;
+package cn.thinkinginjava.mockit.common.model.enums;
 
 /**
  * Enumeration representing different types of options.

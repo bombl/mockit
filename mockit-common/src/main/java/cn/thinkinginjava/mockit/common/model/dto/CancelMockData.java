@@ -13,18 +13,16 @@
  * along with Mockit. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cn.thinkinginjava.mockit.common.dto;
-
-import java.util.List;
+package cn.thinkinginjava.mockit.common.model.dto;
 
 /**
- * Represents the mock data entity, extending the {@link Message}.
+ * Represents the cancel mock data entity.
  */
-public class MockData {
+public class CancelMockData {
 
     private String alias;
+
     private String className;
-    private List<MethodMockData> methodMockDataList;
 
     /**
      * Get the alias name.
@@ -62,21 +60,4 @@ public class MockData {
         this.className = className;
     }
 
-    /**
-     * Get the list of method mock data.
-     *
-     * @return The list of method mock data.
-     */
-    public List<MethodMockData> getMethodMockDataList() {
-        return methodMockDataList;
-    }
-
-    /**
-     * Set the list of method mock data.
-     *
-     * @param methodMockDataList The list of method mock data to set.
-     */
-    public void setMethodMockDataList(List<MethodMockData> methodMockDataList) {
-        this.methodMockDataList = methodMockDataList;
-    }
 }

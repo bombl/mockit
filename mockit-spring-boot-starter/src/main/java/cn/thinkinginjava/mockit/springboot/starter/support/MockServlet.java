@@ -16,7 +16,7 @@
 package cn.thinkinginjava.mockit.springboot.starter.support;
 
 import cn.thinkinginjava.mockit.client.utils.ClassUtil;
-import cn.thinkinginjava.mockit.common.dto.MethodMockData;
+import cn.thinkinginjava.mockit.common.model.dto.MethodMockData;
 import cn.thinkinginjava.mockit.core.model.MockInfo;
 import cn.thinkinginjava.mockit.core.model.MockMethodInfo;
 import cn.thinkinginjava.mockit.core.transformer.CancelMockClassFileTransformer;

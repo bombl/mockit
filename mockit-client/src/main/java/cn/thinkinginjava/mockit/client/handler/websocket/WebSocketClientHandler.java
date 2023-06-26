@@ -20,7 +20,7 @@ import cn.thinkinginjava.mockit.client.handler.message.MessageHandler;
 import cn.thinkinginjava.mockit.client.handler.message.MessageHandlerManager;
 import cn.thinkinginjava.mockit.client.utils.AddressUtil;
 import cn.thinkinginjava.mockit.common.constant.MockConstants;
-import cn.thinkinginjava.mockit.common.enums.MessageTypeEnum;
+import cn.thinkinginjava.mockit.common.model.enums.MessageTypeEnum;
 import cn.thinkinginjava.mockit.common.utils.GsonUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;

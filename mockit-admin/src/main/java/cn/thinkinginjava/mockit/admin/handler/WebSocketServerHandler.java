@@ -16,7 +16,10 @@
 package cn.thinkinginjava.mockit.admin.handler;
 
 import cn.thinkinginjava.mockit.admin.context.ResponseCallbackManager;
+import cn.thinkinginjava.mockit.admin.model.dto.Session;
+import cn.thinkinginjava.mockit.admin.service.IMockitServiceRegistryService;
 import cn.thinkinginjava.mockit.admin.session.SessionHolder;
+import cn.thinkinginjava.mockit.admin.utils.SpringContextUtil;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -79,7 +82,9 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<WebSocke
      */
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        SessionHolder.removeSession(ctx.channel());
+        Session session = SessionHolder.removeSession(ctx.channel());
+        IMockitServiceRegistryService iMockitServiceRegistryService = SpringContextUtil.getBean(IMockitServiceRegistryService.class);
+        iMockitServiceRegistryService.offline(session);
     }
 
 }

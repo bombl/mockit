@@ -24,16 +24,23 @@ public class Session {
 
     private final Channel channel;
 
+    private final String alias;
+
     private final String ip;
 
 
-    public Session(Channel channel, String ip) {
+    public Session(Channel channel, String alias, String ip) {
         this.channel = channel;
+        this.alias = alias;
         this.ip = ip;
     }
 
     public Channel getChannel() {
         return channel;
+    }
+
+    public String getAlias() {
+        return alias;
     }
 
     public String getIp() {

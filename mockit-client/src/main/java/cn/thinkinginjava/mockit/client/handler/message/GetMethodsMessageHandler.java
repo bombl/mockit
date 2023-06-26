@@ -16,9 +16,9 @@
 package cn.thinkinginjava.mockit.client.handler.message;
 
 import cn.thinkinginjava.mockit.client.annotation.MessageType;
-import cn.thinkinginjava.mockit.common.dto.Message;
-import cn.thinkinginjava.mockit.common.dto.MethodInfo;
-import cn.thinkinginjava.mockit.common.enums.MessageTypeEnum;
+import cn.thinkinginjava.mockit.common.model.dto.Message;
+import cn.thinkinginjava.mockit.common.model.dto.MethodInfo;
+import cn.thinkinginjava.mockit.common.model.enums.MessageTypeEnum;
 import cn.thinkinginjava.mockit.common.utils.GsonUtil;
 import cn.thinkinginjava.mockit.common.utils.MethodUtil;
 import io.netty.channel.ChannelHandlerContext;

@@ -13,7 +13,7 @@
  * along with Mockit. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cn.thinkinginjava.mockit.common.dto;
+package cn.thinkinginjava.mockit.common.model.dto;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -21,8 +21,6 @@ import java.util.Map;
 /**
  * Base entity class representing common attributes for entities.
  */
-import java.io.Serializable;
-import java.util.Map;
 
 /**
  * Generic message class.

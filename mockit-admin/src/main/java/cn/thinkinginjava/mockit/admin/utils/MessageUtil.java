@@ -18,7 +18,7 @@ package cn.thinkinginjava.mockit.admin.utils;
 import cn.thinkinginjava.mockit.admin.context.MockitContext;
 import cn.thinkinginjava.mockit.admin.context.ResponseCallback;
 import cn.thinkinginjava.mockit.admin.context.ResponseCallbackManager;
-import cn.thinkinginjava.mockit.common.dto.Message;
+import cn.thinkinginjava.mockit.common.model.dto.Message;
 import cn.thinkinginjava.mockit.common.exception.MockitException;
 import cn.thinkinginjava.mockit.common.utils.GsonUtil;
 import io.netty.channel.Channel;

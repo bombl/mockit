@@ -60,4 +60,12 @@ public class MockConstants {
      * The request field name.
      */
     public static final String REQUEST_ID = "requestId";
+    /**
+     * The yes field name.
+     */
+    public static final Integer YES = 1;
+    /**
+     * The no field name.
+     */
+    public static final Integer NO = 0;
 }

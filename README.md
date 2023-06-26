@@ -64,8 +64,7 @@ curl --location --request POST 'http://localhost:9999/mockit-admin/api/methodLis
             "methodName": "say2",
             "parameters": [
                 "java.lang.String"
-            ],
-            "methodContent": "AbA="
+            ]
         }
     ]
 }

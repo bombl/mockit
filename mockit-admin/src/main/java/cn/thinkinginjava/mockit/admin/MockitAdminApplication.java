@@ -15,6 +15,7 @@
 
 package cn.thinkinginjava.mockit.admin;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -22,6 +23,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * Main entry point for the Mockit Admin application.
  */
 @SpringBootApplication
+@MapperScan(basePackages = {"cn.thinkinginjava.mockit.admin.mapper"})
 public class MockitAdminApplication {
 
     public static void main(String[] args) {

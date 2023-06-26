@@ -15,8 +15,8 @@
 
 package cn.thinkinginjava.mockit.springboot.starter.model;
 
-import cn.thinkinginjava.mockit.common.dto.Message;
-import cn.thinkinginjava.mockit.common.dto.MethodMockData;
+import cn.thinkinginjava.mockit.common.model.dto.Message;
+import cn.thinkinginjava.mockit.common.model.dto.MethodMockData;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class MockData {
 
     private String alias;
     private String className;
-    private List<cn.thinkinginjava.mockit.common.dto.MethodMockData> methodMockDataList;
+    private List<cn.thinkinginjava.mockit.common.model.dto.MethodMockData> methodMockDataList;
 
     /**
      * Get the alias name.
@@ -65,7 +65,7 @@ public class MockData {
         this.className = className;
     }
 
-    public List<cn.thinkinginjava.mockit.common.dto.MethodMockData> getMethodMockDataList() {
+    public List<cn.thinkinginjava.mockit.common.model.dto.MethodMockData> getMethodMockDataList() {
         return methodMockDataList;
     }
 

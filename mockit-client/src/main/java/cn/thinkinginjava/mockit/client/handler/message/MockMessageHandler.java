@@ -17,10 +17,10 @@ package cn.thinkinginjava.mockit.client.handler.message;
 
 import cn.thinkinginjava.mockit.client.annotation.MessageType;
 import cn.thinkinginjava.mockit.client.utils.ClassUtil;
-import cn.thinkinginjava.mockit.common.dto.Message;
-import cn.thinkinginjava.mockit.common.dto.MethodMockData;
-import cn.thinkinginjava.mockit.common.dto.MockData;
-import cn.thinkinginjava.mockit.common.enums.MessageTypeEnum;
+import cn.thinkinginjava.mockit.common.model.dto.Message;
+import cn.thinkinginjava.mockit.common.model.dto.MethodMockData;
+import cn.thinkinginjava.mockit.common.model.dto.MockData;
+import cn.thinkinginjava.mockit.common.model.enums.MessageTypeEnum;
 import cn.thinkinginjava.mockit.common.utils.GsonUtil;
 import cn.thinkinginjava.mockit.core.model.MockInfo;
 import cn.thinkinginjava.mockit.core.model.MockMethodInfo;

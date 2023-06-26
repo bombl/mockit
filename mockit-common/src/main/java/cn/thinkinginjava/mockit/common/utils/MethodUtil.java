@@ -1,6 +1,6 @@
 package cn.thinkinginjava.mockit.common.utils;
 
-import cn.thinkinginjava.mockit.common.dto.MethodInfo;
+import cn.thinkinginjava.mockit.common.model.dto.MethodInfo;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;

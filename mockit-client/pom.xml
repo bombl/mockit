@@ -18,13 +18,13 @@
         <dependency>
             <groupId>cn.thinkinginjava</groupId>
             <artifactId>mockit-core</artifactId>
-            <version>${mockit.version}</version>
+            <version>0.0.1</version>
         </dependency>
 
         <dependency>
             <groupId>cn.thinkinginjava</groupId>
             <artifactId>mockit-common</artifactId>
-            <version>${mockit.version}</version>
+            <version>0.0.1</version>
         </dependency>
 
         <dependency>

@@ -16,23 +16,15 @@
 package cn.thinkinginjava.mockit.client.handler.message;
 
 import cn.thinkinginjava.mockit.client.annotation.MessageType;
-import cn.thinkinginjava.mockit.common.dto.CancelMockData;
-import cn.thinkinginjava.mockit.common.dto.Message;
-import cn.thinkinginjava.mockit.common.dto.MockData;
-import cn.thinkinginjava.mockit.common.enums.MessageTypeEnum;
+import cn.thinkinginjava.mockit.common.model.dto.CancelMockData;
+import cn.thinkinginjava.mockit.common.model.dto.Message;
+import cn.thinkinginjava.mockit.common.model.enums.MessageTypeEnum;
 import cn.thinkinginjava.mockit.common.utils.GsonUtil;
 import cn.thinkinginjava.mockit.core.transformer.CancelMockClassFileTransformer;
-import cn.thinkinginjava.mockit.core.transformer.ResultMockClassFileTransformer;
 import cn.thinkinginjava.mockit.core.transformer.manager.MockTransformerManager;
-import cn.thinkinginjava.mockit.core.utils.ClassPoolHolder;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.NotFoundException;
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.List;
 
 import static cn.thinkinginjava.mockit.common.constant.MockConstants.SUCCESS;
 

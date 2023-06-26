@@ -20,6 +20,7 @@ import io.netty.channel.Channel;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,24 +38,21 @@ public class SessionHolder {
     /**
      * Adds a WebSocket session to the session holder.
      *
-     * @param alias   The alias associated with the session.
-     * @param channel The Channel object representing the WebSocket connection.
-     * @param ip      The IP address of the client.
+     * @param session The WebSocket session.
      */
-    public synchronized static void addSession(String alias, Channel channel, String ip) {
-        List<Session> sessionList = sessionMap.get(alias);
+    public synchronized static void addSession(Session session) {
+        List<Session> sessionList = sessionMap.get(session.getAlias());
         if (CollectionUtils.isEmpty(sessionList)) {
-            Session session = new Session(channel, ip);
             List<Session> newList = new ArrayList<>();
             newList.add(session);
-            sessionMap.put(alias, newList);
+            sessionMap.put(session.getAlias(), newList);
             return;
         }
         boolean isExist = sessionList.stream().map(Session::getIp)
-                .anyMatch(value -> value.equals(ip));
+                .anyMatch(value -> value.equals(session.getIp()));
         if (!isExist) {
-            sessionList.add(new Session(channel, ip));
-            sessionMap.put(alias, sessionList);
+            sessionList.add(session);
+            sessionMap.put(session.getAlias(), sessionList);
         }
     }
 
@@ -63,17 +61,25 @@ public class SessionHolder {
      *
      * @param channel The Channel object representing the WebSocket connection to be removed.
      */
-    public synchronized static void removeSession(Channel channel) {
+    public synchronized static Session removeSession(Channel channel) {
+        Session session = null;
         if (!CollectionUtils.isEmpty(sessionMap)) {
             for (String alias : sessionMap.keySet()) {
                 List<Session> sessions = sessionMap.get(alias);
                 if (sessions == null || CollectionUtils.isEmpty(sessions)) {
                     continue;
                 }
-                sessions.removeIf(session -> session.getChannel().equals(channel));
+                Iterator<Session> iterator = sessions.iterator();
+                while (iterator.hasNext()) {
+                    session = iterator.next();
+                    if (session.getChannel().equals(channel)) {
+                        iterator.remove();
+                    }
+                }
                 sessionMap.put(alias, sessions);
             }
         }
+        return session;
     }
 
     /**

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <properties>
+        <property name="dialect" value="${mockit.database.dialect:mysql}"/>
+    </properties>
+
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="cacheEnabled" value="true"/>
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="multipleResultSetsEnabled" value="true"/>
+        <setting name="useColumnLabel" value="true"/>
+        <setting name="useGeneratedKeys" value="false"/>
+        <setting name="defaultExecutorType" value="SIMPLE"/>
+        <setting name="defaultStatementTimeout" value="25000"/>
+    </settings>
+
+    <typeAliases>
+        <typeAlias alias="Integer" type="java.lang.Integer"/>
+        <typeAlias alias="Long" type="java.lang.Long"/>
+        <typeAlias alias="HashMap" type="java.util.HashMap"/>
+        <typeAlias alias="LinkedHashMap" type="java.util.LinkedHashMap"/>
+        <typeAlias alias="ArrayList" type="java.util.ArrayList"/>
+        <typeAlias alias="LinkedList" type="java.util.LinkedList"/>
+    </typeAliases>
+
+    <plugins>
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <property name="dialect" value="com.github.pagehelper.PageHelper"/>
+            <property name="offsetAsPageNum" value="true"/>
+            <property name="rowBoundsWithCount" value="true"/>
+            <property name="pageSizeZero" value="true"/>
+            <property name="reasonable" value="false"/>
+            <property name="params" value="pageNum=start;pageSize=limit;"/>
+            <property name="supportMethodsArguments" value="true"/>
+            <property name="returnPageInfo" value="check"/>
+        </plugin>
+    </plugins>
+</configuration>
