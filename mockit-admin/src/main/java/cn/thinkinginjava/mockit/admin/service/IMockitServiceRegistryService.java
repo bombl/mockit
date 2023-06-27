@@ -15,8 +15,11 @@
 
 package cn.thinkinginjava.mockit.admin.service;
 
+import cn.thinkinginjava.mockit.admin.model.dto.MockitServiceRegistryDTO;
 import cn.thinkinginjava.mockit.admin.model.dto.Session;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceRegistry;
+import cn.thinkinginjava.mockit.admin.model.vo.MockitServiceRegistryVO;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -38,4 +41,34 @@ public interface IMockitServiceRegistryService extends IService<MockitServiceReg
      * @param session session
      */
     void offline(Session session);
+
+    /**
+     * OfflineAll method: Sets the all sessions as offline
+     *
+     */
+    void offlineAll();
+
+    /**
+     * AddService method：add new service
+     * @param mockitServiceRegistryDTO service info
+     */
+    void addService(MockitServiceRegistryDTO mockitServiceRegistryDTO);
+
+    /**
+     * DeleteService method：delete service
+     * @param mockitServiceRegistryDTO service info
+     */
+    void deleteService(MockitServiceRegistryDTO mockitServiceRegistryDTO);
+
+    /**
+     * UpdateService method：update service
+     * @param mockitServiceRegistryDTO service info
+     */
+    void updateService(MockitServiceRegistryDTO mockitServiceRegistryDTO);
+
+    /**
+     * listByPage method：list service
+     * @param mockitServiceRegistryDTO service info
+     */
+    IPage<MockitServiceRegistryVO> listByPage(MockitServiceRegistryDTO mockitServiceRegistryDTO);
 }

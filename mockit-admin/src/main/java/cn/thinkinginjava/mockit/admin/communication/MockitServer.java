@@ -16,6 +16,7 @@
 package cn.thinkinginjava.mockit.admin.communication;
 
 import cn.thinkinginjava.mockit.admin.handler.HttpServerHandler;
+import cn.thinkinginjava.mockit.admin.service.manager.ServiceRegistryManager;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -48,6 +49,7 @@ public class MockitServer implements SmartInitializingSingleton {
      * Starts the mockit server.
      */
     public void start() {
+        ServiceRegistryManager.offlineAll();
         initServer();
     }
 

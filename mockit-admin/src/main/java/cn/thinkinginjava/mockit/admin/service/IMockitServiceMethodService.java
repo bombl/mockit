@@ -15,8 +15,11 @@
 
 package cn.thinkinginjava.mockit.admin.service;
 
+import cn.thinkinginjava.mockit.admin.model.dto.MockitServiceMethodDTO;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceMethod;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * Service interface for managing Mockit service methods.
@@ -24,4 +27,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IMockitServiceMethodService extends IService<MockitServiceMethod> {
 
+    void addMethod(List<MockitServiceMethodDTO> methodList);
 }

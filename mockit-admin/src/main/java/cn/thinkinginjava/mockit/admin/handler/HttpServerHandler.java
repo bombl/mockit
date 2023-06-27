@@ -16,9 +16,8 @@
 package cn.thinkinginjava.mockit.admin.handler;
 
 import cn.thinkinginjava.mockit.admin.model.dto.Session;
-import cn.thinkinginjava.mockit.admin.service.IMockitServiceRegistryService;
 import cn.thinkinginjava.mockit.admin.session.SessionHolder;
-import cn.thinkinginjava.mockit.admin.utils.SpringContextUtil;
+import cn.thinkinginjava.mockit.admin.service.manager.ServiceRegistryManager;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
@@ -33,7 +32,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import static cn.thinkinginjava.mockit.common.constant.MockConstants.*;
 import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
@@ -81,9 +79,7 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
             }
             Session session = new Session(channel, paraMap.get(ALIAS), paraMap.get(IP));
             SessionHolder.addSession(session);
-
-            IMockitServiceRegistryService iMockitServiceRegistryService = SpringContextUtil.getBean(IMockitServiceRegistryService.class);
-            iMockitServiceRegistryService.online(session);
+            ServiceRegistryManager.online(session);
         });
     }
 

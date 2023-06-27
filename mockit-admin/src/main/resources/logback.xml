@@ -2,7 +2,7 @@
 <configuration debug="false" scan="true" scanPeriod="1 seconds">
 
     <contextName>logback</contextName>
-    <property name="APP_HOME" value="." />
+    <property name="APP_HOME" value="./" />
 
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>

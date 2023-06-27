@@ -15,6 +15,7 @@
 
 package cn.thinkinginjava.mockit.admin.service;
 
+import cn.thinkinginjava.mockit.admin.model.dto.MockitServiceClassDTO;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceClass;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -24,4 +25,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IMockitServiceClassService extends IService<MockitServiceClass> {
 
+    void addClass(MockitServiceClassDTO mockitServiceClassDTO);
 }

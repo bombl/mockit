@@ -16,6 +16,7 @@
 package cn.thinkinginjava.mockit.admin.service.impl;
 
 import cn.thinkinginjava.mockit.admin.mapper.MockitServiceClassMapper;
+import cn.thinkinginjava.mockit.admin.model.dto.MockitServiceClassDTO;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceClass;
 import cn.thinkinginjava.mockit.admin.service.IMockitServiceClassService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -28,4 +29,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class MockitServiceClassServiceImpl extends ServiceImpl<MockitServiceClassMapper, MockitServiceClass> implements IMockitServiceClassService {
 
+    @Override
+    public void addClass(MockitServiceClassDTO mockitServiceClassDTO) {
+
+    }
 }
