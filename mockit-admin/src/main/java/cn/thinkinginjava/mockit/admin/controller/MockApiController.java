@@ -18,14 +18,17 @@ package cn.thinkinginjava.mockit.admin.controller;
 import cn.thinkinginjava.mockit.admin.context.ResponseCallback;
 import cn.thinkinginjava.mockit.admin.model.dto.MockitResult;
 import cn.thinkinginjava.mockit.admin.model.dto.Session;
+import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceRegistry;
+import cn.thinkinginjava.mockit.admin.service.IMockitServiceRegistryService;
 import cn.thinkinginjava.mockit.admin.session.SessionHolder;
 import cn.thinkinginjava.mockit.admin.utils.MessageUtil;
+import cn.thinkinginjava.mockit.common.constant.MockConstants;
+import cn.thinkinginjava.mockit.common.exception.MockitException;
 import cn.thinkinginjava.mockit.common.model.dto.CancelMockData;
-import cn.thinkinginjava.mockit.common.model.dto.MockData;
-import cn.thinkinginjava.mockit.common.model.enums.MessageTypeEnum;
 import cn.thinkinginjava.mockit.common.model.dto.Message;
 import cn.thinkinginjava.mockit.common.model.dto.MethodInfo;
-import cn.thinkinginjava.mockit.common.exception.MockitException;
+import cn.thinkinginjava.mockit.common.model.dto.MockData;
+import cn.thinkinginjava.mockit.common.model.enums.MessageTypeEnum;
 import cn.thinkinginjava.mockit.common.utils.GsonUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -36,6 +39,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +49,9 @@ import java.util.Map;
 public class MockApiController {
 
     private static final Logger logger = LoggerFactory.getLogger(MockApiController.class);
+
+    @Resource
+    private IMockitServiceRegistryService iMockitServiceRegistryService;
 
     /**
      * retrieves a list of method information based on the provided mock data.
@@ -79,7 +87,12 @@ public class MockApiController {
         sessions.forEach(session -> {
             try {
                 ResponseCallback responseCallback = MessageUtil.sendMessage(session.getChannel(), sendMessage);
-                // TODO UPDATE DB
+                responseCallback.getFuture().whenComplete((response, throwable) -> {
+                    updateRegistry(session, response, MockConstants.YES);
+                }).exceptionally(throwable -> {
+                    logger.error(throwable.getMessage());
+                    return null;
+                });
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -102,12 +115,32 @@ public class MockApiController {
         sessions.forEach(session -> {
             try {
                 ResponseCallback responseCallback = MessageUtil.sendMessage(session.getChannel(), sendMessage);
-                // TODO UPDATE DB
+                responseCallback.getFuture().whenComplete((response, throwable) -> {
+                    updateRegistry(session, response, MockConstants.NO);
+                }).exceptionally(throwable -> {
+                    logger.error(throwable.getMessage());
+                    return null;
+                });
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
         });
         return MockitResult.successful();
+    }
+
+    private void updateRegistry(Session session, String response, Integer enabled) {
+        if (!MockitResult.isSuccess(response)) {
+            return;
+        }
+        MockitServiceRegistry mockitServiceRegistry = iMockitServiceRegistryService.getServiceRegistry(session);
+        if (mockitServiceRegistry == null) {
+            return;
+        }
+        MockitServiceRegistry serviceRegistry = new MockitServiceRegistry();
+        serviceRegistry.setId(mockitServiceRegistry.getId());
+        serviceRegistry.setEnabled(enabled);
+        serviceRegistry.setUpdateAt(new Date());
+        iMockitServiceRegistryService.updateById(serviceRegistry);
     }
 
     private List<Session> getSessions(String alias) {

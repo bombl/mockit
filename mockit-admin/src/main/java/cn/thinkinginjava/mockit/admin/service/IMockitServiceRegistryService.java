@@ -15,7 +15,7 @@
 
 package cn.thinkinginjava.mockit.admin.service;
 
-import cn.thinkinginjava.mockit.admin.model.dto.BatchEnabledDTO;
+import cn.thinkinginjava.mockit.admin.model.dto.BatchCommonDTO;
 import cn.thinkinginjava.mockit.admin.model.dto.MockitServiceRegistryDTO;
 import cn.thinkinginjava.mockit.admin.model.dto.Session;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceRegistry;
@@ -75,11 +75,13 @@ public interface IMockitServiceRegistryService extends IService<MockitServiceReg
 
     /**
      * enabled method：enabled the service
-     * @param batchEnabledDTO enabled info
+     * @param batchCommonDTO enabled info
      */
-    void enabled(BatchEnabledDTO batchEnabledDTO);
+    void enabled(BatchCommonDTO batchCommonDTO);
 
-    void mock(BatchEnabledDTO batchEnabledDTO);
+    void mock(BatchCommonDTO batchCommonDTO);
 
-    void cancelMock(BatchEnabledDTO batchEnabledDTO);
+    void cancelMock(BatchCommonDTO batchCommonDTO);
+
+    MockitServiceRegistry getServiceRegistry(Session session);
 }

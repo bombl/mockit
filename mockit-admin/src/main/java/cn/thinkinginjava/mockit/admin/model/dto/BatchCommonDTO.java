@@ -1,5 +1,7 @@
 package cn.thinkinginjava.mockit.admin.model.dto;
 
+import cn.thinkinginjava.mockit.common.constant.MockConstants;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -8,9 +10,9 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * The type Batch enabled dto.
+ * The type Batch common dto.
  */
-public class BatchEnabledDTO implements Serializable {
+public class BatchCommonDTO implements Serializable {
 
     private static final long serialVersionUID = -7574242366401326562L;
 
@@ -19,7 +21,7 @@ public class BatchEnabledDTO implements Serializable {
     private List<@NotBlank String> ids;
 
     @NotNull
-    private Integer enabled;
+    private Boolean enabled;
 
     /**
      * Gets the value of ids.
@@ -44,8 +46,17 @@ public class BatchEnabledDTO implements Serializable {
      *
      * @return the value of enabled
      */
-    public Integer getEnabled() {
+    public Boolean getEnabled() {
         return enabled;
+    }
+
+    /**
+     * Gets the value of enabled.
+     *
+     * @return the value of enabled
+     */
+    public Integer getEnabledValue() {
+        return enabled ? MockConstants.YES : MockConstants.NO;
     }
 
     /**
@@ -53,7 +64,7 @@ public class BatchEnabledDTO implements Serializable {
      *
      * @param enabled enabled
      */
-    public void setEnabled(final Integer enabled) {
+    public void setEnabled(final Boolean enabled) {
         this.enabled = enabled;
     }
 
@@ -62,10 +73,10 @@ public class BatchEnabledDTO implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof BatchEnabledDTO)) {
+        if (!(o instanceof BatchCommonDTO)) {
             return false;
         }
-        BatchEnabledDTO that = (BatchEnabledDTO) o;
+        BatchCommonDTO that = (BatchCommonDTO) o;
         return Objects.equals(ids, that.ids) && Objects.equals(enabled, that.enabled);
     }
 

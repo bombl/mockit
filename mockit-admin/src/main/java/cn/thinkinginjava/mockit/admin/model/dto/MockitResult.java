@@ -15,6 +15,10 @@
 
 package cn.thinkinginjava.mockit.admin.model.dto;
 
+import cn.thinkinginjava.mockit.common.constant.MockConstants;
+import cn.thinkinginjava.mockit.common.model.dto.Message;
+import cn.thinkinginjava.mockit.common.utils.GsonUtil;
+
 import java.io.Serializable;
 
 /**
@@ -90,6 +94,18 @@ public class MockitResult<T> implements Serializable {
      */
     public static <T> MockitResult<T> fail(String message) {
         return new MockitResult<T>().setCode(FAIL_CODE).setMessage(message);
+    }
+
+    /**
+     * This method checks if the given response indicates success or failure.
+     * It takes a string response as input and returns a boolean value.
+     *
+     * @param response The response string to be checked.
+     * @return true if the response indicates success, false otherwise.
+     */
+    public static boolean isSuccess(String response) {
+        Message<String> reponseMessage = GsonUtil.fromJsonToMessage(response, String.class);
+        return MockConstants.SUCCESS.equals(reponseMessage.getData());
     }
 
     /**

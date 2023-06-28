@@ -84,6 +84,7 @@ public class ResponseCallbackManager {
             return;
         }
         responseCallback.done(response);
+        callbackMap.remove(requestId);
     }
 
     /**

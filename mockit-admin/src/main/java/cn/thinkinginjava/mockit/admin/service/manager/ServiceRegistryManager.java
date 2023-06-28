@@ -15,9 +15,12 @@
 
 package cn.thinkinginjava.mockit.admin.service.manager;
 
+import cn.thinkinginjava.mockit.admin.model.dto.BatchCommonDTO;
 import cn.thinkinginjava.mockit.admin.model.dto.Session;
+import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceRegistry;
 import cn.thinkinginjava.mockit.admin.service.IMockitServiceRegistryService;
 import cn.thinkinginjava.mockit.admin.utils.SpringContextUtil;
+import com.google.common.collect.Lists;
 
 /**
  * This class is responsible for managing the registration and status of services in the "Mockit" service registry.
@@ -33,6 +36,7 @@ public class ServiceRegistryManager {
 
     /**
      * Method to offline a specific session
+     *
      * @param session session
      */
     public static void offline(Session session) {
@@ -41,9 +45,17 @@ public class ServiceRegistryManager {
 
     /**
      * Method to bring a specific session online
+     *
      * @param session session
      */
     public static void online(Session session) {
-        SpringContextUtil.getBean(IMockitServiceRegistryService.class).online(session);
+        IMockitServiceRegistryService registryService = SpringContextUtil.getBean(IMockitServiceRegistryService.class);
+        registryService.online(session);
+        MockitServiceRegistry serviceRegistry = registryService.getServiceRegistry(session);
+        if (serviceRegistry != null) {
+            BatchCommonDTO batchCommonDTO = new BatchCommonDTO();
+            batchCommonDTO.setIds(Lists.newArrayList(serviceRegistry.getId()));
+            registryService.mock(batchCommonDTO);
+        }
     }
 }

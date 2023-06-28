@@ -15,29 +15,45 @@
 
 package cn.thinkinginjava.mockit.admin.service.impl;
 
+import cn.thinkinginjava.mockit.admin.context.ResponseCallback;
 import cn.thinkinginjava.mockit.admin.mapper.MockitServiceRegistryMapper;
-import cn.thinkinginjava.mockit.admin.model.dto.BatchEnabledDTO;
+import cn.thinkinginjava.mockit.admin.model.dto.BatchCommonDTO;
+import cn.thinkinginjava.mockit.admin.model.dto.MockitResult;
 import cn.thinkinginjava.mockit.admin.model.dto.MockitServiceRegistryDTO;
 import cn.thinkinginjava.mockit.admin.model.dto.Session;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceClass;
+import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceMethod;
+import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceMethodMockData;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceRegistry;
 import cn.thinkinginjava.mockit.admin.model.vo.MockitServiceRegistryVO;
 import cn.thinkinginjava.mockit.admin.service.IMockitServiceClassService;
+import cn.thinkinginjava.mockit.admin.service.IMockitServiceMethodMockDataService;
+import cn.thinkinginjava.mockit.admin.service.IMockitServiceMethodService;
 import cn.thinkinginjava.mockit.admin.service.IMockitServiceRegistryService;
+import cn.thinkinginjava.mockit.admin.session.SessionHolder;
+import cn.thinkinginjava.mockit.admin.utils.MessageUtil;
 import cn.thinkinginjava.mockit.common.constant.MockConstants;
+import cn.thinkinginjava.mockit.common.model.dto.CancelMockData;
+import cn.thinkinginjava.mockit.common.model.dto.Message;
+import cn.thinkinginjava.mockit.common.model.dto.MethodMockData;
+import cn.thinkinginjava.mockit.common.model.dto.MockData;
+import cn.thinkinginjava.mockit.common.model.enums.MessageTypeEnum;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -47,8 +63,16 @@ import java.util.stream.Collectors;
 @Service
 public class MockitServiceRegistryServiceImpl extends ServiceImpl<MockitServiceRegistryMapper, MockitServiceRegistry> implements IMockitServiceRegistryService {
 
+    private static final Logger logger = LoggerFactory.getLogger(MockitServiceRegistryServiceImpl.class);
+
     @Resource
     private IMockitServiceClassService iMockitServiceClassService;
+
+    @Resource
+    private IMockitServiceMethodService iMockitServiceMethodService;
+
+    @Resource
+    private IMockitServiceMethodMockDataService iMockitServiceMethodMockDataService;
 
     /**
      * Online method: Sets the given session as online
@@ -62,6 +86,7 @@ public class MockitServiceRegistryServiceImpl extends ServiceImpl<MockitServiceR
         mockitServiceRegistryUpdate.setAlias(session.getAlias());
         mockitServiceRegistryUpdate.setIp(session.getIp());
         mockitServiceRegistryUpdate.setOnline(MockConstants.YES);
+        mockitServiceRegistryUpdate.setEnabled(MockConstants.NO);
         mockitServiceRegistryUpdate.setCreateAt(new Date());
         mockitServiceRegistryUpdate.setUpdateAt(new Date());
         saveOrUpdate(mockitServiceRegistryUpdate, queryWrapper);
@@ -79,6 +104,7 @@ public class MockitServiceRegistryServiceImpl extends ServiceImpl<MockitServiceR
         mockitServiceRegistryUpdate.setAlias(session.getAlias());
         mockitServiceRegistryUpdate.setIp(session.getIp());
         mockitServiceRegistryUpdate.setOnline(MockConstants.NO);
+        mockitServiceRegistryUpdate.setEnabled(MockConstants.NO);
         mockitServiceRegistryUpdate.setUpdateAt(new Date());
         update(mockitServiceRegistryUpdate, queryWrapper);
     }
@@ -111,7 +137,7 @@ public class MockitServiceRegistryServiceImpl extends ServiceImpl<MockitServiceR
         mockitServiceRegistry.setAlias(mockitServiceRegistryDTO.getAlias());
         mockitServiceRegistry.setIp(mockitServiceRegistryDTO.getIp());
         mockitServiceRegistry.setOnline(MockConstants.NO);
-        mockitServiceRegistry.setEnabled(MockConstants.YES);
+        mockitServiceRegistry.setEnabled(MockConstants.NO);
         mockitServiceRegistry.setDeleted(MockConstants.NO);
         mockitServiceRegistry.setCreateAt(new Date());
         mockitServiceRegistry.setUpdateAt(new Date());
@@ -183,41 +209,161 @@ public class MockitServiceRegistryServiceImpl extends ServiceImpl<MockitServiceR
     /**
      * enabled the service.
      *
-     * @param batchEnabledDTO enabled info
+     * @param batchCommonDTO enabled info
      */
     @Override
-    public void enabled(BatchEnabledDTO batchEnabledDTO) {
-        List<MockitServiceRegistry> mockitServiceRegistryList = listByIds(batchEnabledDTO.getIds());
+    public void enabled(BatchCommonDTO batchCommonDTO) {
+        List<MockitServiceRegistry> mockitServiceRegistryList = listByIds(batchCommonDTO.getIds());
         if (CollectionUtils.isEmpty(mockitServiceRegistryList)) {
             return;
         }
         mockitServiceRegistryList.forEach(mockitServiceRegistry -> {
-            mockitServiceRegistry.setEnabled(batchEnabledDTO.getEnabled());
+            mockitServiceRegistry.setEnabled(batchCommonDTO.getEnabledValue());
             mockitServiceRegistry.setUpdateAt(new Date());
         });
         updateBatchById(mockitServiceRegistryList);
     }
 
     @Override
-    public void mock(BatchEnabledDTO batchEnabledDTO) {
-        List<MockitServiceRegistry> mockitServiceRegistryList = listByIds(batchEnabledDTO.getIds());
-        if (CollectionUtils.isEmpty(mockitServiceRegistryList)) {
-            return;
-        }
-        mockitServiceRegistryList.forEach(mockitServiceRegistry -> {
-            LambdaQueryWrapper<MockitServiceClass> serviceClassLambdaQueryWrapper = new LambdaQueryWrapper<>();
-            serviceClassLambdaQueryWrapper.eq(MockitServiceClass::getServiceId,mockitServiceRegistry.getId());
-            List<MockitServiceClass> serviceClassList = iMockitServiceClassService.list(serviceClassLambdaQueryWrapper);
-            if (CollectionUtils.isEmpty(serviceClassList)) {
-                return;
-            }
-            // TODO 今天就写到这吧
-        });
+    public void mock(BatchCommonDTO batchCommonDTO) {
+        mockOrCancelMock(batchCommonDTO);
     }
 
     @Override
-    public void cancelMock(BatchEnabledDTO batchEnabledDTO) {
+    public void cancelMock(BatchCommonDTO batchCommonDTO) {
+        mockOrCancelMock(batchCommonDTO);
+    }
 
+    @Override
+    public MockitServiceRegistry getServiceRegistry(Session session) {
+        LambdaQueryWrapper<MockitServiceRegistry> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(MockitServiceRegistry::getAlias, session.getAlias());
+        lambdaQueryWrapper.eq(MockitServiceRegistry::getIp, session.getIp());
+        lambdaQueryWrapper.eq(MockitServiceRegistry::getDeleted, MockConstants.NO);
+        return getOne(lambdaQueryWrapper);
+    }
+
+    private void mockOrCancelMock(BatchCommonDTO batchCommonDTO) {
+        List<MockitServiceRegistry> mockitServiceRegistryList = listByIds(batchCommonDTO.getIds());
+        if (CollectionUtils.isEmpty(mockitServiceRegistryList)) {
+            return;
+        }
+        mockitServiceRegistryList = mockitServiceRegistryList.stream().filter(this::canMock).collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(mockitServiceRegistryList)) {
+            return;
+        }
+        mockitServiceRegistryList.forEach(mockitServiceRegistry -> mockOrCancelMock(mockitServiceRegistry, batchCommonDTO.getEnabled()));
+    }
+
+    private void mockOrCancelMock(MockitServiceRegistry mockitServiceRegistry, Boolean isMock) {
+        LambdaQueryWrapper<MockitServiceClass> serviceClassLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        serviceClassLambdaQueryWrapper.eq(MockitServiceClass::getServiceId, mockitServiceRegistry.getId());
+        serviceClassLambdaQueryWrapper.eq(MockitServiceClass::getMockEnabled, MockConstants.YES);
+        serviceClassLambdaQueryWrapper.eq(MockitServiceClass::getDeleted, MockConstants.NO);
+        List<MockitServiceClass> serviceClassList = iMockitServiceClassService.list(serviceClassLambdaQueryWrapper);
+        if (CollectionUtils.isEmpty(serviceClassList)) {
+            return;
+        }
+        serviceClassList.forEach(mockitServiceClass -> mockOrCancelMock(mockitServiceRegistry, mockitServiceClass, isMock));
+    }
+
+    private void mockOrCancelMock(MockitServiceRegistry mockitServiceRegistry, MockitServiceClass mockitServiceClass, Boolean isMock) {
+        if (isMock) {
+            LambdaQueryWrapper<MockitServiceMethod> serviceMethodLambdaQueryWrapper = new LambdaQueryWrapper<>();
+            serviceMethodLambdaQueryWrapper.eq(MockitServiceMethod::getClassId, mockitServiceClass.getId());
+            serviceMethodLambdaQueryWrapper.eq(MockitServiceMethod::getMockEnabled, MockConstants.YES);
+            serviceMethodLambdaQueryWrapper.eq(MockitServiceMethod::getDeleted, MockConstants.NO);
+            List<MockitServiceMethod> serviceMethodList = iMockitServiceMethodService.list(serviceMethodLambdaQueryWrapper);
+            if (CollectionUtils.isEmpty(serviceMethodList)) {
+                return;
+            }
+            mock(mockitServiceRegistry, mockitServiceClass, serviceMethodList);
+        } else {
+            cancelMock(mockitServiceRegistry, mockitServiceClass);
+        }
+    }
+
+    private void mock(MockitServiceRegistry mockitServiceRegistry, MockitServiceClass mockitServiceClass, List<MockitServiceMethod> serviceMethodList) {
+        List<MethodMockData> methodMockDataList = new ArrayList<>();
+        serviceMethodList.forEach(mockitServiceMethod -> {
+            LambdaQueryWrapper<MockitServiceMethodMockData> methodMockDataLambdaQueryWrapper = new LambdaQueryWrapper<>();
+            methodMockDataLambdaQueryWrapper.eq(MockitServiceMethodMockData::getMethodId, mockitServiceMethod.getId());
+            methodMockDataLambdaQueryWrapper.eq(MockitServiceMethodMockData::getMockEnabled, MockConstants.YES);
+            methodMockDataLambdaQueryWrapper.eq(MockitServiceMethodMockData::getDeleted, MockConstants.NO);
+            MockitServiceMethodMockData serviceMethodMockData = iMockitServiceMethodMockDataService.getOne(methodMockDataLambdaQueryWrapper);
+            if (serviceMethodMockData == null) {
+                return;
+            }
+            MethodMockData mockData = new MethodMockData();
+            mockData.setMethodName(mockitServiceMethod.getMethodName());
+            mockData.setParameters(Lists.newArrayList(mockitServiceMethod.getParameters().split(",")));
+            mockData.setMockValue(serviceMethodMockData.getMockValue());
+            methodMockDataList.add(mockData);
+        });
+        if (CollectionUtils.isEmpty(methodMockDataList)) {
+            return;
+        }
+        Session session = getSession(mockitServiceRegistry.getAlias(), mockitServiceRegistry.getIp());
+        if (session == null) {
+            return;
+        }
+        MockData mockData = new MockData();
+        mockData.setAlias(mockitServiceRegistry.getAlias());
+        mockData.setClassName(mockitServiceClass.getClassName());
+        mockData.setMethodMockDataList(methodMockDataList);
+        Message<MockData> sendMessage = new Message<>();
+        sendMessage.setData(mockData);
+        sendMessage.setMessageType(MessageTypeEnum.MOCK.getType());
+        ResponseCallback responseCallback = MessageUtil.sendMessage(session.getChannel(), sendMessage);
+        responseCallback.getFuture().whenComplete((response, throwable) -> {
+            if (MockitResult.isSuccess(response)) {
+                MockitServiceRegistry serviceRegistry = new MockitServiceRegistry();
+                serviceRegistry.setId(mockitServiceRegistry.getId());
+                serviceRegistry.setEnabled(MockConstants.YES);
+                serviceRegistry.setUpdateAt(new Date());
+                updateById(serviceRegistry);
+            }
+        }).exceptionally(throwable -> {
+            logger.error(throwable.getMessage());
+            return null;
+        });
+    }
+
+    private void cancelMock(MockitServiceRegistry mockitServiceRegistry, MockitServiceClass mockitServiceClass) {
+        Session session = getSession(mockitServiceRegistry.getAlias(), mockitServiceRegistry.getIp());
+        if (session == null) {
+            return;
+        }
+        CancelMockData cancelMockData = new CancelMockData();
+        cancelMockData.setAlias(session.getAlias());
+        cancelMockData.setClassName(mockitServiceClass.getClassName());
+        Message<CancelMockData> sendMessage = new Message<>();
+        sendMessage.setData(cancelMockData);
+        sendMessage.setMessageType(MessageTypeEnum.CANCEL_MOCK.getType());
+        ResponseCallback responseCallback = MessageUtil.sendMessage(session.getChannel(), sendMessage);
+        responseCallback.getFuture().whenComplete((response, throwable) -> {
+            if (MockitResult.isSuccess(response)) {
+                MockitServiceRegistry serviceRegistry = new MockitServiceRegistry();
+                serviceRegistry.setId(mockitServiceRegistry.getId());
+                serviceRegistry.setEnabled(MockConstants.NO);
+                serviceRegistry.setUpdateAt(new Date());
+                updateById(serviceRegistry);
+            }
+        }).exceptionally(throwable -> {
+            logger.error(throwable.getMessage());
+            return null;
+        });
+    }
+
+    private Session getSession(String alias, String ip) {
+        Map<String, List<Session>> sessionMap = SessionHolder.getSessionMap();
+        if (MapUtils.isEmpty(sessionMap)
+                || CollectionUtils.isEmpty(sessionMap.get(alias))) {
+            return null;
+        }
+        Optional<Session> sessionOptional = sessionMap.get(alias).stream()
+                .filter(session -> ip.equals(session.getIp())).findFirst();
+        return sessionOptional.orElse(null);
     }
 
     private QueryWrapper<MockitServiceRegistry> getQueryWrapper(Session session) {
@@ -225,5 +371,10 @@ public class MockitServiceRegistryServiceImpl extends ServiceImpl<MockitServiceR
         queryWrapper.lambda().eq(MockitServiceRegistry::getAlias, session.getAlias());
         queryWrapper.lambda().eq(MockitServiceRegistry::getIp, session.getIp());
         return queryWrapper;
+    }
+
+    private boolean canMock(MockitServiceRegistry mockitServiceRegistry) {
+        return MockConstants.YES.equals(mockitServiceRegistry.getOnline())
+                && MockConstants.NO.equals(mockitServiceRegistry.getDeleted());
     }
 }

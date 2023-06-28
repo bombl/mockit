@@ -1,9 +1,8 @@
 package cn.thinkinginjava.mockit.admin.controller;
 
-import cn.thinkinginjava.mockit.admin.model.dto.BatchEnabledDTO;
+import cn.thinkinginjava.mockit.admin.model.dto.BatchCommonDTO;
 import cn.thinkinginjava.mockit.admin.model.dto.MockitResult;
 import cn.thinkinginjava.mockit.admin.model.dto.MockitServiceRegistryDTO;
-import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceMethod;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceRegistry;
 import cn.thinkinginjava.mockit.admin.model.vo.MockitServiceRegistryVO;
 import cn.thinkinginjava.mockit.admin.service.IMockitServiceRegistryService;
@@ -38,8 +37,8 @@ public class MockServiceRegistryController {
     }
 
     @RequestMapping("/enabled")
-    public MockitResult<Void> enabled(@Valid @RequestBody BatchEnabledDTO batchEnabledDTO) {
-        iMockitServiceRegistryService.enabled(batchEnabledDTO);
+    public MockitResult<Void> enabled(@Valid @RequestBody BatchCommonDTO batchCommonDTO) {
+        iMockitServiceRegistryService.enabled(batchCommonDTO);
         return MockitResult.successful();
     }
 
@@ -58,14 +57,14 @@ public class MockServiceRegistryController {
     }
 
     @RequestMapping("/mock")
-    public MockitResult<Void> mock(@Valid @RequestBody BatchEnabledDTO batchEnabledDTO) {
-        iMockitServiceRegistryService.mock(batchEnabledDTO);
+    public MockitResult<Void> mock(@Valid @RequestBody BatchCommonDTO batchCommonDTO) {
+        iMockitServiceRegistryService.mock(batchCommonDTO);
         return MockitResult.successful();
     }
 
     @RequestMapping("/cancelMock")
-    public MockitResult<Void> cancelMock(@Valid @RequestBody BatchEnabledDTO batchEnabledDTO) {
-        iMockitServiceRegistryService.cancelMock(batchEnabledDTO);
+    public MockitResult<Void> cancelMock(@Valid @RequestBody BatchCommonDTO batchCommonDTO) {
+        iMockitServiceRegistryService.cancelMock(batchCommonDTO);
         return MockitResult.successful();
     }
 }
