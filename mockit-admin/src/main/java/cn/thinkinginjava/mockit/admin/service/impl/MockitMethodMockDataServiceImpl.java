@@ -16,18 +16,10 @@
 package cn.thinkinginjava.mockit.admin.service.impl;
 
 import cn.thinkinginjava.mockit.admin.mapper.MockitServiceMethodMockDataMapper;
-import cn.thinkinginjava.mockit.admin.model.dto.MockitMethodMockDataDTO;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitMethodMockData;
 import cn.thinkinginjava.mockit.admin.service.IMockitMethodMockDataService;
-import cn.thinkinginjava.mockit.common.constant.MockConstants;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Implementation of the service for managing Mockit service method mock data.
@@ -36,19 +28,4 @@ import java.util.stream.Collectors;
 @Service
 public class MockitMethodMockDataServiceImpl extends ServiceImpl<MockitServiceMethodMockDataMapper, MockitMethodMockData> implements IMockitMethodMockDataService {
 
-    @Override
-    public void addMockData(List<MockitMethodMockDataDTO> mockDataList) {
-        LambdaQueryWrapper<MockitMethodMockData> mockDataLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        mockDataLambdaQueryWrapper.eq(MockitMethodMockData::getMethodId, mockDataList.get(0).getMethodId());
-        remove(mockDataLambdaQueryWrapper);
-        List<MockitMethodMockData> methodMockDataList = mockDataList.stream().map(mockDataDTO -> {
-            MockitMethodMockData mockData = new MockitMethodMockData();
-            BeanUtils.copyProperties(mockDataDTO, mockData);
-            mockData.setMockEnabled(MockConstants.YES);
-            mockData.setCreateAt(new Date());
-            mockData.setUpdateAt(new Date());
-            return mockData;
-        }).collect(Collectors.toList());
-        saveBatch(methodMockDataList);
-    }
 }

@@ -21,6 +21,7 @@ import cn.thinkinginjava.mockit.admin.model.dto.MockitServiceClassDTO;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceClass;
 import cn.thinkinginjava.mockit.admin.model.vo.MockitServiceClassVO;
 import cn.thinkinginjava.mockit.admin.service.IMockitServiceClassService;
+import cn.thinkinginjava.mockit.common.constant.MockConstants;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -69,6 +70,7 @@ public class MockitServiceClassServiceImpl extends ServiceImpl<MockitServiceClas
         if (mockitServiceClassDTO.getMockEnabled() != null) {
             queryWrapper.eq(MockitServiceClass::getMockEnabled, mockitServiceClassDTO.getMockEnabled());
         }
+        queryWrapper.eq(MockitServiceClass::getDeleted, MockConstants.NO);
         queryWrapper.orderByDesc(MockitServiceClass::getUpdateAt);
         return page(new Page<>(mockitServiceClassDTO.getCurrentPage(),
                 mockitServiceClassDTO.getPageSize()), queryWrapper).convert(mockitServiceClass -> {

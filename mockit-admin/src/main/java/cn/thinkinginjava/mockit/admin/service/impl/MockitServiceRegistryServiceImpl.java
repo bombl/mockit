@@ -182,6 +182,7 @@ public class MockitServiceRegistryServiceImpl extends ServiceImpl<MockitServiceR
         if (mockitServiceRegistryDTO.getOnline() != null) {
             queryWrapper.eq(MockitServiceRegistry::getOnline, mockitServiceRegistryDTO.getOnline());
         }
+        queryWrapper.eq(MockitServiceRegistry::getDeleted, MockConstants.NO);
         queryWrapper.orderByDesc(MockitServiceRegistry::getUpdateAt);
         return page(new Page<>(mockitServiceRegistryDTO.getCurrentPage(),
                 mockitServiceRegistryDTO.getPageSize()), queryWrapper).convert(mockitServiceRegistry -> {

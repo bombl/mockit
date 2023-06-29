@@ -15,11 +15,8 @@
 
 package cn.thinkinginjava.mockit.admin.service;
 
-import cn.thinkinginjava.mockit.admin.model.dto.MockitMethodMockDataDTO;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitMethodMockData;
 import com.baomidou.mybatisplus.extension.service.IService;
-
-import java.util.List;
 
 /**
  * Service interface for managing Mockit service method mock data.
@@ -27,5 +24,4 @@ import java.util.List;
  */
 public interface IMockitMethodMockDataService extends IService<MockitMethodMockData> {
 
-    void addMockData(List<MockitMethodMockDataDTO> mockDataList);
 }

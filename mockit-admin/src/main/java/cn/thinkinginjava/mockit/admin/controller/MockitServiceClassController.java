@@ -18,6 +18,9 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.Date;
 
+/**
+ * Represents a controller for managing MockitServiceClass.
+ */
 @Controller
 @RequestMapping("/class")
 public class MockitServiceClassController {
@@ -25,12 +28,24 @@ public class MockitServiceClassController {
     @Resource
     private IMockitServiceClassService iMockitServiceClassService;
 
+    /**
+     * Adds a MockitServiceClass based on the provided MockitServiceClassDTO.
+     *
+     * @param mockitServiceClassDTO The DTO object containing the information of the MockitServiceClass to be added.
+     * @return A MockitResult object indicating the result of the add operation.
+     */
     @RequestMapping("/add")
     public MockitResult<Void> addClass(@Valid @RequestBody MockitServiceClassDTO mockitServiceClassDTO) {
         iMockitServiceClassService.addClass(mockitServiceClassDTO);
         return MockitResult.successful();
     }
 
+    /**
+     * Retrieves a paginated list of MockitServiceClassVO objects based on the provided MockitServiceClassDTO.
+     *
+     * @param mockitServiceClassDTO The DTO object containing the criteria for filtering and paginating the list.
+     * @return A MockitResult object encapsulating the paginated list of MockitServiceClassVO objects.
+     */
     @RequestMapping("/list")
     public MockitResult<IPage<MockitServiceClassVO>> list(@RequestBody MockitServiceClassDTO mockitServiceClassDTO) {
         if (mockitServiceClassDTO.getCurrentPage() == null) {

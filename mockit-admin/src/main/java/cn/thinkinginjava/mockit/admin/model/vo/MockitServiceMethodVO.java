@@ -13,8 +13,10 @@
  * along with Mockit. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cn.thinkinginjava.mockit.admin.model.dto;
+package cn.thinkinginjava.mockit.admin.model.vo;
 
+import cn.thinkinginjava.mockit.admin.model.dto.BaseDTO;
+import cn.thinkinginjava.mockit.admin.model.dto.MockitMethodMockDataDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -30,7 +32,7 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class MockitServiceMethodDTO extends BaseDTO {
+public class MockitServiceMethodVO extends BaseDTO {
 
     private static final long serialVersionUID = 1L;
 
