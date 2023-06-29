@@ -63,13 +63,6 @@ public interface IMockitServiceRegistryService extends IService<MockitServiceReg
     void deleteService(MockitServiceRegistryDTO mockitServiceRegistryDTO);
 
     /**
-     * UpdateService method：update service
-     *
-     * @param mockitServiceRegistryDTO service info
-     */
-    void updateService(MockitServiceRegistryDTO mockitServiceRegistryDTO);
-
-    /**
      * listByPage method：list service
      *
      * @param mockitServiceRegistryDTO service info

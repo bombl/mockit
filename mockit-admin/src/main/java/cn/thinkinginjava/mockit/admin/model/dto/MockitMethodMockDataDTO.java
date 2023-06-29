@@ -19,43 +19,38 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
- * Represents a Mockit service class.
+ * Represents the mock data for a Mockit service method.
  * This class implements the Serializable interface to support serialization.
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class MockitServiceClassDTO extends BaseDTO {
+public class MockitMethodMockDataDTO extends BaseDTO {
 
     private static final long serialVersionUID = 1L;
 
     private String id;
 
     /**
-     * Service id
+     * Method id
      */
-    @NotBlank
-    private String serviceId;
+    private String methodId;
 
     /**
-     * Name of the service class
+     * Mock data for the method
      */
-    @NotBlank
-    private String className;
+    private String mockValue;
 
     /**
-     * Indicates whether the service class is mocked or not（0.disabled, 1.enabled）
+     * Indicates whether the mock data is mocked or not（0.disabled, 1.enabled）
      */
-    @NotNull
     private Integer mockEnabled;
 
     /**
-     * Marks if the service class is deleted（0.not deleted, 1.deleted）
+     * Marks if the mock data is deleted（0.not deleted, 1.deleted）
      */
     private Integer deleted;
 
@@ -65,12 +60,12 @@ public class MockitServiceClassDTO extends BaseDTO {
     private String remarks;
 
     /**
-     * Date and time when the service class was created
+     * Date and time when the mock data was created
      */
     private Date createAt;
 
     /**
-     * Date and time when the service class was updated
+     * Date and time when the mock data was updated
      */
     private Date updateAt;
 

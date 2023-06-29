@@ -34,7 +34,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("mockit_service_method_mock_data")
-public class MockitServiceMethodMockData implements Serializable {
+public class MockitMethodMockData implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

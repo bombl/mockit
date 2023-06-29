@@ -16,9 +16,9 @@
 package cn.thinkinginjava.mockit.admin.service.impl;
 
 import cn.thinkinginjava.mockit.admin.mapper.MockitServiceMethodMockDataMapper;
-import cn.thinkinginjava.mockit.admin.model.dto.MockitServiceMethodMockDataDTO;
-import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceMethodMockData;
-import cn.thinkinginjava.mockit.admin.service.IMockitServiceMethodMockDataService;
+import cn.thinkinginjava.mockit.admin.model.dto.MockitMethodMockDataDTO;
+import cn.thinkinginjava.mockit.admin.model.entity.MockitMethodMockData;
+import cn.thinkinginjava.mockit.admin.service.IMockitMethodMockDataService;
 import cn.thinkinginjava.mockit.common.constant.MockConstants;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -34,15 +34,15 @@ import java.util.stream.Collectors;
  * This class extends the base ServiceImpl class and implements the IMockitServiceMethodMockDataService interface.
  */
 @Service
-public class MockitServiceMethodMockDataServiceImpl extends ServiceImpl<MockitServiceMethodMockDataMapper, MockitServiceMethodMockData> implements IMockitServiceMethodMockDataService {
+public class MockitMethodMockDataServiceImpl extends ServiceImpl<MockitServiceMethodMockDataMapper, MockitMethodMockData> implements IMockitMethodMockDataService {
 
     @Override
-    public void addMockData(List<MockitServiceMethodMockDataDTO> mockDataList) {
-        LambdaQueryWrapper<MockitServiceMethodMockData> mockDataLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        mockDataLambdaQueryWrapper.eq(MockitServiceMethodMockData::getMethodId, mockDataList.get(0).getMethodId());
+    public void addMockData(List<MockitMethodMockDataDTO> mockDataList) {
+        LambdaQueryWrapper<MockitMethodMockData> mockDataLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        mockDataLambdaQueryWrapper.eq(MockitMethodMockData::getMethodId, mockDataList.get(0).getMethodId());
         remove(mockDataLambdaQueryWrapper);
-        List<MockitServiceMethodMockData> methodMockDataList = mockDataList.stream().map(mockDataDTO -> {
-            MockitServiceMethodMockData mockData = new MockitServiceMethodMockData();
+        List<MockitMethodMockData> methodMockDataList = mockDataList.stream().map(mockDataDTO -> {
+            MockitMethodMockData mockData = new MockitMethodMockData();
             BeanUtils.copyProperties(mockDataDTO, mockData);
             mockData.setMockEnabled(MockConstants.YES);
             mockData.setCreateAt(new Date());

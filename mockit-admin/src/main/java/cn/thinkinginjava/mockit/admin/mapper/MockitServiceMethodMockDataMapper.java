@@ -15,13 +15,13 @@
 
 package cn.thinkinginjava.mockit.admin.mapper;
 
-import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceMethodMockData;
+import cn.thinkinginjava.mockit.admin.model.entity.MockitMethodMockData;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
  * MyBatis mapper interface for MockitServiceMethodMockData entities.
  * This interface extends the BaseMapper interface provided by MyBatis Plus.
  */
-public interface MockitServiceMethodMockDataMapper extends BaseMapper<MockitServiceMethodMockData> {
+public interface MockitServiceMethodMockDataMapper extends BaseMapper<MockitMethodMockData> {
 
 }

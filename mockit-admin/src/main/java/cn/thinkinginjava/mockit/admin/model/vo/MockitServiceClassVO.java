@@ -13,44 +13,45 @@
  * along with Mockit. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cn.thinkinginjava.mockit.admin.model.dto;
+package cn.thinkinginjava.mockit.admin.model.vo;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
- * Represents the mock data for a Mockit service method.
+ * Represents a Mockit service class.
  * This class implements the Serializable interface to support serialization.
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class MockitServiceMethodMockDataDTO extends BaseDTO {
+public class MockitServiceClassVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private String id;
 
     /**
-     * Method id
+     * Service id
      */
-    private String methodId;
+    private String serviceId;
 
     /**
-     * Mock data for the method
+     * Name of the service class
      */
-    private String mockValue;
+    private String className;
 
     /**
-     * Indicates whether the mock data is mocked or not（0.disabled, 1.enabled）
+     * Indicates whether the service class is mocked or not（0.disabled, 1.enabled）
      */
     private Integer mockEnabled;
 
     /**
-     * Marks if the mock data is deleted（0.not deleted, 1.deleted）
+     * Marks if the service class is deleted（0.not deleted, 1.deleted）
      */
     private Integer deleted;
 
@@ -60,12 +61,12 @@ public class MockitServiceMethodMockDataDTO extends BaseDTO {
     private String remarks;
 
     /**
-     * Date and time when the mock data was created
+     * Date and time when the service class was created
      */
     private Date createAt;
 
     /**
-     * Date and time when the mock data was updated
+     * Date and time when the service class was updated
      */
     private Date updateAt;
 

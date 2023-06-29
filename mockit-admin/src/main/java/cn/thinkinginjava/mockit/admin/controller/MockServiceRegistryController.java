@@ -7,15 +7,16 @@ import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceRegistry;
 import cn.thinkinginjava.mockit.admin.model.vo.MockitServiceRegistryVO;
 import cn.thinkinginjava.mockit.admin.service.IMockitServiceRegistryService;
 import cn.thinkinginjava.mockit.common.exception.MockitException;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.Date;
 
 /**
  * Represents a mock service registry controller.
@@ -69,11 +70,9 @@ public class MockServiceRegistryController {
             throw new MockitException("service id can not empty.");
         }
         MockitServiceRegistry mockitServiceRegistry = new MockitServiceRegistry();
-        mockitServiceRegistry.setId(mockitServiceRegistryDTO.getId());
-        mockitServiceRegistry.setRemarks(mockitServiceRegistryDTO.getRemarks());
-        LambdaQueryWrapper<MockitServiceRegistry> registryLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        registryLambdaQueryWrapper.eq(MockitServiceRegistry::getId, mockitServiceRegistryDTO.getId());
-        iMockitServiceRegistryService.update(mockitServiceRegistry, registryLambdaQueryWrapper);
+        BeanUtils.copyProperties(mockitServiceRegistryDTO, mockitServiceRegistry);
+        mockitServiceRegistry.setUpdateAt(new Date());
+        iMockitServiceRegistryService.updateById(mockitServiceRegistry);
         return MockitResult.successful();
     }
 

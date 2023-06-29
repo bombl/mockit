@@ -84,5 +84,5 @@ public class MockitServiceMethodDTO extends BaseDTO {
      */
     private Date updateAt;
 
-    private MockitServiceMethodMockDataDTO mockDataDTO;
+    private MockitMethodMockDataDTO mockDataDTO;
 }

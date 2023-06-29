@@ -15,8 +15,11 @@
 
 package cn.thinkinginjava.mockit.admin.service;
 
+import cn.thinkinginjava.mockit.admin.model.dto.BatchCommonDTO;
 import cn.thinkinginjava.mockit.admin.model.dto.MockitServiceClassDTO;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceClass;
+import cn.thinkinginjava.mockit.admin.model.vo.MockitServiceClassVO;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -25,5 +28,32 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IMockitServiceClassService extends IService<MockitServiceClass> {
 
+    /**
+     * Adds a MockitServiceClass based on the provided MockitServiceClassDTO.
+     *
+     * @param mockitServiceClassDTO The DTO object containing the information of the MockitServiceClass to be added.
+     */
     void addClass(MockitServiceClassDTO mockitServiceClassDTO);
+
+    /**
+     * Retrieves a paginated list of MockitServiceClassVO objects based on the provided MockitServiceClassDTO.
+     *
+     * @param mockitServiceClassDTO The DTO object containing the criteria for filtering and paginating the list.
+     * @return An IPage object encapsulating the paginated list of MockitServiceClassVO objects.
+     */
+    IPage<MockitServiceClassVO> listByPage(MockitServiceClassDTO mockitServiceClassDTO);
+
+    /**
+     * Updates the enabled status in batch for the items specified in the BatchCommonDTO.
+     *
+     * @param batchCommonDTO The DTO object containing the batch of items and the desired enabled status.
+     */
+    void batchEnabled(BatchCommonDTO batchCommonDTO);
+
+    /**
+     * Deletes a batch of items specified in the BatchCommonDTO.
+     *
+     * @param batchCommonDTO The DTO object containing the batch of items to be deleted.
+     */
+    void batchDelete(BatchCommonDTO batchCommonDTO);
 }

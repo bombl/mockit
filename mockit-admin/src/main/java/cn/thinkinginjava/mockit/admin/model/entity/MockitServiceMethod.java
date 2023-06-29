@@ -15,7 +15,7 @@
 
 package cn.thinkinginjava.mockit.admin.model.entity;
 
-import cn.thinkinginjava.mockit.admin.model.dto.MockitServiceMethodMockDataDTO;
+import cn.thinkinginjava.mockit.admin.model.dto.MockitMethodMockDataDTO;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -102,5 +102,5 @@ public class MockitServiceMethod implements Serializable {
     @TableField("update_at")
     private Date updateAt;
 
-    private MockitServiceMethodMockDataDTO mockDataDTO;
+    private MockitMethodMockDataDTO mockDataDTO;
 }

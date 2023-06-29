@@ -17,10 +17,9 @@ package cn.thinkinginjava.mockit.admin.service.impl;
 
 import cn.thinkinginjava.mockit.admin.mapper.MockitServiceMethodMapper;
 import cn.thinkinginjava.mockit.admin.model.dto.MockitServiceMethodDTO;
-import cn.thinkinginjava.mockit.admin.model.dto.MockitServiceMethodMockDataDTO;
+import cn.thinkinginjava.mockit.admin.model.dto.MockitMethodMockDataDTO;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceMethod;
-import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceMethodMockData;
-import cn.thinkinginjava.mockit.admin.service.IMockitServiceMethodMockDataService;
+import cn.thinkinginjava.mockit.admin.service.IMockitMethodMockDataService;
 import cn.thinkinginjava.mockit.admin.service.IMockitServiceMethodService;
 import cn.thinkinginjava.mockit.admin.utils.UUIDUtils;
 import cn.thinkinginjava.mockit.common.constant.MockConstants;
@@ -32,7 +31,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -43,7 +41,7 @@ import java.util.stream.Collectors;
 public class MockitServiceMethodServiceImpl extends ServiceImpl<MockitServiceMethodMapper, MockitServiceMethod> implements IMockitServiceMethodService {
 
     @Resource
-    private IMockitServiceMethodMockDataService iMockitServiceMethodMockDataService;
+    private IMockitMethodMockDataService iMockitMethodMockDataService;
 
     @Override
     public void addMethod(List<MockitServiceMethodDTO> methodList) {
@@ -60,13 +58,13 @@ public class MockitServiceMethodServiceImpl extends ServiceImpl<MockitServiceMet
             return mockData;
         }).collect(Collectors.toList());
         saveBatch(serviceMethodList);
-        List<MockitServiceMethodMockDataDTO> mockDataList = serviceMethodList.stream().map(methodDTO -> {
-            MockitServiceMethodMockDataDTO mockData = new MockitServiceMethodMockDataDTO();
+        List<MockitMethodMockDataDTO> mockDataList = serviceMethodList.stream().map(methodDTO -> {
+            MockitMethodMockDataDTO mockData = new MockitMethodMockDataDTO();
             BeanUtils.copyProperties(methodDTO.getMockDataDTO(), mockData);
             mockData.setMethodId(methodDTO.getId());
             mockData.setMockEnabled(MockConstants.YES);
             return mockData;
         }).collect(Collectors.toList());
-        iMockitServiceMethodMockDataService.addMockData(mockDataList);
+        iMockitMethodMockDataService.addMockData(mockDataList);
     }
 }

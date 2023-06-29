@@ -21,13 +21,13 @@ import cn.thinkinginjava.mockit.admin.model.dto.BatchCommonDTO;
 import cn.thinkinginjava.mockit.admin.model.dto.MockitResult;
 import cn.thinkinginjava.mockit.admin.model.dto.MockitServiceRegistryDTO;
 import cn.thinkinginjava.mockit.admin.model.dto.Session;
+import cn.thinkinginjava.mockit.admin.model.entity.MockitMethodMockData;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceClass;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceMethod;
-import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceMethodMockData;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceRegistry;
 import cn.thinkinginjava.mockit.admin.model.vo.MockitServiceRegistryVO;
+import cn.thinkinginjava.mockit.admin.service.IMockitMethodMockDataService;
 import cn.thinkinginjava.mockit.admin.service.IMockitServiceClassService;
-import cn.thinkinginjava.mockit.admin.service.IMockitServiceMethodMockDataService;
 import cn.thinkinginjava.mockit.admin.service.IMockitServiceMethodService;
 import cn.thinkinginjava.mockit.admin.service.IMockitServiceRegistryService;
 import cn.thinkinginjava.mockit.admin.session.SessionHolder;
@@ -73,7 +73,7 @@ public class MockitServiceRegistryServiceImpl extends ServiceImpl<MockitServiceR
     private IMockitServiceMethodService iMockitServiceMethodService;
 
     @Resource
-    private IMockitServiceMethodMockDataService iMockitServiceMethodMockDataService;
+    private IMockitMethodMockDataService iMockitMethodMockDataService;
 
     /**
      * Online method: Sets the given session as online
@@ -158,22 +158,6 @@ public class MockitServiceRegistryServiceImpl extends ServiceImpl<MockitServiceR
         MockitServiceRegistry mockitServiceRegistry = new MockitServiceRegistry();
         mockitServiceRegistry.setOnline(MockConstants.NO);
         mockitServiceRegistry.setDeleted(MockConstants.YES);
-        mockitServiceRegistry.setUpdateAt(new Date());
-        update(mockitServiceRegistry, queryWrapper);
-    }
-
-    /**
-     * UpdateService method：update service
-     *
-     * @param mockitServiceRegistryDTO service info
-     */
-    @Override
-    public void updateService(MockitServiceRegistryDTO mockitServiceRegistryDTO) {
-        QueryWrapper<MockitServiceRegistry> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(MockitServiceRegistry::getAlias, mockitServiceRegistryDTO.getAlias());
-        queryWrapper.lambda().eq(MockitServiceRegistry::getIp, mockitServiceRegistryDTO.getIp());
-        MockitServiceRegistry mockitServiceRegistry = new MockitServiceRegistry();
-        BeanUtils.copyProperties(mockitServiceRegistryDTO, mockitServiceRegistry);
         mockitServiceRegistry.setUpdateAt(new Date());
         update(mockitServiceRegistry, queryWrapper);
     }
@@ -366,11 +350,11 @@ public class MockitServiceRegistryServiceImpl extends ServiceImpl<MockitServiceR
     private List<MethodMockData> getMethodMockDataList(List<MockitServiceMethod> serviceMethodList) {
         List<MethodMockData> methodMockDataList = new ArrayList<>();
         serviceMethodList.forEach(mockitServiceMethod -> {
-            LambdaQueryWrapper<MockitServiceMethodMockData> methodMockDataLambdaQueryWrapper = new LambdaQueryWrapper<>();
-            methodMockDataLambdaQueryWrapper.eq(MockitServiceMethodMockData::getMethodId, mockitServiceMethod.getId());
-            methodMockDataLambdaQueryWrapper.eq(MockitServiceMethodMockData::getMockEnabled, MockConstants.YES);
-            methodMockDataLambdaQueryWrapper.eq(MockitServiceMethodMockData::getDeleted, MockConstants.NO);
-            MockitServiceMethodMockData serviceMethodMockData = iMockitServiceMethodMockDataService.getOne(methodMockDataLambdaQueryWrapper);
+            LambdaQueryWrapper<MockitMethodMockData> methodMockDataLambdaQueryWrapper = new LambdaQueryWrapper<>();
+            methodMockDataLambdaQueryWrapper.eq(MockitMethodMockData::getMethodId, mockitServiceMethod.getId());
+            methodMockDataLambdaQueryWrapper.eq(MockitMethodMockData::getMockEnabled, MockConstants.YES);
+            methodMockDataLambdaQueryWrapper.eq(MockitMethodMockData::getDeleted, MockConstants.NO);
+            MockitMethodMockData serviceMethodMockData = iMockitMethodMockDataService.getOne(methodMockDataLambdaQueryWrapper);
             if (serviceMethodMockData == null) {
                 return;
             }
