@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 
+/**
+ * Represents a mock service registry controller.
+ */
 @Controller
 @RequestMapping("/registry")
 public class MockServiceRegistryController {
@@ -24,6 +27,12 @@ public class MockServiceRegistryController {
     @Resource
     private IMockitServiceRegistryService iMockitServiceRegistryService;
 
+    /**
+     * Retrieves a list of MockitServiceRegistryVO objects based on the provided MockitServiceRegistryDTO.
+     *
+     * @param mockitServiceRegistryDTO The DTO object containing the criteria for filtering the list.
+     * @return A MockitResult object encapsulating the paginated list of MockitServiceRegistryVO objects.
+     */
     @RequestMapping("/list")
     public MockitResult<IPage<MockitServiceRegistryVO>> list(@RequestBody MockitServiceRegistryDTO mockitServiceRegistryDTO) {
         if (mockitServiceRegistryDTO.getCurrentPage() == null) {
@@ -36,12 +45,24 @@ public class MockServiceRegistryController {
         return MockitResult.successful(page);
     }
 
+    /**
+     * Updates the enabled status for a batch of items based on the provided BatchCommonDTO.
+     *
+     * @param batchCommonDTO The DTO object containing the batch of items and the desired enabled status.
+     * @return A MockitResult object indicating the result of the operation.
+     */
     @RequestMapping("/enabled")
     public MockitResult<Void> enabled(@Valid @RequestBody BatchCommonDTO batchCommonDTO) {
         iMockitServiceRegistryService.enabled(batchCommonDTO);
         return MockitResult.successful();
     }
 
+    /**
+     * Updates the MockitServiceRegistry based on the provided MockitServiceRegistryDTO.
+     *
+     * @param mockitServiceRegistryDTO The DTO object containing the updated information for the registry.
+     * @return A MockitResult object indicating the result of the update operation.
+     */
     @RequestMapping("/update")
     public MockitResult<Void> update(@RequestBody MockitServiceRegistryDTO mockitServiceRegistryDTO) {
         if (StringUtils.isEmpty(mockitServiceRegistryDTO.getId())) {
@@ -56,12 +77,24 @@ public class MockServiceRegistryController {
         return MockitResult.successful();
     }
 
+    /**
+     * Initiates mocking for a batch of items based on the provided BatchCommonDTO.
+     *
+     * @param batchCommonDTO The DTO object containing the batch of items to be mocked.
+     * @return A MockitResult object indicating the result of the mocking operation.
+     */
     @RequestMapping("/mock")
     public MockitResult<Void> mock(@Valid @RequestBody BatchCommonDTO batchCommonDTO) {
         iMockitServiceRegistryService.mock(batchCommonDTO);
         return MockitResult.successful();
     }
 
+    /**
+     * Cancels the mocking for a batch of items based on the provided BatchCommonDTO.
+     *
+     * @param batchCommonDTO The DTO object containing the batch of items to cancel the mocking for.
+     * @return A MockitResult object indicating the result of the canceling operation.
+     */
     @RequestMapping("/cancelMock")
     public MockitResult<Void> cancelMock(@Valid @RequestBody BatchCommonDTO batchCommonDTO) {
         iMockitServiceRegistryService.cancelMock(batchCommonDTO);

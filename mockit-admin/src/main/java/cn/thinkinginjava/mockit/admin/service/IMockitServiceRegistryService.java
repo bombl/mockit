@@ -45,43 +45,63 @@ public interface IMockitServiceRegistryService extends IService<MockitServiceReg
 
     /**
      * OfflineAll method: Sets the all sessions as offline
-     *
      */
     void offlineAll();
 
     /**
      * AddService method：add new service
+     *
      * @param mockitServiceRegistryDTO service info
      */
     void addService(MockitServiceRegistryDTO mockitServiceRegistryDTO);
 
     /**
      * DeleteService method：delete service
+     *
      * @param mockitServiceRegistryDTO service info
      */
     void deleteService(MockitServiceRegistryDTO mockitServiceRegistryDTO);
 
     /**
      * UpdateService method：update service
+     *
      * @param mockitServiceRegistryDTO service info
      */
     void updateService(MockitServiceRegistryDTO mockitServiceRegistryDTO);
 
     /**
      * listByPage method：list service
+     *
      * @param mockitServiceRegistryDTO service info
      */
     IPage<MockitServiceRegistryVO> listByPage(MockitServiceRegistryDTO mockitServiceRegistryDTO);
 
     /**
      * enabled method：enabled the service
+     *
      * @param batchCommonDTO enabled info
      */
     void enabled(BatchCommonDTO batchCommonDTO);
 
+    /**
+     * Initiates mocking for a batch of items based on the provided BatchCommonDTO.
+     *
+     * @param batchCommonDTO The DTO object containing the batch of items to be mocked.
+     */
     void mock(BatchCommonDTO batchCommonDTO);
 
+    /**
+     * Cancels the mocking for a batch of items based on the provided BatchCommonDTO.
+     *
+     * @param batchCommonDTO The DTO object containing the batch of items to cancel the mocking for.
+     */
     void cancelMock(BatchCommonDTO batchCommonDTO);
 
+    /**
+     * Retrieves the MockitServiceRegistry object associated with the provided session.
+     *
+     * @param session The session object for which to retrieve the associated service registry.
+     * @return The MockitServiceRegistry object associated with the session.
+     */
     MockitServiceRegistry getServiceRegistry(Session session);
 }

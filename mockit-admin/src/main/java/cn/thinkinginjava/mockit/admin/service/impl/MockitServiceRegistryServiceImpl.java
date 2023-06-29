@@ -54,6 +54,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 /**
@@ -224,16 +225,32 @@ public class MockitServiceRegistryServiceImpl extends ServiceImpl<MockitServiceR
         updateBatchById(mockitServiceRegistryList);
     }
 
+    /**
+     * Initiates mocking for a batch of items based on the provided BatchCommonDTO.
+     *
+     * @param batchCommonDTO The DTO object containing the batch of items to be mocked.
+     */
     @Override
     public void mock(BatchCommonDTO batchCommonDTO) {
         mockOrCancelMock(batchCommonDTO);
     }
 
+    /**
+     * Cancels the mocking for a batch of items based on the provided BatchCommonDTO.
+     *
+     * @param batchCommonDTO The DTO object containing the batch of items to cancel the mocking for.
+     */
     @Override
     public void cancelMock(BatchCommonDTO batchCommonDTO) {
         mockOrCancelMock(batchCommonDTO);
     }
 
+    /**
+     * Retrieves the MockitServiceRegistry object associated with the provided session.
+     *
+     * @param session The session object for which to retrieve the associated service registry.
+     * @return The MockitServiceRegistry object associated with the session.
+     */
     @Override
     public MockitServiceRegistry getServiceRegistry(Session session) {
         LambdaQueryWrapper<MockitServiceRegistry> lambdaQueryWrapper = new LambdaQueryWrapper<>();
@@ -243,6 +260,11 @@ public class MockitServiceRegistryServiceImpl extends ServiceImpl<MockitServiceR
         return getOne(lambdaQueryWrapper);
     }
 
+    /**
+     * Initiates or cancels mocking for a batch of items based on the provided BatchCommonDTO.
+     *
+     * @param batchCommonDTO The DTO object containing the batch of items to be mocked or canceled.
+     */
     private void mockOrCancelMock(BatchCommonDTO batchCommonDTO) {
         List<MockitServiceRegistry> mockitServiceRegistryList = listByIds(batchCommonDTO.getIds());
         if (CollectionUtils.isEmpty(mockitServiceRegistryList)) {
@@ -255,6 +277,12 @@ public class MockitServiceRegistryServiceImpl extends ServiceImpl<MockitServiceR
         mockitServiceRegistryList.forEach(mockitServiceRegistry -> mockOrCancelMock(mockitServiceRegistry, batchCommonDTO.getEnabled()));
     }
 
+    /**
+     * Initiates or cancels mocking for the given MockitServiceRegistry based on the specified flag.
+     *
+     * @param mockitServiceRegistry The MockitServiceRegistry object for which to initiate or cancel mocking.
+     * @param isMock                A boolean flag indicating whether to initiate mocking (true) or cancel mocking (false).
+     */
     private void mockOrCancelMock(MockitServiceRegistry mockitServiceRegistry, Boolean isMock) {
         LambdaQueryWrapper<MockitServiceClass> serviceClassLambdaQueryWrapper = new LambdaQueryWrapper<>();
         serviceClassLambdaQueryWrapper.eq(MockitServiceClass::getServiceId, mockitServiceRegistry.getId());
@@ -267,6 +295,13 @@ public class MockitServiceRegistryServiceImpl extends ServiceImpl<MockitServiceR
         serviceClassList.forEach(mockitServiceClass -> mockOrCancelMock(mockitServiceRegistry, mockitServiceClass, isMock));
     }
 
+    /**
+     * Initiates or cancels mocking for the given MockitServiceClass within the provided MockitServiceRegistry based on the specified flag.
+     *
+     * @param mockitServiceRegistry The MockitServiceRegistry object that contains the MockitServiceClass to be mocked or canceled.
+     * @param mockitServiceClass    The MockitServiceClass object for which to initiate or cancel mocking.
+     * @param isMock                A boolean flag indicating whether to initiate mocking (true) or cancel mocking (false).
+     */
     private void mockOrCancelMock(MockitServiceRegistry mockitServiceRegistry, MockitServiceClass mockitServiceClass, Boolean isMock) {
         if (isMock) {
             LambdaQueryWrapper<MockitServiceMethod> serviceMethodLambdaQueryWrapper = new LambdaQueryWrapper<>();
@@ -283,7 +318,52 @@ public class MockitServiceRegistryServiceImpl extends ServiceImpl<MockitServiceR
         }
     }
 
+    /**
+     * Initiates mocking for the given MockitServiceClass and its associated list of MockitServiceMethod within the provided MockitServiceRegistry.
+     *
+     * @param mockitServiceRegistry The MockitServiceRegistry object that contains the MockitServiceClass to be mocked.
+     * @param mockitServiceClass    The MockitServiceClass object for which to initiate mocking.
+     * @param serviceMethodList     The list of MockitServiceMethod objects to be mocked.
+     */
     private void mock(MockitServiceRegistry mockitServiceRegistry, MockitServiceClass mockitServiceClass, List<MockitServiceMethod> serviceMethodList) {
+        List<MethodMockData> methodMockDataList = getMethodMockDataList(serviceMethodList);
+        if (CollectionUtils.isEmpty(methodMockDataList)) {
+            return;
+        }
+        Session session = getSession(mockitServiceRegistry.getAlias(), mockitServiceRegistry.getIp());
+        if (session == null) {
+            return;
+        }
+        MockData mockData = new MockData();
+        mockData.setAlias(mockitServiceRegistry.getAlias());
+        mockData.setClassName(mockitServiceClass.getClassName());
+        mockData.setMethodMockDataList(methodMockDataList);
+        Message<MockData> sendMessage = new Message<>();
+        sendMessage.setData(mockData);
+        sendMessage.setMessageType(MessageTypeEnum.MOCK.getType());
+        ResponseCallback responseCallback = MessageUtil.sendMessage(session.getChannel(), sendMessage);
+        CompletableFuture<String> completableFuture = responseCallback.getFuture().whenComplete((response, throwable) -> {
+            if (MockitResult.isSuccess(response)) {
+                MockitServiceRegistry serviceRegistry = new MockitServiceRegistry();
+                serviceRegistry.setId(mockitServiceRegistry.getId());
+                serviceRegistry.setEnabled(MockConstants.YES);
+                serviceRegistry.setUpdateAt(new Date());
+                updateById(serviceRegistry);
+            }
+        }).exceptionally(throwable -> {
+            logger.error(throwable.getMessage());
+            return null;
+        });
+        completableFuture.join();
+    }
+
+    /**
+     * Retrieves a list of MethodMockData objects based on the provided list of MockitServiceMethod.
+     *
+     * @param serviceMethodList The list of MockitServiceMethod objects for which to retrieve the MethodMockData.
+     * @return A list of MethodMockData objects corresponding to the provided MockitServiceMethod list.
+     */
+    private List<MethodMockData> getMethodMockDataList(List<MockitServiceMethod> serviceMethodList) {
         List<MethodMockData> methodMockDataList = new ArrayList<>();
         serviceMethodList.forEach(mockitServiceMethod -> {
             LambdaQueryWrapper<MockitServiceMethodMockData> methodMockDataLambdaQueryWrapper = new LambdaQueryWrapper<>();
@@ -300,35 +380,15 @@ public class MockitServiceRegistryServiceImpl extends ServiceImpl<MockitServiceR
             mockData.setMockValue(serviceMethodMockData.getMockValue());
             methodMockDataList.add(mockData);
         });
-        if (CollectionUtils.isEmpty(methodMockDataList)) {
-            return;
-        }
-        Session session = getSession(mockitServiceRegistry.getAlias(), mockitServiceRegistry.getIp());
-        if (session == null) {
-            return;
-        }
-        MockData mockData = new MockData();
-        mockData.setAlias(mockitServiceRegistry.getAlias());
-        mockData.setClassName(mockitServiceClass.getClassName());
-        mockData.setMethodMockDataList(methodMockDataList);
-        Message<MockData> sendMessage = new Message<>();
-        sendMessage.setData(mockData);
-        sendMessage.setMessageType(MessageTypeEnum.MOCK.getType());
-        ResponseCallback responseCallback = MessageUtil.sendMessage(session.getChannel(), sendMessage);
-        responseCallback.getFuture().whenComplete((response, throwable) -> {
-            if (MockitResult.isSuccess(response)) {
-                MockitServiceRegistry serviceRegistry = new MockitServiceRegistry();
-                serviceRegistry.setId(mockitServiceRegistry.getId());
-                serviceRegistry.setEnabled(MockConstants.YES);
-                serviceRegistry.setUpdateAt(new Date());
-                updateById(serviceRegistry);
-            }
-        }).exceptionally(throwable -> {
-            logger.error(throwable.getMessage());
-            return null;
-        });
+        return methodMockDataList;
     }
 
+    /**
+     * Cancels mocking for the given MockitServiceClass within the provided MockitServiceRegistry.
+     *
+     * @param mockitServiceRegistry The MockitServiceRegistry object that contains the MockitServiceClass to cancel mocking.
+     * @param mockitServiceClass    The MockitServiceClass object for which to cancel mocking.
+     */
     private void cancelMock(MockitServiceRegistry mockitServiceRegistry, MockitServiceClass mockitServiceClass) {
         Session session = getSession(mockitServiceRegistry.getAlias(), mockitServiceRegistry.getIp());
         if (session == null) {
@@ -341,7 +401,7 @@ public class MockitServiceRegistryServiceImpl extends ServiceImpl<MockitServiceR
         sendMessage.setData(cancelMockData);
         sendMessage.setMessageType(MessageTypeEnum.CANCEL_MOCK.getType());
         ResponseCallback responseCallback = MessageUtil.sendMessage(session.getChannel(), sendMessage);
-        responseCallback.getFuture().whenComplete((response, throwable) -> {
+        CompletableFuture<String> completableFuture = responseCallback.getFuture().whenComplete((response, throwable) -> {
             if (MockitResult.isSuccess(response)) {
                 MockitServiceRegistry serviceRegistry = new MockitServiceRegistry();
                 serviceRegistry.setId(mockitServiceRegistry.getId());
@@ -353,8 +413,16 @@ public class MockitServiceRegistryServiceImpl extends ServiceImpl<MockitServiceR
             logger.error(throwable.getMessage());
             return null;
         });
+        completableFuture.join();
     }
 
+    /**
+     * Retrieves a session object based on the provided alias and IP address.
+     *
+     * @param alias The alias used to identify the session.
+     * @param ip    The IP address associated with the session.
+     * @return The Session object matching the provided alias and IP address.
+     */
     private Session getSession(String alias, String ip) {
         Map<String, List<Session>> sessionMap = SessionHolder.getSessionMap();
         if (MapUtils.isEmpty(sessionMap)
@@ -366,6 +434,12 @@ public class MockitServiceRegistryServiceImpl extends ServiceImpl<MockitServiceR
         return sessionOptional.orElse(null);
     }
 
+    /**
+     * Retrieves a QueryWrapper object for querying the MockitServiceRegistry based on the provided Session.
+     *
+     * @param session The session object used to create the query criteria.
+     * @return The QueryWrapper object configured with the criteria for querying the MockitServiceRegistry.
+     */
     private QueryWrapper<MockitServiceRegistry> getQueryWrapper(Session session) {
         QueryWrapper<MockitServiceRegistry> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(MockitServiceRegistry::getAlias, session.getAlias());
@@ -373,6 +447,12 @@ public class MockitServiceRegistryServiceImpl extends ServiceImpl<MockitServiceR
         return queryWrapper;
     }
 
+    /**
+     * Determines whether mocking is allowed for the given MockitServiceRegistry.
+     *
+     * @param mockitServiceRegistry The MockitServiceRegistry object to check for mocking eligibility.
+     * @return True if mocking is allowed for the given registry, false otherwise.
+     */
     private boolean canMock(MockitServiceRegistry mockitServiceRegistry) {
         return MockConstants.YES.equals(mockitServiceRegistry.getOnline())
                 && MockConstants.NO.equals(mockitServiceRegistry.getDeleted());

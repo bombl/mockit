@@ -40,9 +40,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 @RestController
 @RequestMapping("/api")
@@ -84,19 +84,19 @@ public class MockApiController {
         sendMessage.setData(mockData);
         sendMessage.setMessageType(MessageTypeEnum.MOCK.getType());
         List<Session> sessions = getSessions(mockData.getAlias());
-        sessions.forEach(session -> {
-            try {
-                ResponseCallback responseCallback = MessageUtil.sendMessage(session.getChannel(), sendMessage);
-                responseCallback.getFuture().whenComplete((response, throwable) -> {
-                    updateRegistry(session, response, MockConstants.YES);
-                }).exceptionally(throwable -> {
-                    logger.error(throwable.getMessage());
-                    return null;
-                });
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-            }
-        });
+        List<CompletableFuture<String>> all = new ArrayList<>();
+        Consumer<Session> sessionConsumer = session -> {
+            ResponseCallback responseCallback = MessageUtil.sendMessage(session.getChannel(), sendMessage);
+            CompletableFuture<String> completableFuture = responseCallback.getFuture().whenComplete((response, throwable) -> {
+                updateRegistry(session, response, MockConstants.YES);
+            }).exceptionally(throwable -> {
+                logger.error(throwable.getMessage());
+                return null;
+            });
+            all.add(completableFuture);
+        };
+        sessions.forEach(sessionConsumer);
+        CompletableFuture.allOf(all.toArray(new CompletableFuture[0])).join();
         return MockitResult.successful();
     }
 
@@ -112,22 +112,29 @@ public class MockApiController {
         sendMessage.setData(cancelMockData);
         sendMessage.setMessageType(MessageTypeEnum.CANCEL_MOCK.getType());
         List<Session> sessions = getSessions(cancelMockData.getAlias());
-        sessions.forEach(session -> {
-            try {
-                ResponseCallback responseCallback = MessageUtil.sendMessage(session.getChannel(), sendMessage);
-                responseCallback.getFuture().whenComplete((response, throwable) -> {
-                    updateRegistry(session, response, MockConstants.NO);
-                }).exceptionally(throwable -> {
-                    logger.error(throwable.getMessage());
-                    return null;
-                });
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-            }
-        });
+        List<CompletableFuture<String>> all = new ArrayList<>();
+        Consumer<Session> sessionConsumer = session -> {
+            ResponseCallback responseCallback = MessageUtil.sendMessage(session.getChannel(), sendMessage);
+            CompletableFuture<String> completableFuture = responseCallback.getFuture().whenComplete((response, throwable) -> {
+                updateRegistry(session, response, MockConstants.NO);
+            }).exceptionally(throwable -> {
+                logger.error(throwable.getMessage());
+                return null;
+            });
+            all.add(completableFuture);
+        };
+        sessions.forEach(sessionConsumer);
+        CompletableFuture.allOf(all.toArray(new CompletableFuture[0])).join();
         return MockitResult.successful();
     }
 
+    /**
+     * Updates the registry with the provided session, response, and enabled status.
+     *
+     * @param session  The session object representing the interaction session.
+     * @param response The response or message to be processed.
+     * @param enabled  The enabled status indicating whether a feature or state is enabled.
+     */
     private void updateRegistry(Session session, String response, Integer enabled) {
         if (!MockitResult.isSuccess(response)) {
             return;
@@ -143,6 +150,12 @@ public class MockApiController {
         iMockitServiceRegistryService.updateById(serviceRegistry);
     }
 
+    /**
+     * Retrieves a list of sessions based on the given alias.
+     *
+     * @param alias The alias used to filter and identify the sessions.
+     * @return A list of Session objects matching the provided alias.
+     */
     private List<Session> getSessions(String alias) {
         Map<String, List<Session>> sessionMap = SessionHolder.getSessionMap();
         if (MapUtils.isEmpty(sessionMap)

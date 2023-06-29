@@ -28,7 +28,7 @@ public class ResponseCallback {
 
     private static final Logger logger = LoggerFactory.getLogger(ResponseCallback.class);
 
-    public static final long EXPIRATION_TIME_MS = 100;
+    public static final long EXPIRATION_TIME_MS = 30;
 
     private final CompletableFuture<String> future;
 
