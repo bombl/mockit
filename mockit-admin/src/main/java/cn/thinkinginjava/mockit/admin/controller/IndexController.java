@@ -1,3 +1,18 @@
+/**
+ * Mockit is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * Mockit is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU General Public License
+ * along with Mockit. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package cn.thinkinginjava.mockit.admin.controller;
 
 import cn.thinkinginjava.mockit.admin.model.entity.MockitMethodMockData;
@@ -36,37 +51,71 @@ public class IndexController {
     private IMockitMethodMockDataService iMockitMethodMockDataService;
 
 
+    /**
+     * Controller method for handling the index page
+     * @param model model
+     * @return modelAndView
+     */
     @RequestMapping("/")
     public ModelAndView index(Model model) {
         return new ModelAndView("forward:/index");
     }
 
+    /**
+     * Controller method for handling the index page
+     * @param model model
+     * @return index
+     */
     @RequestMapping("/index")
     public String index0(Model model) {
         setStatistics(model);
         return "index";
     }
 
+    /**
+     * Controller method for handling the service page
+     * @param model model
+     * @return service
+     */
     @RequestMapping("/service")
     public String service(Model model) {
         return "service";
     }
 
+    /**
+     * Controller method for handling the class page
+     * @param model model
+     * @return class
+     */
     @RequestMapping("/class")
     public String clazz(Model model) {
         return "class";
     }
 
+    /**
+     * Controller method for handling the method page
+     * @param model model
+     * @return method
+     */
     @RequestMapping("/method")
     public String method(Model model) {
         return "method";
     }
 
+    /**
+     * Controller method for handling the data page
+     * @param model model
+     * @return data
+     */
     @RequestMapping("/data")
     public String mockData(Model model) {
         return "data";
     }
 
+    /**
+     * Method to set statistics in the provided model
+     * @param model model
+     */
     private void setStatistics(Model model) {
         LambdaQueryWrapper<MockitServiceRegistry> registryLambdaQueryWrapper = new LambdaQueryWrapper<>();
         registryLambdaQueryWrapper.eq(MockitServiceRegistry::getOnline, MockConstants.YES);

@@ -15,13 +15,35 @@
 
 package cn.thinkinginjava.mockit.springboot.starter.config;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
 /**
  * Represents the configuration for the Mockit plugin.
  */
+@ConfigurationProperties(prefix = "mockit.plugin")
 public class MockitPluginConfig {
 
+    private Boolean enabled;
     private String addresses;
     private String alias;
+
+    /**
+     * Get the enabled.
+     *
+     * @return The enabled.
+     */
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    /**
+     * Set the enabled.
+     *
+     * @param enabled The enabled to set.
+     */
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
 
     /**
      * Get the addresses.

@@ -20,6 +20,7 @@ import cn.thinkinginjava.mockit.springboot.starter.support.MockServlet;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +32,7 @@ import javax.servlet.Servlet;
  */
 @Configuration
 @ConditionalOnProperty(value = "mockit.plugin.enabled", havingValue = "true")
+@EnableConfigurationProperties(MockitPluginConfig.class)
 public class MockitConfiguration {
 
     /**
@@ -60,7 +62,6 @@ public class MockitConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(value = "mockit.plugin.addresses")
     public MockitClient mockitClient(MockitPluginConfig mockitPluginConfig) {
         MockitClient mockitClient = new MockitClient();
         mockitClient.setAddresses(mockitPluginConfig.getAddresses());
@@ -75,9 +76,9 @@ public class MockitConfiguration {
      *
      * @return The MockitPluginConfig object populated with the configuration properties.
      */
-    @Bean
-    @ConfigurationProperties(prefix = "mockit.plugin")
-    public MockitPluginConfig mockitPluginConfig() {
-        return new MockitPluginConfig();
-    }
+//    @Bean
+//    @ConfigurationProperties(prefix = "mockit.plugin")
+//    public MockitPluginConfig mockitPluginConfig() {
+//        return new MockitPluginConfig();
+//    }
 }

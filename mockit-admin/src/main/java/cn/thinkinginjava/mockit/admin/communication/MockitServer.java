@@ -15,6 +15,7 @@
 
 package cn.thinkinginjava.mockit.admin.communication;
 
+import cn.thinkinginjava.mockit.admin.config.AdminPropertiesConfig;
 import cn.thinkinginjava.mockit.admin.handler.HttpServerHandler;
 import cn.thinkinginjava.mockit.admin.service.manager.ServiceRegistryManager;
 import io.netty.bootstrap.ServerBootstrap;
@@ -33,6 +34,8 @@ import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+
 
 /**
  * Represents the Mockit Server that implements the {@link SmartInitializingSingleton} interface.
@@ -42,8 +45,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class MockitServer implements SmartInitializingSingleton {
 
-    @Value("${mockit.admin.comm.port}")
-    public Integer port;
+    @Resource
+    private AdminPropertiesConfig adminPropertiesConfig;
 
     /**
      * Starts the mockit server.
@@ -72,7 +75,7 @@ public class MockitServer implements SmartInitializingSingleton {
                         pipeline.addLast(new HttpServerHandler());
                     }
                 });
-        ChannelFuture channelFuture = bootstrap.bind(port);
+        ChannelFuture channelFuture = bootstrap.bind(adminPropertiesConfig.getCommPort());
         channelFuture.addListener(future -> {
             if (!future.isSuccess()) {
                 future.cause().printStackTrace();
