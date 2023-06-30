@@ -23,4 +23,9 @@ public class IndexController {
         model.addAttribute("sessionMap", sessionMap);
         return "index";
     }
+
+    @RequestMapping("/service")
+    public String service(Model model) {
+        return "service";
+    }
 }

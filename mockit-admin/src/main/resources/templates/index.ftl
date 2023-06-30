@@ -1,100 +1,113 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Session List</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-
-        h1 {
-            color: #333;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 8px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        tr:hover {
-            background-color: #f5f5f5;
-        }
-
-        .search-form {
-            margin-bottom: 20px;
-        }
-
-        .search-input {
-            width: 200px;
-            padding: 6px;
-        }
-
-        .actions {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 20px;
-        }
-
-        .action-button {
-            margin-left: 10px;
-            padding: 6px 12px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        .action-button.cancel {
-            background-color: #f44336;
-        }
-    </style>
+    <#import "./common/common.ftl" as netCommon>
+    <@netCommon.commonStyle />
+    <title>Mockit</title>
 </head>
-<body>
-<h1>Session List</h1>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
 
-<form class="search-form">
-    <label for="search-input">Search:</label>
-    <input type="text" id="search-input" class="search-input" placeholder="Enter project name">
-</form>
+    <!-- header -->
+    <@netCommon.commonHeader />
+    <!-- left -->
+    <@netCommon.commonLeft "jobinfo" />
 
-<table id="session-table">
-    <thead>
-    <tr>
-        <th>Project Name</th>
-        <th>IP</th>
-        <th>Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    <#list sessionMap?keys as projectName>
-        <#list sessionMap[projectName] as session>
-            <tr>
-                <td>${projectName}</td>
-                <td>${session.ip}</td>
-                <td>
-                    <button class="action-button">Mock</button>
-                    <button class="action-button cancel">Cancel Mock</button>
-                </td>
-            </tr>
-        </#list>
-    </#list>
-    </tbody>
-</table>
 
-<div class="actions">
-    <button class="action-button">Mock All</button>
-    <button class="action-button cancel">Cancel All</button>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">运行报表</h1>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <!-- Small boxes (Stat box) -->
+                <div class="row">
+                    <div class="col-lg-3 col-6">
+                        <!-- small box -->
+                        <div class="small-box bg-info">
+                            <div class="inner">
+                                <h3>150</h3>
+
+                                <p>在线服务</p>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-bag"></i>
+                            </div>
+                            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+                    <!-- ./col -->
+                    <div class="col-lg-3 col-6">
+                        <!-- small box -->
+                        <div class="small-box bg-success">
+                            <div class="inner">
+                                <h3>53<sup style="font-size: 20px"></sup></h3>
+
+                                <p>服务类</p>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-stats-bars"></i>
+                            </div>
+                            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+                    <!-- ./col -->
+                    <div class="col-lg-3 col-6">
+                        <!-- small box -->
+                        <div class="small-box bg-warning">
+                            <div class="inner">
+                                <h3>44</h3>
+
+                                <p>方法</p>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-person-add"></i>
+                            </div>
+                            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+                    <!-- ./col -->
+                    <div class="col-lg-3 col-6">
+                        <!-- small box -->
+                        <div class="small-box bg-danger">
+                            <div class="inner">
+                                <h3>65</h3>
+
+                                <p>模拟数据</p>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-pie-graph"></i>
+                            </div>
+                            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+                    <!-- ./col -->
+                </div>
+                <!-- /.row -->
+                <!-- Main row -->
+                <div class="row">
+                </div>
+                <!-- /.row (main row) -->
+            </div><!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- footer -->
+    <@netCommon.commonFooter />
+
 </div>
-
-<script>
-    // Add JavaScript code here, if needed
-</script>
+<!-- ./wrapper -->
+<@netCommon.commonScript />
 </body>
 </html>
