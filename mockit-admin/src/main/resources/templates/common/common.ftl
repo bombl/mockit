@@ -119,7 +119,7 @@
                     <!-- Add icons to the links using the .nav-icon class
                          with font-awesome or any other icon font library -->
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="index" class="nav-link">
                             <i class="nav-icon far fa-circle text-danger"></i>
                             <p class="text">运行报表</p>
                         </a>
@@ -131,19 +131,19 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="class" class="nav-link">
                             <i class="nav-icon far fa-circle text-info"></i>
                             <p>服务类管理</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="method" class="nav-link">
                             <i class="nav-icon far fa-circle text-success"></i>
                             <p>方法管理</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="data" class="nav-link">
                             <i class="nav-icon far fa-circle text-primary"></i>
                             <p>数据管理</p>
                         </a>
