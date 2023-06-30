@@ -125,7 +125,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="service" class="nav-link">
                             <i class="nav-icon far fa-circle text-warning"></i>
                             <p>服务管理</p>
                         </a>
