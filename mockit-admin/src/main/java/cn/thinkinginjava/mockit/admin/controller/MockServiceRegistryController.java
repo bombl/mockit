@@ -28,10 +28,14 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Represents a mock service registry controller.
@@ -50,7 +54,8 @@ public class MockServiceRegistryController {
      * @return A MockitResult object encapsulating the paginated list of MockitServiceRegistryVO objects.
      */
     @RequestMapping("/list")
-    public MockitResult<IPage<MockitServiceRegistryVO>> list(@RequestBody MockitServiceRegistryDTO mockitServiceRegistryDTO) {
+    @ResponseBody
+    public Map<String,Object> list(@RequestBody MockitServiceRegistryDTO mockitServiceRegistryDTO) {
         if (mockitServiceRegistryDTO.getCurrentPage() == null) {
             throw new MockitException("currentPage can not empty.");
         }
@@ -58,7 +63,11 @@ public class MockServiceRegistryController {
             throw new MockitException("pageSize can not empty.");
         }
         IPage<MockitServiceRegistryVO> page = iMockitServiceRegistryService.listByPage(mockitServiceRegistryDTO);
-        return MockitResult.successful(page);
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("recordsTotal", page.getRecords().size());
+        map.put("recordsFiltered", page.getRecords().size());
+        map.put("data", page.getRecords());
+        return map;
     }
 
     /**
