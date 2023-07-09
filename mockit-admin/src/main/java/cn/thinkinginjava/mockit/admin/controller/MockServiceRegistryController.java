@@ -77,6 +77,7 @@ public class MockServiceRegistryController {
      * @return A MockitResult object indicating the result of the operation.
      */
     @RequestMapping("/enabled")
+    @ResponseBody
     public MockitResult<Void> enabled(@Valid @RequestBody BatchCommonDTO batchCommonDTO) {
         iMockitServiceRegistryService.enabled(batchCommonDTO);
         return MockitResult.successful();

@@ -28,6 +28,7 @@
     <link rel="stylesheet" href="${request.contextPath}/static/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
     <!-- Select2 -->
     <link rel="stylesheet" href="${request.contextPath}/static/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="${request.contextPath}/static/plugins/toastr/toastr.min.css">
 </#macro>
 
 <#macro commonScript>
@@ -77,11 +78,9 @@
     <script src="${request.contextPath}/static/plugins/datatables-buttons/js/buttons.print.min.js"></script>
     <script src="${request.contextPath}/static/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/select/1.3.3/js/dataTables.select.min.js"></script>
-
-    <!-- AdminLTE for demo purposes -->
-<#--    <script src="${request.contextPath}/static/dist/js/demo.js"></script>-->
     <!-- Select2 -->
     <script src="${request.contextPath}/static/plugins/select2/js/select2.full.min.js"></script>
+    <script src="${request.contextPath}/static/plugins/toastr/toastr.min.js"></script>
     <!-- Page specific script -->
     <script>
         $(function () {

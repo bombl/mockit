@@ -37,13 +37,13 @@
                                 <div class="box-header">
                                     <div class="input-group">
                                         <a class="btn btn-primary dialog" style="margin-right: 3px;background-color: #3c8dbc;" href="javascript:;" data-url="/system/user/add"
-                                           data-title="创建新用户" data-width="850" data-height="550"><i class="fa fa-check"></i>启用</a>
+                                           data-title="创建新用户" data-width="850" data-height="550" onclick="enableAll()"><i class="fa fa-check"></i>启用</a>
                                     </div>
                                 </div>
                                 <div class="box-header">
                                     <div class="input-group">
                                         <a class="btn btn-primary dialog" style="margin-right: 3px;background-color: #dd4b39;" href="javascript:;" href="javascript:;" data-url="/system/user/add"
-                                           data-title="创建新用户" data-width="850" data-height="550"><i class="fa fa-times"></i>禁用</a>
+                                           data-title="创建新用户" data-width="850" data-height="550" onclick="disableAll()"><i class="fa fa-times"></i>禁用</a>
                                     </div>
                                 </div>
                                 <div class="input-group">
@@ -51,7 +51,7 @@
                                            placeholder="Search">
                                     <div class="input-group-btn">
                                         <button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
-                                        <a href="/system/user/list/1" class="btn btn-default"><i class="fas fa-sync-alt"></i></a>
+                                        <a class="btn btn-default" onclick="refreshTableData()"><i class="fas fa-sync-alt"></i></a>
                                     </div>
                                 </div>
                             </form>
@@ -63,7 +63,7 @@
                                             <table id="example2" class="table table-striped table-bordered table-hover">
                                                 <thead>
                                                 <tr>
-                                                    <th><input name="userState" type="checkbox" class="minimal checkbox-toolbar"></th>
+                                                    <th><input name="userState" type="checkbox" onclick="checkItem(this)" class="minimal checkbox-toolbar"></th>
                                                     <th>行号</th>
                                                     <th>服务名</th>
                                                     <th>IP地址</th>
@@ -97,29 +97,102 @@
 <!-- ./wrapper -->
 <@netCommon.commonScript />
 <script>
-    var timer = null; //延时搜索，
-    var timeout = 1000; // 当在搜索时，只有超过间隔时间（1000）才开始搜索
-    var url = "./registry/list" //请求地址
-    var delurl = "./demo.php" //请求地址
-    var table = null; //表格
-    var request = (url, params, method = "POST") => {
-        return new Promise((resolve, reject) => {
+    // 批量启用
+    function enableAll() {
+        debugger
+        var ids = [];
+
+        table.rows().every(function () {
+            var rowData = this.data();
+            var checkbox = this.nodes().to$().find('input[name="userState"]');
+            if (checkbox.prop('checked')) {
+                var selectedId = rowData.id; // Assuming the ID field name is "id"
+                ids.push(selectedId);
+            }
+        });
+
+        // Perform the batch enable action using the serviceNames array
+        console.log('Enable:', ids);
+
+        if (ids.length > 0) {
+            var obj = {};
+            obj.ids = ids;
+            obj.enabled = true;
+            var data = JSON.stringify(obj);
             $.ajax({
-                type: method,
-                url: url,
-                cache: false, //禁用缓存
-                data: params, //传入组装的参数
-                dataType: "json",
+                url: "${request.contextPath}/registry/enabled",
+                type: "post",
+                data: data,
                 contentType: "application/json",
-                success: function (result) {
-                    debugger
-                    resolve(result);
+                success: function (response) {
+                    refreshTableData();
+                    toastr.success("操作成功");
                 },
-                error: function () {
-                    reject('出错')
+                error: function (xhr, status, error) {
+                    toastr.error("操作失败");
                 }
             });
-        })
+        }
+    }
+
+    // 批量禁用
+    function disableAll() {
+        var ids = [];
+
+        table.rows().every(function () {
+            var rowData = this.data();
+            var checkbox = this.nodes().to$().find('input[name="userState"]');
+            if (checkbox.prop('checked')) {
+                var selectedId = rowData.id; // Assuming the ID field name is "id"
+                ids.push(selectedId);
+            }
+        });
+
+        // Perform the batch enable action using the serviceNames array
+        console.log('Enable:', ids);
+
+        if (ids.length > 0) {
+            var obj = {};
+            obj.ids = ids;
+            obj.enabled = false;
+            var data = JSON.stringify(obj);
+            $.ajax({
+                url: "${request.contextPath}/registry/enabled",
+                type: "post",
+                data: data,
+                contentType: "application/json",
+                success: function (response) {
+                    refreshTableData();
+                    toastr.success("操作成功");
+                },
+                error: function (xhr, status, error) {
+                    toastr.error("操作失败");
+                }
+            });
+        }
+    }
+
+    // 刷新表格数据
+    function refreshTableData() {
+        var table = $('#example2').DataTable();
+
+        // Clear existing table data
+        table.clear().draw();
+
+        // Fetch updated data from the server
+        $.ajax({
+            url: "${request.contextPath}/registry/list", // Replace with the actual URL to fetch updated data
+            type: "POST",
+            success: function (data) {
+                $('input[name="userState"]').prop('checked', false);
+                table.rows.add(data).draw();
+            },
+            error: function (xhr, status, error) {
+                // Handle any errors that occur during the request
+                console.error("Failed to fetch updated data");
+                console.error(xhr.responseText);
+            }
+        });
     }
 
     // 修改
@@ -133,12 +206,22 @@
         var row = table.rows($(me).parents('tr')).data()[0]; // 选中行数的数据
         var {first_name} = row; //这里一般是主键，但是没有传过来的id值，这里就用name替代了
         var param = {first_name, method: 'del'}; //传递的参数，也可以在添加一些判断条件
-        var res = await request(delurl, param);
-        if (res && res.code == 0) { //判断返回的数据
-            $(me).parents('tr').remove();
-            alert('删除成功')
-        }
+        $(me).parents('tr').remove();
+        alert('删除成功')
     }
+
+    function checkItem(checkbox){
+        var isChecked = checkbox.checked;
+        var checkboxes = document.querySelectorAll('input[name="userState"]');
+
+        checkboxes.forEach(function(item) {
+            if (isChecked) {
+                item.checked = true;
+            } else {
+                item.checked = false;
+            }
+        });
+    };
 
     $(document).ready(function () {
         table = $('#example2').DataTable({
@@ -154,11 +237,19 @@
                     var obj = {};
                     obj.alias = $("#serviceName").val();
                     obj.ip = $("#ip").val();
-                    debugger
                     obj.currentPage = d.start;
                     obj.pageSize = d.length;
                     return JSON.stringify(obj);
                 }
+            },
+            "initComplete": function (settings, json) {
+                // Toastr初始化
+                toastr.options = {
+                    closeButton: true,
+                    progressBar: true,
+                    positionClass: "toast-top-right",
+                    timeOut: 3000
+                };
             },
             "columns": [{
                     orderable: false,
@@ -168,7 +259,8 @@
                         selectRow: true
                     },
                     render: function (data, type, row, meta) {
-                        return '<input name="userState" type="checkbox" class="minimal checkbox-toolbar">';
+                        var id = row.id;
+                        return '<input name="userState" type="checkbox" class="minimal checkbox-toolbar" data-id="' + id + '">';
                     }
                 },
                 {

@@ -8,6 +8,7 @@
     <version>0.0.1</version>
     <name>mockit</name>
     <description>Non-invasive mock framework</description>
+    <url>https://github.com/alibaba/easyexcel</url>
     <modules>
         <module>mockit-admin</module>
         <module>mockit-client</module>
@@ -156,14 +157,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${maven-javadoc-plugin.version}</version>
-                <configuration>
-                    <sourcepath>src/main/java</sourcepath>
-                    <detectJavaApiLink>false</detectJavaApiLink>
-                    <detectOfflineLinks>false</detectOfflineLinks>
-                </configuration>
                 <executions>
                     <execution>
-                        <phase>package</phase>
+                        <id>attach-javadocs</id>
                         <goals>
                             <goal>jar</goal>
                         </goals>
@@ -205,6 +201,27 @@
                 </configuration>
             </plugin>
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                        <configuration>
+                            <executable>/usr/local/bin/gpg</executable>
+                            <keyname>0xC6BE0018</keyname>
+                            <passphraseServerId>932060B330EC6BF32DD2CA9382981EFFC6BE0018</passphraseServerId>
+                        </configuration>
+                    </execution>
+
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 
@@ -225,6 +242,9 @@
                                 </goals>
                             </execution>
                         </executions>
+                        <configuration>
+                            <executable>/usr/local/bin/gpg</executable> <!-- 或指定实际的可执行文件名称 -->
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
