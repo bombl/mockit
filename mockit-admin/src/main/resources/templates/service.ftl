@@ -47,10 +47,27 @@
                                     </div>
                                 </div>
                                 <div class="input-group">
-                                    <input type="text" name="search" value="${search!}" class="form-control"
-                                           placeholder="Search">
+                                    <input type="text" name="search" id="alias" value="${search!}" class="form-control"
+                                           placeholder="请输入服务名" style="margin-right: 3px;">
+                                    <input type="text" name="search" id="ip" value="${search!}" class="form-control"
+                                           placeholder="请输入IP地址" style="margin-right: 3px;">
+                                    <!-- 启用状态下拉框 -->
+                                    <label for="enabledSelect">启用状态：</label>
+                                    <select id="online" class="form-control" style="margin-right: 3px;">
+                                        <option value="">全部</option>
+                                        <option value="1">启用</option>
+                                        <option value="0">禁用</option>
+                                    </select>
+
+                                    <!-- 在线状态下拉框 -->
+                                    <label for="enabled">在线状态：</label>
+                                    <select id="enabled" class="form-control" style="margin-right: 3px;">
+                                        <option value="">全部</option>
+                                        <option value="1">在线</option>
+                                        <option value="0">离线</option>
+                                    </select>
                                     <div class="input-group-btn">
-                                        <button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+                                        <button class="btn btn-default" onclick="searchTableData(event)"><i class="fa fa-search"></i></button>
                                         <a class="btn btn-default" onclick="refreshTableData()"><i class="fas fa-sync-alt"></i></a>
                                     </div>
                                 </div>
@@ -90,6 +107,81 @@
         </section>
         <!-- /.content -->
     </div>
+    <!-- 修改弹框 -->
+    <div id="myModal" class="modal fade">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">修改</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="serviceNameInput">服务名</label>
+                                <input id="serviceNameInput" type="text" class="form-control" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="ipAddressInput">IP地址</label>
+                                <input id="ipAddressInput" type="text" class="form-control" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="onlineStatusInput">在线状态</label>
+                                <select id="onlineStatusInput" class="form-control" disabled>
+                                    <option value="1">在线</option>
+                                    <option value="0">离线</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="enabledStatusInput">启用状态</label>
+                                <select id="enabledStatusInput" class="form-control" disabled>
+                                    <option value="1">启用</option>
+                                    <option value="0">禁用</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="remarksInput">备注</label>
+                        <textarea id="remarksInput" class="form-control"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="saveRecord()">保存</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- 删除确认框 -->
+    <div id="confirmDeleteModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">确认删除</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="recordIdInput" value="">
+                    <p>确定要删除该记录吗？</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" onclick="deleteRecord()">删除</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- footer -->
     <@netCommon.commonFooter />
 
@@ -97,6 +189,30 @@
 <!-- ./wrapper -->
 <@netCommon.commonScript />
 <script>
+
+    function searchTableData(event) {
+        event.preventDefault();
+        debugger
+        var alias = $('#alias').val().trim();
+        var ip = $('#ip').val();
+        var online = $('#online').val();
+        var enabled = $('#enabled').val();
+        var searchCondition = {};
+
+        if (alias) {
+            searchCondition.alias = alias;
+        }
+        if (ip) {
+            searchCondition.ip = ip;
+        }
+        if (online) {
+            searchCondition.online = online;
+        }
+        if (enabled) {
+            searchCondition.enabled = enabled;
+        }
+        table.search(JSON.stringify(searchCondition)).draw();
+    }
     // 批量启用
     function enableAll() {
         debugger
@@ -126,7 +242,6 @@
                 contentType: "application/json",
                 success: function (response) {
                     refreshTableData();
-                    toastr.success("操作成功");
                 },
                 error: function (xhr, status, error) {
                     toastr.error("操作失败");
@@ -163,7 +278,6 @@
                 contentType: "application/json",
                 success: function (response) {
                     refreshTableData();
-                    toastr.success("操作成功");
                 },
                 error: function (xhr, status, error) {
                     toastr.error("操作失败");
@@ -181,34 +295,123 @@
 
         // Fetch updated data from the server
         $.ajax({
-            url: "${request.contextPath}/registry/list", // Replace with the actual URL to fetch updated data
+            url: "${request.contextPath}/registry/list",
             type: "POST",
             success: function (data) {
                 $('input[name="userState"]').prop('checked', false);
                 table.rows.add(data).draw();
+                toastr.success("操作成功");
             },
             error: function (xhr, status, error) {
-                // Handle any errors that occur during the request
-                console.error("Failed to fetch updated data");
-                console.error(xhr.responseText);
+                // toastr.success("操作失败");
             }
         });
     }
 
-    // 修改
+    // 修改按钮点击事件处理函数
     function update(me) {
-        var row = table.rows($(me).parents('tr')).data()[0]; // 选中行数的数据
-        alert('修改：' + JSON.stringify(row))
+        var rowData = table.rows($(me).parents('tr')).data()[0]; // 选中行数的数据
+        var id = rowData.id;
+        $('#recordIdInput').val(id);
+        // 将行数据填充到弹框的表单控件中
+        $('#serviceNameInput').val(rowData.alias);
+        $('#ipAddressInput').val(rowData.ip);
+        $('#onlineStatusInput').val(rowData.online);
+        $('#enabledStatusInput').val(rowData.enabled);
+        $('#remarksInput').val(rowData.remarks);
+
+        // 弹出修改弹框
+        $('#myModal').modal('show');
+    }
+
+    // 保存记录按钮点击事件处理函数
+    function saveRecord() {
+        var id = $('#recordIdInput').val();
+        var remarks = $('#remarksInput').val(); // 获取修改后的备注信息
+        // 保存记录的逻辑...
+        var obj = {};
+        obj.id = id;
+        obj.remarks = remarks;
+        var data = JSON.stringify(obj);
+
+        // 删除记录的逻辑...
+        $.ajax({
+            url: "${request.contextPath}/registry/update",
+            type: "post",
+            data: data,
+            contentType: "application/json",
+            success: function (data) {
+                refreshTableData();
+            },
+            error: function (xhr, status, error) {
+                // toastr.success("操作失败");
+            }
+        });
+        // 关闭修改弹框
+        $('#myModal').modal('hide');
+
+        // 刷新表格数据
+        refreshTableData();
+    }
+
+    // 删除按钮点击事件处理函数
+    function del(me) {
+        Swal.fire({
+            title: '确认删除',
+            text: '您确定要删除该记录吗？',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: '确认',
+            cancelButtonText: '取消'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // 发送删除请求的代码
+                deleteRecord(me);
+            }
+        });
+    }
+
+
+    // 执行删除操作的逻辑
+    function deleteRecord(me) {
+        var rowData = table.rows($(me).parents('tr')).data()[0]; // 选中行数的数据
+        var id = rowData.id;
+
+        var obj = {};
+        obj.id = id;
+        obj.deleted = 1;
+        var data = JSON.stringify(obj);
+
+        // 删除记录的逻辑...
+        $.ajax({
+            url: "${request.contextPath}/registry/update",
+            type: "post",
+            data: data,
+            contentType: "application/json",
+            success: function (data) {
+                refreshTableData();
+            },
+            error: function (xhr, status, error) {
+                toastr.success("操作失败");
+            }
+        });
+        // 关闭删除确认框
+        $('#confirmDeleteModal').modal('hide');
+
+        // 刷新表格数据
+        refreshTableData();
     }
 
     // 删除
-    async function del(me) {
-        var row = table.rows($(me).parents('tr')).data()[0]; // 选中行数的数据
-        var {first_name} = row; //这里一般是主键，但是没有传过来的id值，这里就用name替代了
-        var param = {first_name, method: 'del'}; //传递的参数，也可以在添加一些判断条件
-        $(me).parents('tr').remove();
-        alert('删除成功')
-    }
+    // async function del(me) {
+    //     var row = table.rows($(me).parents('tr')).data()[0]; // 选中行数的数据
+    //     var {first_name} = row; //这里一般是主键，但是没有传过来的id值，这里就用name替代了
+    //     var param = {first_name, method: 'del'}; //传递的参数，也可以在添加一些判断条件
+    //     $(me).parents('tr').remove();
+    //     alert('删除成功')
+    // }
 
     function checkItem(checkbox){
         var isChecked = checkbox.checked;
@@ -235,8 +438,10 @@
                 contentType: "application/json",
                 data: function (d) {
                     var obj = {};
-                    obj.alias = $("#serviceName").val();
+                    obj.alias = $("#alias").val();
                     obj.ip = $("#ip").val();
+                    obj.online = $("#online").val();
+                    obj.enabled = $("#enabled").val();
                     obj.currentPage = d.start;
                     obj.pageSize = d.length;
                     return JSON.stringify(obj);
@@ -246,9 +451,10 @@
                 // Toastr初始化
                 toastr.options = {
                     closeButton: true,
-                    progressBar: true,
-                    positionClass: "toast-top-right",
-                    timeOut: 3000
+                    progressBar: false,
+                    preventDuplicates: true,
+                    positionClass: "toast-top-center",
+                    timeOut: 1000
                 };
             },
             "columns": [{
@@ -272,7 +478,7 @@
                 },
                 {
                 "data": "alias",
-                "width": '20%',
+                // "width": '20%',
                 'render': function (data, type, row) {
                     return "<span style='color:blue'>" + data + '</span>';
                 },
@@ -280,10 +486,10 @@
                 "orderable": false
                 },
                 {"data": "ip", "orderable": false},
-                {"data": "online", "orderable": false},
-                {"data": "enabled", "orderable": false},
+                {"data": "onlineMc", "orderable": false},
+                {"data": "enabledMc", "orderable": false},
                 {"data": "remarks", "orderable": false},
-                {"data": "createAt", "orderable": false},
+                {"data": "createTime", "orderable": false},
                 // {"data": "updateAt", "orderable": false},
                 {
                     'sTitle': '操作',

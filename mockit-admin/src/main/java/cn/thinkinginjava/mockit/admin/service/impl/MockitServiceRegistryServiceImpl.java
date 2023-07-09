@@ -25,6 +25,8 @@ import cn.thinkinginjava.mockit.admin.model.entity.MockitMethodMockData;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceClass;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceMethod;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceRegistry;
+import cn.thinkinginjava.mockit.admin.model.enums.EnabledStatusEnum;
+import cn.thinkinginjava.mockit.admin.model.enums.OnlineStatusEnum;
 import cn.thinkinginjava.mockit.admin.model.vo.MockitServiceRegistryVO;
 import cn.thinkinginjava.mockit.admin.service.IMockitMethodMockDataService;
 import cn.thinkinginjava.mockit.admin.service.IMockitServiceClassService;
@@ -47,6 +49,7 @@ import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -188,6 +191,9 @@ public class MockitServiceRegistryServiceImpl extends ServiceImpl<MockitServiceR
                 mockitServiceRegistryDTO.getPageSize()), queryWrapper).convert(mockitServiceRegistry -> {
             MockitServiceRegistryVO mockitServiceRegistryVO = new MockitServiceRegistryVO();
             BeanUtils.copyProperties(mockitServiceRegistry, mockitServiceRegistryVO);
+            mockitServiceRegistryVO.setEnabledMc(EnabledStatusEnum.getByValue(mockitServiceRegistry.getEnabled()));
+            mockitServiceRegistryVO.setOnlineMc(OnlineStatusEnum.getByValue(mockitServiceRegistry.getOnline()));
+            mockitServiceRegistryVO.setCreateTime(DateFormatUtils.format(mockitServiceRegistry.getCreateAt(), MockConstants.Y_M_D));
             return mockitServiceRegistryVO;
         });
     }

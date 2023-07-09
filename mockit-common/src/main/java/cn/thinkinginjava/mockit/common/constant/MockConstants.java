@@ -68,4 +68,8 @@ public class MockConstants {
      * The no field name.
      */
     public static final Integer NO = 0;
+    /**
+     * The no field name.
+     */
+    public static final String Y_M_D = "yyyy-MM-dd HH:mm:ss";
 }

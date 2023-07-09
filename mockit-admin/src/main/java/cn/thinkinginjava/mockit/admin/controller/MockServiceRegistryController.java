@@ -90,6 +90,7 @@ public class MockServiceRegistryController {
      * @return A MockitResult object indicating the result of the update operation.
      */
     @RequestMapping("/update")
+    @ResponseBody
     public MockitResult<Void> update(@RequestBody MockitServiceRegistryDTO mockitServiceRegistryDTO) {
         if (StringUtils.isEmpty(mockitServiceRegistryDTO.getId())) {
             throw new MockitException("service id can not empty.");
@@ -108,6 +109,7 @@ public class MockServiceRegistryController {
      * @return A MockitResult object indicating the result of the mocking operation.
      */
     @RequestMapping("/mock")
+    @ResponseBody
     public MockitResult<Void> mock(@Valid @RequestBody BatchCommonDTO batchCommonDTO) {
         iMockitServiceRegistryService.mock(batchCommonDTO);
         return MockitResult.successful();
@@ -120,6 +122,7 @@ public class MockServiceRegistryController {
      * @return A MockitResult object indicating the result of the canceling operation.
      */
     @RequestMapping("/cancelMock")
+    @ResponseBody
     public MockitResult<Void> cancelMock(@Valid @RequestBody BatchCommonDTO batchCommonDTO) {
         iMockitServiceRegistryService.cancelMock(batchCommonDTO);
         return MockitResult.successful();

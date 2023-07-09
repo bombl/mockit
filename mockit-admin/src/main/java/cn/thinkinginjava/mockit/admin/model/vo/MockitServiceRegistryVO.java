@@ -51,9 +51,19 @@ public class MockitServiceRegistryVO implements Serializable {
     private Integer online;
 
     /**
+     * Indicates if the service is online（0.online, 1.offline）
+     */
+    private String onlineMc;
+
+    /**
      * Indicates if the service is enabled or disabled（0.disabled, 1.enabled）
      */
     private Integer enabled;
+
+    /**
+     * Indicates if the service is enabled or disabled（0.disabled, 1.enabled）
+     */
+    private String enabledMc;
 
     /**
      * Marks if the service is deleted（0.not deleted, 1.deleted）
@@ -69,6 +79,11 @@ public class MockitServiceRegistryVO implements Serializable {
      * Date and time when the service was created
      */
     private Date createAt;
+
+    /**
+     * Date and time when the service was created
+     */
+    private String createTime;
 
     /**
      * Date and time when the service was updated
