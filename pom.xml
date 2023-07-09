@@ -5,10 +5,10 @@
     <groupId>cn.thinkinginjava</groupId>
     <artifactId>mockit</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.1</version>
+    <version>${revision}</version>
     <name>mockit</name>
     <description>Non-invasive mock framework</description>
-    <url>https://github.com/alibaba/easyexcel</url>
+    <url>https://github.com/bombl/mockit</url>
     <modules>
         <module>mockit-admin</module>
         <module>mockit-client</module>
@@ -55,6 +55,7 @@
 
     <properties>
         <java.version>1.8</java.version>
+        <revision>0.0.1</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <spring-boot.version>2.6.8</spring-boot.version>
@@ -88,6 +89,42 @@
                 <version>${spring-boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.thinkinginjava</groupId>
+                <artifactId>mockit-core</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.thinkinginjava</groupId>
+                <artifactId>mockit-spring-boot-starter</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.thinkinginjava</groupId>
+                <artifactId>mockit-common</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.thinkinginjava</groupId>
+                <artifactId>mockit-client</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.thinkinginjava</groupId>
+                <artifactId>mockit-example</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.thinkinginjava</groupId>
+                <artifactId>mockit-admin</artifactId>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
@@ -162,6 +199,39 @@
                         <id>attach-javadocs</id>
                         <goals>
                             <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>1.2.7</version>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>oss</flattenMode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten.process-resources</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
                         </goals>
                     </execution>
                 </executions>
