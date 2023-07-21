@@ -19,8 +19,13 @@ import cn.thinkinginjava.mockit.admin.mapper.MockitServiceClassMapper;
 import cn.thinkinginjava.mockit.admin.model.dto.BatchCommonDTO;
 import cn.thinkinginjava.mockit.admin.model.dto.MockitServiceClassDTO;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceClass;
+import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceRegistry;
+import cn.thinkinginjava.mockit.admin.model.enums.EnabledStatusEnum;
+import cn.thinkinginjava.mockit.admin.model.enums.OnlineStatusEnum;
 import cn.thinkinginjava.mockit.admin.model.vo.MockitServiceClassVO;
 import cn.thinkinginjava.mockit.admin.service.IMockitServiceClassService;
+import cn.thinkinginjava.mockit.admin.service.IMockitServiceRegistryService;
+import cn.thinkinginjava.mockit.admin.utils.UUIDUtils;
 import cn.thinkinginjava.mockit.common.constant.MockConstants;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -28,9 +33,12 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 
@@ -50,8 +58,12 @@ public class MockitServiceClassServiceImpl extends ServiceImpl<MockitServiceClas
     public void addClass(MockitServiceClassDTO mockitServiceClassDTO) {
         MockitServiceClass mockitServiceClass = new MockitServiceClass();
         BeanUtils.copyProperties(mockitServiceClassDTO, mockitServiceClass);
+        mockitServiceClass.setId(UUIDUtils.getUuid());
+        mockitServiceClass.setMockEnabled(mockitServiceClassDTO.getMockEnabled());
+        mockitServiceClass.setDeleted(MockConstants.NO);
         mockitServiceClass.setCreateAt(new Date());
         mockitServiceClass.setUpdateAt(new Date());
+        mockitServiceClass.setId(UUIDUtils.getUuid());
         save(mockitServiceClass);
     }
 
@@ -64,6 +76,9 @@ public class MockitServiceClassServiceImpl extends ServiceImpl<MockitServiceClas
     @Override
     public IPage<MockitServiceClassVO> listByPage(MockitServiceClassDTO mockitServiceClassDTO) {
         LambdaQueryWrapper<MockitServiceClass> queryWrapper = new LambdaQueryWrapper<>();
+        if (StringUtils.isNotEmpty(mockitServiceClassDTO.getServiceId())) {
+            queryWrapper.eq(MockitServiceClass::getServiceId, mockitServiceClassDTO.getServiceId());
+        }
         if (StringUtils.isNotEmpty(mockitServiceClassDTO.getClassName())) {
             queryWrapper.like(MockitServiceClass::getClassName, mockitServiceClassDTO.getClassName());
         }
@@ -76,6 +91,8 @@ public class MockitServiceClassServiceImpl extends ServiceImpl<MockitServiceClas
                 mockitServiceClassDTO.getPageSize()), queryWrapper).convert(mockitServiceClass -> {
             MockitServiceClassVO mockitServiceClassVO = new MockitServiceClassVO();
             BeanUtils.copyProperties(mockitServiceClass, mockitServiceClassVO);
+            mockitServiceClassVO.setMockEnabledMc(EnabledStatusEnum.getByValue(mockitServiceClass.getMockEnabled()));
+            mockitServiceClassVO.setCreateTime(DateFormatUtils.format(mockitServiceClass.getCreateAt(), MockConstants.Y_M_D));
             return mockitServiceClassVO;
         });
     }

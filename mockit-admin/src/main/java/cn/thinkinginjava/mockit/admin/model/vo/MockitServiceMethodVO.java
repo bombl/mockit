@@ -75,6 +75,11 @@ public class MockitServiceMethodVO extends BaseDTO {
     private Integer mockEnabled;
 
     /**
+     * Indicates if the service is enabled or disabled（0.disabled, 1.enabled）
+     */
+    private String mockEnabledMc;
+
+    /**
      * Marks if the service method is deleted（0.not deleted, 1.deleted）
      */
     private Integer deleted;
@@ -90,9 +95,20 @@ public class MockitServiceMethodVO extends BaseDTO {
     private Date createAt;
 
     /**
+     * Date and time when the service class was created
+     */
+    private String createTime;
+
+    /**
      * Date and time when the service method was updated
      */
     private Date updateAt;
+
+    private String alias;
+
+    private String className;
+
+    private String methodInfo;
 
     private MockitMethodMockDataDTO mockDataDTO;
 }

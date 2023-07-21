@@ -36,6 +36,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Represents a mock service registry controller.
@@ -55,7 +56,7 @@ public class MockServiceRegistryController {
      */
     @RequestMapping("/list")
     @ResponseBody
-    public Map<String,Object> list(@RequestBody MockitServiceRegistryDTO mockitServiceRegistryDTO) {
+    public Map<String, Object> list(@RequestBody MockitServiceRegistryDTO mockitServiceRegistryDTO) {
         if (mockitServiceRegistryDTO.getCurrentPage() == null) {
             throw new MockitException("currentPage can not empty.");
         }
@@ -126,5 +127,16 @@ public class MockServiceRegistryController {
     public MockitResult<Void> cancelMock(@Valid @RequestBody BatchCommonDTO batchCommonDTO) {
         iMockitServiceRegistryService.cancelMock(batchCommonDTO);
         return MockitResult.successful();
+    }
+
+    @RequestMapping("/alias")
+    @ResponseBody
+    public List<MockitServiceRegistryVO> alias() {
+        List<MockitServiceRegistry> list = iMockitServiceRegistryService.list();
+        return list.stream().map(i -> {
+            MockitServiceRegistryVO resp = new MockitServiceRegistryVO();
+            BeanUtils.copyProperties(i, resp);
+            return resp;
+        }).collect(Collectors.toList());
     }
 }

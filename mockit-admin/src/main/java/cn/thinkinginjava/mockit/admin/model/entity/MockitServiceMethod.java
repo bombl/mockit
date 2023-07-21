@@ -101,6 +101,4 @@ public class MockitServiceMethod implements Serializable {
      */
     @TableField("update_at")
     private Date updateAt;
-
-    private MockitMethodMockDataDTO mockDataDTO;
 }

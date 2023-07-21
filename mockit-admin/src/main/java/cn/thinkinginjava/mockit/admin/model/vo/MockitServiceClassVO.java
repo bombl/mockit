@@ -35,6 +35,8 @@ public class MockitServiceClassVO implements Serializable {
 
     private String id;
 
+    private String alias;
+
     /**
      * Service id
      */
@@ -49,6 +51,11 @@ public class MockitServiceClassVO implements Serializable {
      * Indicates whether the service class is mocked or not（0.disabled, 1.enabled）
      */
     private Integer mockEnabled;
+
+    /**
+     * Indicates if the service is enabled or disabled（0.disabled, 1.enabled）
+     */
+    private String mockEnabledMc;
 
     /**
      * Marks if the service class is deleted（0.not deleted, 1.deleted）
@@ -69,6 +76,11 @@ public class MockitServiceClassVO implements Serializable {
      * Date and time when the service class was updated
      */
     private Date updateAt;
+
+    /**
+     * Date and time when the service class was created
+     */
+    private String createTime;
 
 
 }

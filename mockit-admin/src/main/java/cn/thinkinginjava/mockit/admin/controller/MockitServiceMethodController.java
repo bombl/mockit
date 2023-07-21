@@ -17,20 +17,29 @@ package cn.thinkinginjava.mockit.admin.controller;
 
 import cn.thinkinginjava.mockit.admin.model.dto.*;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceClass;
-import cn.thinkinginjava.mockit.admin.model.vo.MockitServiceClassVO;
+import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceRegistry;
 import cn.thinkinginjava.mockit.admin.model.vo.MockitServiceMethodVO;
+import cn.thinkinginjava.mockit.admin.service.IMockitServiceClassService;
 import cn.thinkinginjava.mockit.admin.service.IMockitServiceMethodService;
+import cn.thinkinginjava.mockit.admin.service.IMockitServiceRegistryService;
+import cn.thinkinginjava.mockit.common.constant.MockConstants;
 import cn.thinkinginjava.mockit.common.exception.MockitException;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
-import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Represents a controller for managing MockitServiceMethod.
@@ -42,19 +51,29 @@ public class MockitServiceMethodController {
     @Resource
     private IMockitServiceMethodService iMockitServiceMethodService;
 
+    @Resource
+    private IMockitServiceClassService iMockitServiceClassService;
+
+    @Resource
+    private IMockitServiceRegistryService iMockitServiceRegistryService;
+
     /**
      * Saves or updates a MockitServiceMethod based on the provided MockitServiceMethodDTO.
      *
-     * @param mockitServiceMethodDTO The DTO object containing the information of the MockitServiceMethod to be saved or updated.
+     * @param mockitMethodDTO The DTO object containing the information of the MockitServiceMethod to be saved or updated.
      * @return A MockitResult object indicating the result of the save or update operation.
      */
     @RequestMapping("/saveOrUpdate")
-    public MockitResult<Void> saveOrUpdate(@Valid @RequestBody MockitServiceMethodDTO mockitServiceMethodDTO) {
-        MockitMethodMockDataDTO mockDataDTO = mockitServiceMethodDTO.getMockDataDTO();
-        if (mockDataDTO == null || StringUtils.isEmpty(mockDataDTO.getMockValue())) {
-            throw new MockitException("Mock value can not empty.");
+    @ResponseBody
+    public MockitResult<Void> saveOrUpdate(@Valid @RequestBody MockitMethodDTO mockitMethodDTO) {
+        List<MockitServiceMethodDTO> mockitMethodList = mockitMethodDTO.getMockitMethodList();
+        for (MockitServiceMethodDTO mockitServiceMethodDTO : mockitMethodList) {
+//            MockitMethodMockDataDTO mockDataDTO = mockitServiceMethodDTO.getMockDataDTO();
+//            if (mockDataDTO == null || StringUtils.isEmpty(mockDataDTO.getMockValue())) {
+//                throw new MockitException("Mock value can not empty.");
+//            }
+            iMockitServiceMethodService.saveOrUpdateMethod(mockitServiceMethodDTO);
         }
-        iMockitServiceMethodService.saveOrUpdateMethod(mockitServiceMethodDTO);
         return MockitResult.successful();
     }
 
@@ -65,15 +84,50 @@ public class MockitServiceMethodController {
      * @return A MockitResult object encapsulating the paginated list of MockitServiceMethodVO objects.
      */
     @RequestMapping("/list")
-    public MockitResult<IPage<MockitServiceMethodVO>> list(@RequestBody MockitServiceMethodDTO mockitServiceMethodDTO) {
+    @ResponseBody
+    public Map<String, Object> list(@RequestBody MockitServiceMethodDTO mockitServiceMethodDTO) {
         if (mockitServiceMethodDTO.getCurrentPage() == null) {
             throw new MockitException("currentPage can not empty.");
         }
         if (mockitServiceMethodDTO.getPageSize() == null) {
             throw new MockitException("pageSize can not empty.");
         }
+        LambdaQueryWrapper<MockitServiceClass> queryWrapper = new LambdaQueryWrapper<>();
+        if (StringUtils.isNotBlank(mockitServiceMethodDTO.getServiceId())) {
+            queryWrapper.eq(MockitServiceClass::getServiceId, mockitServiceMethodDTO.getClassId());
+        }
+        queryWrapper.eq(MockitServiceClass::getDeleted, MockConstants.NO);
+        List<MockitServiceClass> mockitServiceClassList = iMockitServiceClassService.list(queryWrapper);
+        if (CollectionUtils.isEmpty(mockitServiceClassList)) {
+            return new HashMap<>();
+        }
+        List<String> classIdList = mockitServiceClassList.stream().filter(mockitServiceClass -> {
+            if (StringUtils.isNotBlank(mockitServiceMethodDTO.getClassName())) {
+                return mockitServiceClass.getClassName().contains(mockitServiceMethodDTO.getClassName());
+            }
+            return Boolean.TRUE;
+        }).map(MockitServiceClass::getId).collect(Collectors.toList());
+        mockitServiceMethodDTO.setClassIdList(classIdList);
+        if (CollectionUtils.isEmpty(classIdList)) {
+            return new HashMap<>();
+        }
         IPage<MockitServiceMethodVO> page = iMockitServiceMethodService.listByPage(mockitServiceMethodDTO);
-        return MockitResult.successful(page);
+        page.convert(mockitServiceMethod -> {
+            MockitServiceMethodVO mockitServiceMethodVO = new MockitServiceMethodVO();
+            BeanUtils.copyProperties(mockitServiceMethod, mockitServiceMethodVO);
+            MockitServiceClass mockitServiceClass = iMockitServiceClassService.getById(mockitServiceMethod.getClassId());
+            if (mockitServiceClass != null) {
+                mockitServiceMethodVO.setClassName(mockitServiceClass.getClassName());
+                MockitServiceRegistry mockitService = iMockitServiceRegistryService.getById(mockitServiceClass.getServiceId());
+                mockitServiceMethodVO.setAlias(mockitService.getAlias());
+            }
+            return mockitServiceMethodVO;
+        });
+        Map<String, Object> map = new HashMap<>();
+        map.put("recordsTotal", page.getRecords().size());
+        map.put("recordsFiltered", page.getRecords().size());
+        map.put("data", page.getRecords());
+        return map;
     }
 
     /**
@@ -83,6 +137,7 @@ public class MockitServiceMethodController {
      * @return A MockitResult object indicating the result of the operation.
      */
     @RequestMapping("/batchEnabled")
+    @ResponseBody
     public MockitResult<Void> enabled(@Valid @RequestBody BatchCommonDTO batchCommonDTO) {
         iMockitServiceMethodService.batchEnabled(batchCommonDTO);
         return MockitResult.successful();
@@ -95,6 +150,7 @@ public class MockitServiceMethodController {
      * @return A MockitResult object indicating the result of the deletion operation.
      */
     @RequestMapping("/batchDelete")
+    @ResponseBody
     public MockitResult<Void> delete(@Valid @RequestBody BatchCommonDTO batchCommonDTO) {
         iMockitServiceMethodService.batchDelete(batchCommonDTO);
         return MockitResult.successful();

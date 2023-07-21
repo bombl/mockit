@@ -22,6 +22,7 @@ import lombok.experimental.Accessors;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Represents a Mockit service method.
@@ -91,6 +92,12 @@ public class MockitServiceMethodDTO extends BaseDTO {
      * Date and time when the service method was updated
      */
     private Date updateAt;
+
+    private String serviceId;
+
+    private String className;
+
+    private List<String> classIdList;
 
     private MockitMethodMockDataDTO mockDataDTO;
 }

@@ -16,22 +16,28 @@
 package cn.thinkinginjava.mockit.admin.controller;
 
 import cn.thinkinginjava.mockit.admin.model.dto.BatchCommonDTO;
+import cn.thinkinginjava.mockit.admin.model.dto.MockitMethodDTO;
 import cn.thinkinginjava.mockit.admin.model.dto.MockitResult;
 import cn.thinkinginjava.mockit.admin.model.dto.MockitServiceClassDTO;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceClass;
+import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceRegistry;
 import cn.thinkinginjava.mockit.admin.model.vo.MockitServiceClassVO;
 import cn.thinkinginjava.mockit.admin.service.IMockitServiceClassService;
+import cn.thinkinginjava.mockit.admin.service.IMockitServiceRegistryService;
+import cn.thinkinginjava.mockit.common.constant.MockConstants;
 import cn.thinkinginjava.mockit.common.exception.MockitException;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
-import java.util.Date;
+import java.util.*;
 
 /**
  * Represents a controller for managing MockitServiceClass.
@@ -43,6 +49,9 @@ public class MockitServiceClassController {
     @Resource
     private IMockitServiceClassService iMockitServiceClassService;
 
+    @Resource
+    private IMockitServiceRegistryService iMockitServiceRegistryService;
+
     /**
      * Adds a MockitServiceClass based on the provided MockitServiceClassDTO.
      *
@@ -50,6 +59,7 @@ public class MockitServiceClassController {
      * @return A MockitResult object indicating the result of the add operation.
      */
     @RequestMapping("/add")
+    @ResponseBody
     public MockitResult<Void> addClass(@Valid @RequestBody MockitServiceClassDTO mockitServiceClassDTO) {
         iMockitServiceClassService.addClass(mockitServiceClassDTO);
         return MockitResult.successful();
@@ -62,7 +72,8 @@ public class MockitServiceClassController {
      * @return A MockitResult object encapsulating the paginated list of MockitServiceClassVO objects.
      */
     @RequestMapping("/list")
-    public MockitResult<IPage<MockitServiceClassVO>> list(@RequestBody MockitServiceClassDTO mockitServiceClassDTO) {
+    @ResponseBody
+    public Map<String, Object> list(@RequestBody MockitServiceClassDTO mockitServiceClassDTO) {
         if (mockitServiceClassDTO.getCurrentPage() == null) {
             throw new MockitException("currentPage can not empty.");
         }
@@ -70,7 +81,20 @@ public class MockitServiceClassController {
             throw new MockitException("pageSize can not empty.");
         }
         IPage<MockitServiceClassVO> page = iMockitServiceClassService.listByPage(mockitServiceClassDTO);
-        return MockitResult.successful(page);
+        page.convert(mockitServiceClass -> {
+            MockitServiceClassVO mockitServiceClassVO = new MockitServiceClassVO();
+            BeanUtils.copyProperties(mockitServiceClass, mockitServiceClassVO);
+            MockitServiceRegistry mockitServiceRegistry = iMockitServiceRegistryService.getById(mockitServiceClass.getServiceId());
+            if (mockitServiceRegistry != null) {
+                mockitServiceClassVO.setAlias(mockitServiceRegistry.getAlias());
+            }
+            return mockitServiceClassVO;
+        });
+        Map<String, Object> map = new HashMap<>();
+        map.put("recordsTotal", page.getRecords().size());
+        map.put("recordsFiltered", page.getRecords().size());
+        map.put("data", page.getRecords());
+        return map;
     }
 
     /**
@@ -80,6 +104,7 @@ public class MockitServiceClassController {
      * @return A MockitResult object indicating the result of the update operation.
      */
     @RequestMapping("/update")
+    @ResponseBody
     public MockitResult<Void> update(@RequestBody MockitServiceClassDTO mockitServiceClassDTO) {
         if (StringUtils.isEmpty(mockitServiceClassDTO.getId())) {
             throw new MockitException("service id can not empty.");
@@ -97,7 +122,8 @@ public class MockitServiceClassController {
      * @param batchCommonDTO The DTO object containing the batch of items and the desired enabled status.
      * @return A MockitResult object indicating the result of the operation.
      */
-    @RequestMapping("/batchEnabled")
+    @RequestMapping("/enabled")
+    @ResponseBody
     public MockitResult<Void> enabled(@Valid @RequestBody BatchCommonDTO batchCommonDTO) {
         iMockitServiceClassService.batchEnabled(batchCommonDTO);
         return MockitResult.successful();
@@ -110,8 +136,25 @@ public class MockitServiceClassController {
      * @return A MockitResult object indicating the result of the deletion operation.
      */
     @RequestMapping("/batchDelete")
+    @ResponseBody
     public MockitResult<Void> delete(@Valid @RequestBody BatchCommonDTO batchCommonDTO) {
         iMockitServiceClassService.batchDelete(batchCommonDTO);
         return MockitResult.successful();
+    }
+
+    @RequestMapping("/listClass")
+    @ResponseBody
+    public MockitResult<List<MockitServiceClassVO>> listClass(@RequestBody MockitServiceClassDTO mockitServiceClassDTO) {
+        LambdaQueryWrapper<MockitServiceClass> mockitServiceClassLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        mockitServiceClassLambdaQueryWrapper.eq(MockitServiceClass::getServiceId,mockitServiceClassDTO.getServiceId());
+        mockitServiceClassLambdaQueryWrapper.eq(MockitServiceClass::getDeleted, MockConstants.NO);
+        List<MockitServiceClass> mockitServiceClassList = iMockitServiceClassService.list(mockitServiceClassLambdaQueryWrapper);
+        List<MockitServiceClassVO> result = new ArrayList<>();
+        for (MockitServiceClass mockitServiceClass : mockitServiceClassList) {
+            MockitServiceClassVO mockitServiceClassVO = new MockitServiceClassVO();
+            BeanUtils.copyProperties(mockitServiceClass,mockitServiceClassVO);
+            result.add(mockitServiceClassVO);
+        }
+        return MockitResult.successful(result);
     }
 }

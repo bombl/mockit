@@ -37,13 +37,13 @@
                                 <div class="box-header">
                                     <div class="input-group">
                                         <a class="btn btn-primary dialog" style="margin-right: 3px;background-color: #3c8dbc;" href="javascript:;" data-url="/system/user/add"
-                                           data-title="创建新用户" data-width="850" data-height="550" onclick="enableAll()"><i class="fa fa-check"></i>启用</a>
+                                           data-title="启用" data-width="850" data-height="550" onclick="enableAll()"><i class="fa fa-check"></i>启用</a>
                                     </div>
                                 </div>
                                 <div class="box-header">
                                     <div class="input-group">
                                         <a class="btn btn-primary dialog" style="margin-right: 3px;background-color: #dd4b39;" href="javascript:;" href="javascript:;" data-url="/system/user/add"
-                                           data-title="创建新用户" data-width="850" data-height="550" onclick="disableAll()"><i class="fa fa-times"></i>禁用</a>
+                                           data-title="禁用" data-width="850" data-height="550" onclick="disableAll()"><i class="fa fa-times"></i>禁用</a>
                                     </div>
                                 </div>
                                 <div class="input-group">
@@ -192,7 +192,6 @@
 
     function searchTableData(event) {
         event.preventDefault();
-        debugger
         var alias = $('#alias').val().trim();
         var ip = $('#ip').val();
         var online = $('#online').val();
@@ -215,7 +214,6 @@
     }
     // 批量启用
     function enableAll() {
-        debugger
         var ids = [];
 
         table.rows().every(function () {
@@ -226,10 +224,6 @@
                 ids.push(selectedId);
             }
         });
-
-        // Perform the batch enable action using the serviceNames array
-        console.log('Enable:', ids);
-
         if (ids.length > 0) {
             var obj = {};
             obj.ids = ids;
@@ -262,10 +256,6 @@
                 ids.push(selectedId);
             }
         });
-
-        // Perform the batch enable action using the serviceNames array
-        console.log('Enable:', ids);
-
         if (ids.length > 0) {
             var obj = {};
             obj.ids = ids;
@@ -428,6 +418,26 @@
 
     $(document).ready(function () {
         table = $('#example2').DataTable({
+            "columnDefs": [
+                {
+                    "targets": "_all", // Apply to all columns
+                    "className": "text-center" // Center align the content
+                },
+                {
+                    "targets": 6,
+                    "width": "35px",
+                    "render": function (data, type, row) {
+                        const maxChars = 10; // Adjust the maximum characters as needed
+
+                        if (data && data.length > maxChars) {
+                            const truncatedData = data.substr(0, maxChars - 3) + '...';
+                            return '<span title="' + data + '">' + truncatedData + '</span>';
+                        } else {
+                            return data;
+                        }
+                    }
+                },
+            ],
             "searching": false,
             "processing": true,
             "serverSide": true,
