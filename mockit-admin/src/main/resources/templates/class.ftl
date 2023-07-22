@@ -23,10 +23,12 @@
         #example2 th {
             text-align: center;
         }
-        .ellipsis {
+        #example2 th {
+            text-align: center;
+        }
+        #example2 th,
+        #example2 td {
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
     </style>
     <title>Mockit</title>
@@ -103,7 +105,7 @@
                                     <div class="card">
                                         <!-- /.card-header -->
                                         <div class="card-body">
-                                            <table id="example2" class="table table-striped table-bordered table-hover">
+                                            <table id="example2" class="table table-striped table-bordered table-hover" style="width:100%">
                                                 <thead>
                                                 <tr>
                                                     <th><input name="userState" type="checkbox" onclick="checkItem(this)" class="minimal checkbox-toolbar"></th>
@@ -576,46 +578,44 @@
             }
         });
         table = $('#example2').DataTable({
+            "autoWidth": true,
+            "scrollX": true,
+            "scrollCollapse": true,
+            fixedColumns: {
+                left: 2,
+                right: 1
+            },
+            scrollY: true,
             "columnDefs": [
                 {
                     "targets": "_all", // Apply to all columns
                     "className": "text-center" // Center align the content
                 },
                 {
-                    "targets": 0,
-                    "width": "4px"
-                },
-                {
-                    "targets": 1, // Index of the "类名" column (zero-based)
-                    "width": "40px"
-                },
-                {
-                    "targets": 2, // Index of the "类名" column (zero-based)
-                    "width": "30px"
-                },
-                {
                     "targets": 3, // Index of the "类名" column (zero-based)
                     "width": "120px",
                     "render": function (data, type, row) {
-                        const maxChars = 59; // Adjust the maximum characters as needed
+                        const maxChars = 30;
 
                         if (data && data.length > maxChars) {
-                            const truncatedData = data.substr(0, maxChars - 3) + '...';
-                            return '<span title="' + data + '">' + truncatedData + '</span>';
+                            const lastIndex = data.lastIndexOf('.');
+                            if (lastIndex > maxChars - 3) {
+                                const truncatedData = data.substr(lastIndex + 1);
+                                return '<span title="' + data + '">' + truncatedData + '</span>';
+                            } else {
+                                const truncatedData = data.substr(0, maxChars - 3) + '...';
+                                return '<span title="' + data + '">' + truncatedData + '</span>';
+                            }
                         } else {
                             return data;
                         }
                     }
-                },
-                {
-                    "targets": 4,
-                    "width": "90px"
                 },
                 {
                     "targets": 5,
-                    "width": "35px",
+                    "width": "60px",
                     "render": function (data, type, row) {
-                        const maxChars = 10; // Adjust the maximum characters as needed
+                        const maxChars = 20; // Adjust the maximum characters as needed
 
                         if (data && data.length > maxChars) {
                             const truncatedData = data.substr(0, maxChars - 3) + '...';
@@ -624,14 +624,6 @@
                             return data;
                         }
                     }
-                },
-                {
-                    "targets": 6,
-                    "width": "160px"
-                },
-                {
-                    "targets": 7,
-                    "width": "120px"
                 }
             ],
             "searching": false,
@@ -671,6 +663,7 @@
                 checkboxes: {
                     selectRow: true
                 },
+                data: null,
                 render: function (data, type, row, meta) {
                     var id = row.id;
                     return '<div style="text-align: center;"><input name="userState" type="checkbox" class="minimal checkbox-toolbar" data-id="' + id + '" style="width: 20px;"></div>';
@@ -700,6 +693,7 @@
                 {
                     'sTitle': '操作',
                     "orderable": false,
+                    data: null,
                     'render': function (data, type, row) {
                         return `
                             <button type="button" class="btn btn-sm btn-info" onclick="update(this)">修改</button>

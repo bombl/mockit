@@ -3,6 +3,18 @@
 <head>
     <#import "./common/common.ftl" as netCommon>
     <@netCommon.commonStyle />
+    <style>
+        #example2 th {
+            text-align: center;
+        }
+        #example2 th {
+            text-align: center;
+        }
+        #example2 th,
+        #example2 td {
+            white-space: nowrap;
+        }
+    </style>
     <title>Mockit</title>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -77,7 +89,7 @@
                                     <div class="card">
                                         <!-- /.card-header -->
                                         <div class="card-body">
-                                            <table id="example2" class="table table-striped table-bordered table-hover">
+                                            <table id="example2" class="table table-striped table-bordered table-hover" style="width:100%">
                                                 <thead>
                                                 <tr>
                                                     <th><input name="userState" type="checkbox" onclick="checkItem(this)" class="minimal checkbox-toolbar"></th>
@@ -418,6 +430,14 @@
 
     $(document).ready(function () {
         table = $('#example2').DataTable({
+            "autoWidth": true,
+            "scrollX": true,
+            "scrollCollapse": true,
+            fixedColumns: {
+                left: 2,
+                right: 1
+            },
+            scrollY: true,
             "columnDefs": [
                 {
                     "targets": "_all", // Apply to all columns
@@ -425,9 +445,9 @@
                 },
                 {
                     "targets": 6,
-                    "width": "35px",
+                    "width": "60px",
                     "render": function (data, type, row) {
-                        const maxChars = 10; // Adjust the maximum characters as needed
+                        const maxChars = 20; // Adjust the maximum characters as needed
 
                         if (data && data.length > maxChars) {
                             const truncatedData = data.substr(0, maxChars - 3) + '...';
@@ -474,6 +494,7 @@
                     checkboxes: {
                         selectRow: true
                     },
+                    data: null,
                     render: function (data, type, row, meta) {
                         var id = row.id;
                         return '<input name="userState" type="checkbox" class="minimal checkbox-toolbar" data-id="' + id + '">';
@@ -504,6 +525,7 @@
                 {
                     'sTitle': '操作',
                     "orderable": false,
+                    data: null,
                     'render': function (data, type, row) {
                         return `
                             <button type="button" class="btn btn-sm btn-info" onclick="update(this)">修改</button>

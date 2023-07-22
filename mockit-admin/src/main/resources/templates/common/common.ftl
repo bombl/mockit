@@ -30,6 +30,7 @@
     <link rel="stylesheet" href="${request.contextPath}/static/plugins/select2/css/select2.min.css">
     <link rel="stylesheet" href="${request.contextPath}/static/plugins/toastr/toastr.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/4.3.0/css/fixedColumns.dataTables.min.css">
 
 </#macro>
 
@@ -84,6 +85,7 @@
     <script src="${request.contextPath}/static/plugins/select2/js/select2.full.min.js"></script>
     <script src="${request.contextPath}/static/plugins/toastr/toastr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"></script>
 
     <!-- Page specific script -->
     <script>

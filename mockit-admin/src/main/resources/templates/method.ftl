@@ -23,10 +23,9 @@
         #example2 th {
             text-align: center;
         }
-        .ellipsis {
+        #example2 th,
+        #example2 td {
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
     </style>
     <title>Mockit</title>
@@ -103,7 +102,7 @@
                                     <div class="card">
                                         <!-- /.card-header -->
                                         <div class="card-body">
-                                            <table id="example2" class="table table-striped table-bordered table-hover">
+                                            <table id="example2" class="table table-striped table-bordered table-hover" style="width:100%">
                                                 <thead>
                                                 <tr>
                                                     <th><input name="userState" type="checkbox" onclick="checkItem(this)" class="minimal checkbox-toolbar"></th>
@@ -687,42 +686,59 @@
             }
         });
         table = $('#example2').DataTable({
+            "autoWidth": true,
+            "scrollX": true,
+            "scrollCollapse": true,
+            fixedColumns: {
+                left: 2,
+                right: 1
+            },
+            scrollY: true,
             "columnDefs": [
                 {
-                    "targets": "_all", // Apply to all columns
-                    "className": "text-center" // Center align the content
+                    "targets": "_all",
+                    "className": "text-center"
                 },
                 {
-                    "targets": 0,
-                    "width": "4px"
-                },
-                {
-                    "targets": 1, // Index of the "类名" column (zero-based)
-                    "width": "40px"
-                },
-                {
-                    "targets": 2, // Index of the "类名" column (zero-based)
-                    "width": "60px"
-                },
-                {
-                    "targets": 3, // Index of the "类名" column (zero-based)
+                    "targets": 3,
                     "width": "60px",
                     "render": function (data, type, row) {
-                        const maxChars = 30; // Adjust the maximum characters as needed
+                        const maxChars = 30;
 
                         if (data && data.length > maxChars) {
-                            const truncatedData = data.substr(0, maxChars - 3) + '...';
-                            return '<span title="' + data + '">' + truncatedData + '</span>';
+                            const lastIndex = data.lastIndexOf('.');
+                            if (lastIndex > maxChars - 3) {
+                                const truncatedData = data.substr(lastIndex + 1);
+                                return '<span title="' + data + '">' + truncatedData + '</span>';
+                            } else {
+                                const truncatedData = data.substr(0, maxChars - 3) + '...';
+                                return '<span title="' + data + '">' + truncatedData + '</span>';
+                            }
                         } else {
                             return data;
                         }
                     }
                 },
                 {
-                    "targets": 4, // Index of the "类名" column (zero-based)
+                    "targets": 4,
                     "width": "80px",
                     "render": function (data, type, row) {
-                        const maxChars = 30; // Adjust the maximum characters as needed
+                        const methodNamePattern = /public\s+(\w+)\s+(\w+)\(/;
+                        const match = methodNamePattern.exec(data);
+
+                        if (match && match.length >= 3) {
+                            const methodName = match[2];
+                            return '<span title="' + data + '">' + methodName + '</span>';
+                        } else {
+                            return data;
+                        }
+                    }
+                },
+                {
+                    "targets": 6,
+                    "width": "60px",
+                    "render": function (data, type, row) {
+                        const maxChars = 20;
 
                         if (data && data.length > maxChars) {
                             const truncatedData = data.substr(0, maxChars - 3) + '...';
@@ -764,17 +780,18 @@
                 };
             },
             "columns": [{
-                orderable: false,
-                className: 'select-checkbox',
-                targets: 0,
-                checkboxes: {
-                    selectRow: true
+                    orderable: false,
+                    className: 'select-checkbox',
+                    targets: 0,
+                    checkboxes: {
+                        selectRow: true
+                    },
+                    data: "id",
+                    render: function (data, type, row, meta) {
+                        var id = row.id;
+                        return '<div style="text-align: center;"><input name="userState" type="checkbox" class="minimal checkbox-toolbar" data-id="' + id + '" style="width: 20px;"></div>';
+                    }
                 },
-                render: function (data, type, row, meta) {
-                    var id = row.id;
-                    return '<div style="text-align: center;"><input name="userState" type="checkbox" class="minimal checkbox-toolbar" data-id="' + id + '" style="width: 20px;"></div>';
-                }
-            },
                 {
                     targets: 1,
                     data: null,
@@ -800,6 +817,7 @@
                 {
                     'sTitle': '操作',
                     "orderable": false,
+                     data: "id",
                     'render': function (data, type, row) {
                         return `
                             <button type="button" class="btn btn-sm btn-info" onclick="update(this)">修改</button>
