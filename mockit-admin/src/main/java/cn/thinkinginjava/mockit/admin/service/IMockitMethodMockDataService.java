@@ -15,7 +15,10 @@
 
 package cn.thinkinginjava.mockit.admin.service;
 
+import cn.thinkinginjava.mockit.admin.model.dto.BatchCommonDTO;
+import cn.thinkinginjava.mockit.admin.model.dto.MockitMethodMockDataDTO;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitMethodMockData;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -24,4 +27,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IMockitMethodMockDataService extends IService<MockitMethodMockData> {
 
+    void saveOrUpdateMethod(MockitMethodMockDataDTO mockitMethodMockDataDTO);
+
+    void batchEnabled(BatchCommonDTO batchCommonDTO);
+
+    void batchDelete(BatchCommonDTO batchCommonDTO);
 }

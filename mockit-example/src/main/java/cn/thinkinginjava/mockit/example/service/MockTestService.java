@@ -18,6 +18,11 @@ package cn.thinkinginjava.mockit.example.service;
 import cn.thinkinginjava.mockit.example.model.ResultDTO;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * The MockTestService class is a service class that provides functionality related to mock testing.
  * It encapsulates the business logic and operations required for performing mock testing.
@@ -37,15 +42,30 @@ public class MockTestService {
      * @return A ResultDTO object containing the response based on the provided name.
      */
     public ResultDTO say(String name) {
-        System.out.println("name");
         ResultDTO resultDTO = new ResultDTO();
         resultDTO.setResult("hello");
         return resultDTO;
     }
-    public ResultDTO say2(String name) {
-        System.out.println("name");
+
+    public Integer say2(String name) {
+        return 666;
+    }
+
+    public List<ResultDTO> say3(String name) {
+        List<ResultDTO> result = new ArrayList<>();
         ResultDTO resultDTO = new ResultDTO();
         resultDTO.setResult("hello");
-        return resultDTO;
+        result.add(resultDTO);
+        return result;
+    }
+
+    public String say4(String name) {
+        return "hello";
+    }
+
+    public Map<String, Object> say5(String name) {
+        Map<String,Object> map = new HashMap<>();
+        map.put("hello",1);
+        return map;
     }
 }

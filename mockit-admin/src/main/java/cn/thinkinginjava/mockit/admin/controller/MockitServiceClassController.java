@@ -19,15 +19,19 @@ import cn.thinkinginjava.mockit.admin.model.dto.BatchCommonDTO;
 import cn.thinkinginjava.mockit.admin.model.dto.MockitMethodDTO;
 import cn.thinkinginjava.mockit.admin.model.dto.MockitResult;
 import cn.thinkinginjava.mockit.admin.model.dto.MockitServiceClassDTO;
+import cn.thinkinginjava.mockit.admin.model.entity.MockitMethodMockData;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceClass;
+import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceMethod;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceRegistry;
 import cn.thinkinginjava.mockit.admin.model.vo.MockitServiceClassVO;
 import cn.thinkinginjava.mockit.admin.service.IMockitServiceClassService;
+import cn.thinkinginjava.mockit.admin.service.IMockitServiceMethodService;
 import cn.thinkinginjava.mockit.admin.service.IMockitServiceRegistryService;
 import cn.thinkinginjava.mockit.common.constant.MockConstants;
 import cn.thinkinginjava.mockit.common.exception.MockitException;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
@@ -38,6 +42,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Represents a controller for managing MockitServiceClass.
@@ -51,6 +56,9 @@ public class MockitServiceClassController {
 
     @Resource
     private IMockitServiceRegistryService iMockitServiceRegistryService;
+
+    @Resource
+    private IMockitServiceMethodService iMockitServiceMethodService;
 
     /**
      * Adds a MockitServiceClass based on the provided MockitServiceClassDTO.

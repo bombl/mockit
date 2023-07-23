@@ -16,6 +16,7 @@
 package cn.thinkinginjava.mockit.admin.service.impl;
 
 import cn.thinkinginjava.mockit.admin.mapper.MockitServiceMethodMapper;
+import cn.thinkinginjava.mockit.admin.mapper.MockitServiceMethodMockDataMapper;
 import cn.thinkinginjava.mockit.admin.model.dto.BatchCommonDTO;
 import cn.thinkinginjava.mockit.admin.model.dto.MockitMethodMockDataDTO;
 import cn.thinkinginjava.mockit.admin.model.dto.MockitServiceMethodDTO;
@@ -31,6 +32,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -38,8 +41,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of the service for managing Mockit service methods.
@@ -49,7 +54,7 @@ import java.util.List;
 public class MockitServiceMethodServiceImpl extends ServiceImpl<MockitServiceMethodMapper, MockitServiceMethod> implements IMockitServiceMethodService {
 
     @Resource
-    private IMockitMethodMockDataService iMockitMethodMockDataService;
+    private MockitServiceMethodMockDataMapper mockitServiceMethodMockDataMapper;
 
     /**
      * Saves or updates the method mock data based on the provided MockitServiceMethodDTO.
@@ -76,10 +81,6 @@ public class MockitServiceMethodServiceImpl extends ServiceImpl<MockitServiceMet
         mockitServiceMethod.setCreateAt(new Date());
         mockitServiceMethod.setUpdateAt(new Date());
         saveOrUpdate(mockitServiceMethod, mockDataLambdaQueryWrapper);
-
-//        MockitMethodMockDataDTO mockDataDTO = mockitServiceMethodDTO.getMockDataDTO();
-//        mockDataDTO.setMethodId(mockitServiceMethod.getId());
-//        saveOrUpdateMethodMockData(mockDataDTO);
     }
 
     /**
@@ -91,20 +92,18 @@ public class MockitServiceMethodServiceImpl extends ServiceImpl<MockitServiceMet
     @Override
     public IPage<MockitServiceMethodVO> listByPage(MockitServiceMethodDTO mockitServiceMethodDTO) {
         LambdaQueryWrapper<MockitServiceMethod> queryWrapper = new LambdaQueryWrapper<>();
-        if (StringUtils.isNotEmpty(mockitServiceMethodDTO.getMethodName())) {
-            queryWrapper.like(MockitServiceMethod::getMethodName, mockitServiceMethodDTO.getMethodName());
-        }
-        if (mockitServiceMethodDTO.getMockEnabled() != null) {
+        if (mockitServiceMethodDTO.getIsMockData() == null && mockitServiceMethodDTO.getMockEnabled() != null) {
             queryWrapper.eq(MockitServiceMethod::getMockEnabled, mockitServiceMethodDTO.getMockEnabled());
         }
         if (CollectionUtils.isNotEmpty(mockitServiceMethodDTO.getClassIdList())) {
             queryWrapper.in(MockitServiceMethod::getClassId, mockitServiceMethodDTO.getClassIdList());
         }
         if (StringUtils.isNotBlank(mockitServiceMethodDTO.getMethodName())) {
-            queryWrapper.like(MockitServiceMethod::getMethodName,mockitServiceMethodDTO.getMethodName());
+            queryWrapper.like(MockitServiceMethod::getMethodName, mockitServiceMethodDTO.getMethodName());
         }
         queryWrapper.eq(MockitServiceMethod::getDeleted, MockConstants.NO);
         queryWrapper.orderByDesc(MockitServiceMethod::getUpdateAt);
+
         return page(new Page<>(mockitServiceMethodDTO.getCurrentPage(),
                 mockitServiceMethodDTO.getPageSize()), queryWrapper).convert(mockitServiceRegistry -> {
             MockitServiceMethodVO mockitServiceMethodVO = new MockitServiceMethodVO();
@@ -152,21 +151,15 @@ public class MockitServiceMethodServiceImpl extends ServiceImpl<MockitServiceMet
             mockitServiceRegistry.setUpdateAt(new Date());
         });
         updateBatchById(mockitServiceMethodList);
-    }
 
-    /**
-     * Saves or updates the method mock data based on the provided MockitMethodMockDataDTO.
-     *
-     * @param mockitMethodMockDataDTO The DTO object containing the method mock data to be saved or updated.
-     */
-    private void saveOrUpdateMethodMockData(MockitMethodMockDataDTO mockitMethodMockDataDTO) {
-        LambdaQueryWrapper<MockitMethodMockData> methodMockDataLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        methodMockDataLambdaQueryWrapper.eq(MockitMethodMockData::getMethodId, mockitMethodMockDataDTO.getMethodId());
-        MockitMethodMockData mockitMethodMockData = new MockitMethodMockData();
-        BeanUtils.copyProperties(mockitMethodMockDataDTO, mockitMethodMockData);
-        mockitMethodMockData.setMockEnabled(MockConstants.YES);
-        mockitMethodMockData.setCreateAt(new Date());
-        mockitMethodMockData.setUpdateAt(new Date());
-        iMockitMethodMockDataService.saveOrUpdate(mockitMethodMockData, methodMockDataLambdaQueryWrapper);
+        LambdaQueryWrapper<MockitMethodMockData> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(MockitMethodMockData::getMethodId, batchCommonDTO.getIds());
+        queryWrapper.eq(MockitMethodMockData::getDeleted, MockConstants.NO);
+        List<MockitMethodMockData> mockDataList = mockitServiceMethodMockDataMapper.selectList(queryWrapper);
+        mockDataList.forEach(mockitServiceRegistry -> {
+            mockitServiceRegistry.setDeleted(MockConstants.YES);
+            mockitServiceRegistry.setUpdateAt(new Date());
+            mockitServiceMethodMockDataMapper.updateById(mockitServiceRegistry);
+        });
     }
 }

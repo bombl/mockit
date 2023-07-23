@@ -56,4 +56,5 @@ public interface IMockitServiceMethodService extends IService<MockitServiceMetho
      * @param batchCommonDTO The DTO object containing the batch of items to be deleted.
      */
     void batchDelete(BatchCommonDTO batchCommonDTO);
+
 }

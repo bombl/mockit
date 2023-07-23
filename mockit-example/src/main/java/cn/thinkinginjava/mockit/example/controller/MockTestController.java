@@ -20,6 +20,9 @@ import cn.thinkinginjava.mockit.example.service.MockTestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * The MockTestController class is a controller class that handles HTTP requests related to mock testing.
  * It contains methods annotated with @RequestMapping or other relevant annotations to map specific URLs and handle corresponding requests.
@@ -47,8 +50,19 @@ public class MockTestController {
         return mockTestService.say(name);
     }
     @GetMapping("hello2")
-    public ResultDTO hello2(String name) {
+    public Integer hello2(String name) {
         return mockTestService.say2(name);
     }
-
+    @GetMapping("hello3")
+    public List<ResultDTO> hello3(String name) {
+        return mockTestService.say3(name);
+    }
+    @GetMapping("hello4")
+    public String hello4(String name) {
+        return mockTestService.say4(name);
+    }
+    @GetMapping("hello5")
+    public Map<String,Object> hello5(String name) {
+        return mockTestService.say5(name);
+    }
 }

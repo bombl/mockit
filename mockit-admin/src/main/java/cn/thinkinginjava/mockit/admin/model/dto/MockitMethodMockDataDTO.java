@@ -20,6 +20,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Represents the mock data for a Mockit service method.
@@ -69,5 +70,11 @@ public class MockitMethodMockDataDTO extends BaseDTO {
      */
     private Date updateAt;
 
+    private String serviceId;
 
+    private String className;
+
+    private String methodName;
+
+    private List<String> methodIdList;
 }

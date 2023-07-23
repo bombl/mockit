@@ -709,10 +709,10 @@
                             const lastIndex = data.lastIndexOf('.');
                             if (lastIndex > maxChars - 3) {
                                 const truncatedData = data.substr(lastIndex + 1);
-                                return '<span title="' + data + '">' + truncatedData + '</span>';
+                                return '<span class="tooltip-icon" title="' + data + '">' + truncatedData + '</span>';
                             } else {
                                 const truncatedData = data.substr(0, maxChars - 3) + '...';
-                                return '<span title="' + data + '">' + truncatedData + '</span>';
+                                return '<span class="tooltip-icon" title="' + data + '">' + truncatedData + '</span>';
                             }
                         } else {
                             return data;

@@ -105,6 +105,7 @@ public class ResultMockClassFileTransformer extends AbstractClassFileTransformer
                     logger.error("Unsupported data format");
                     continue;
                 }
+                mockValue = mockValue.replaceAll("\\n", "").replaceAll("\\s+", "");
                 String newCode = String.format(
                         "String json = \"%s\";%n" +
                                 "com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();%n" +

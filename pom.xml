@@ -5,7 +5,7 @@
     <groupId>cn.thinkinginjava</groupId>
     <artifactId>mockit</artifactId>
     <packaging>pom</packaging>
-    <version>${revision}</version>
+    <version>0.0.3</version>
     <name>mockit</name>
     <description>Non-invasive mock framework</description>
     <url>https://github.com/bombl/mockit</url>
@@ -55,7 +55,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <revision>0.0.2</revision>
+        <revision>0.0.3</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <spring-boot.version>2.6.8</spring-boot.version>
@@ -94,25 +94,25 @@
             <dependency>
                 <groupId>cn.thinkinginjava</groupId>
                 <artifactId>mockit-core</artifactId>
-                <version>${revision}</version>
+                <version>0.0.3</version>
             </dependency>
 
             <dependency>
                 <groupId>cn.thinkinginjava</groupId>
                 <artifactId>mockit-spring-boot-starter</artifactId>
-                <version>${revision}</version>
+                <version>0.0.3</version>
             </dependency>
 
             <dependency>
                 <groupId>cn.thinkinginjava</groupId>
                 <artifactId>mockit-common</artifactId>
-                <version>${revision}</version>
+                <version>0.0.3</version>
             </dependency>
 
             <dependency>
                 <groupId>cn.thinkinginjava</groupId>
                 <artifactId>mockit-client</artifactId>
-                <version>${revision}</version>
+                <version>0.0.3</version>
             </dependency>
 
             <dependency>
@@ -124,7 +124,7 @@
             <dependency>
                 <groupId>cn.thinkinginjava</groupId>
                 <artifactId>mockit-admin</artifactId>
-                <version>${revision}</version>
+                <version>0.0.3</version>
             </dependency>
 
             <dependency>

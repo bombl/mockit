@@ -30,199 +30,24 @@ Mockit是一个非侵入性的Mock框架，其核心设计目标是提供了一�
 2. Add the following configuration to your project:
 - mockit.plugin.enabled=true: Enable Mockit (true to enable, false to disable).
 - mockit.plugin.alias=mockit-example: The project name registered in the console.
-- mockit.plugin.addresses=10.37.129.2:8889: Console IP address and port.
-3. Start the console (mockit-admin project) for mocking. The console currently does not support page operations (under development). You can perform mocking through the API. The following API is provided:
-* **Get all methods in a class** ：http://localhost:9999/mockit-admin/api/methodList
-```
-## Request Information：
-curl --location --request POST 'http://localhost:9999/mockit-admin/api/methodList' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "alias":"mockit-example",
-    "className":"cn.thinkinginjava.mockit.example.service.MockTestService"
-}'
-```
+- mockit.plugin.addresses=127.0.0.1:8889: Console IP address and port.
+3. Start the console (mockit-admin project) for mocking.
 
-
-```
-## Response Information：
-{
-    "code": 200,
-    "message": null,
-    "data": [
-        {
-            "accessModifier": "public",
-            "returnType": "cn.thinkinginjava.mockit.example.model.ResultDTO",
-            "methodName": "say",
-            "parameters": [
-                "java.lang.String"
-            ]
-        },
-        {
-            "accessModifier": "public",
-            "returnType": "cn.thinkinginjava.mockit.example.model.ResultDTO",
-            "methodName": "say2",
-            "parameters": [
-                "java.lang.String"
-            ]
-        }
-    ]
-}
-```
-* **Mock a method** ：http://localhost:9999/mockit-admin/api/mock
-```
-## Request Information：
-curl --location --request POST 'http://localhost:9999/mockit-admin/api/mock' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "alias": "mockit-example",
-    "className": "cn.thinkinginjava.mockit.example.service.MockTestService",
-    "methodMockDataList": [
-        {
-            "methodName": "say",
-            "parameters": [
-                "java.lang.String"
-            ],
-            "mockValue": "{\"code\":\"111\",\"result\":\"aaa\"}"
-        },
-        {
-            "methodName": "say2",
-            "parameters": [
-                "java.lang.String"
-            ],
-            "mockValue": "{\"code\":\"444\",\"result\":\"aaa\"}"
-        }
-    ]
-}'
-```
-
-```
-## Response Information：
-{
-    "code": 200,
-    "message": null,
-    "data": null
-}
-```
-* **Cancel Mock**  ：http://localhost:9999/mockit-admin/api/cancelMock
-```
-## Request Information：
-curl --location --request POST 'http://localhost:9999/mockit-admin/api/cancelMock' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "alias": "mockit-example",
-    "className": "cn.thinkinginjava.mockit.example.service.MockTestService"
-}'
-```
-
-```
-## Response Information：
-{
-    "code": 200,
-    "message": null,
-    "data": null
-}
-```
-
-1. 将`mockit-spring-boot-starter`maven依赖添加到你的项目中;
-2. 将下面的配置添加到你的项目中：
-- mockit.plugin.enabled=true : 是否启用Mockit（ture.启用｜false.不启用）
-- mockit.plugin.alias=mockit-example : 注册到控制台的项目名称
-- mockit.plugin.addresses=10.37.129.2:8889 : 控制台IP、端口
-
-3. 启动控制台（mockit-admin项目）进行mock，控制台暂时不支持页面操作（开发中...），可以通过接口进行mock，提供接口如下：
-* **获取类中所有方法**  ：http://localhost:9999/mockit-admin/api/methodList
-```
-## 请求信息：
-curl --location --request POST 'http://localhost:9999/mockit-admin/api/methodList' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "alias":"mockit-example",
-    "className":"cn.thinkinginjava.mockit.example.service.MockTestService"
-}'
-```
-
-
-```
-## 响应信息：
-{
-    "code": 200,
-    "message": null,
-    "data": [
-        {
-            "accessModifier": "public",
-            "returnType": "cn.thinkinginjava.mockit.example.model.ResultDTO",
-            "methodName": "say",
-            "parameters": [
-                "java.lang.String"
-            ]
-        },
-        {
-            "accessModifier": "public",
-            "returnType": "cn.thinkinginjava.mockit.example.model.ResultDTO",
-            "methodName": "say2",
-            "parameters": [
-                "java.lang.String"
-            ]
-        }
-    ]
-}
-```
-* **对方法进行Mock**  ：http://localhost:9999/mockit-admin/api/mock
-```
-## 请求信息：
-curl --location --request POST 'http://localhost:9999/mockit-admin/api/mock' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "alias": "mockit-example",
-    "className": "cn.thinkinginjava.mockit.example.service.MockTestService",
-    "methodMockDataList": [
-        {
-            "methodName": "say",
-            "parameters": [
-                "java.lang.String"
-            ],
-            "mockValue": "{\"code\":\"111\",\"result\":\"aaa\"}"
-        },
-        {
-            "methodName": "say2",
-            "parameters": [
-                "java.lang.String"
-            ],
-            "mockValue": "{\"code\":\"444\",\"result\":\"aaa\"}"
-        }
-    ]
-}'
-```
-
-```
-## 响应信息：
-{
-    "code": 200,
-    "message": null,
-    "data": null
-}
-```
-* **取消Mock**  ：http://localhost:9999/mockit-admin/api/cancelMock
-```
-## 请求信息：
-curl --location --request POST 'http://localhost:9999/mockit-admin/api/cancelMock' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "alias": "mockit-example",
-    "className": "cn.thinkinginjava.mockit.example.service.MockTestService"
-}'
-```
-
-```
-## 响应信息：
-{
-    "code": 200,
-    "message": null,
-    "data": null
-}
-```
-
+- **Running Report：**By running the report, you can intuitively see the status of service mocking.
+  ![](https://github.com/bombl/ImageHost/blob/main/report.jpg?raw=true)
+  
+- **Service Management：**Through service management, you can mock or unmock services.
+  ![](https://github.com/bombl/ImageHost/blob/main/alias.jpg?raw=true)
+  
+- **Service Class Management：**Through service class management, you can perform operations such as adding, modifying, deleting, enabling, and disabling service classes.
+  ![](https://github.com/bombl/ImageHost/blob/main/class.jpg?raw=true)
+  
+- **Method Management：**Through method management, you can perform operations such as adding, modifying, deleting, enabling, and disabling methods.
+  ![](https://github.com/bombl/ImageHost/blob/main/method.jpg?raw=true)
+  
+- **Data Management：**Through data management, you can perform operations such as adding, modifying, deleting, enabling, and disabling data.
+  ![](https://github.com/bombl/ImageHost/blob/main/data.jpg?raw=true)
+  
 ## Module Relationship Diagram
 ![](https://github.com/bombl/ImageHost/blob/main/Mockit.png?raw=true)
 

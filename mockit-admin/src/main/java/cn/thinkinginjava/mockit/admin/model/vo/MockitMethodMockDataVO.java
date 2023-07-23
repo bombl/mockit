@@ -16,72 +16,43 @@
 package cn.thinkinginjava.mockit.admin.model.vo;
 
 import cn.thinkinginjava.mockit.admin.model.dto.BaseDTO;
-import cn.thinkinginjava.mockit.admin.model.dto.MockitMethodMockDataDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 
 /**
- * Represents a Mockit service method.
+ * Represents the mock data for a Mockit service method.
  * This class implements the Serializable interface to support serialization.
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class MockitServiceMethodVO extends BaseDTO {
+public class MockitMethodMockDataVO extends BaseDTO {
 
     private static final long serialVersionUID = 1L;
 
     private String id;
 
     /**
-     * Class id
+     * Method id
      */
-    @NotBlank
-    private String classId;
+    private String methodId;
 
     /**
-     * Name of the method
+     * Mock data for the method
      */
-    @NotBlank
-    private String methodName;
+    private String mockValue;
 
     /**
-     * Access modifier of the method (e.g., public, private)
+     * Indicates whether the mock data is mocked or not（0.disabled, 1.enabled）
      */
-    @NotBlank
-    private String accessModifer;
-
-    /**
-     * Return type of the method
-     */
-    @NotBlank
-    private String returnType;
-
-    /**
-     * List of method parameters (comma-separated)
-     */
-    @NotBlank
-    private String parameters;
-
-    /**
-     * Indicates whether the service method is mocked or not（0.disabled, 1.enabled）
-     */
-    @NotNull
     private Integer mockEnabled;
 
     /**
-     * Indicates if the service is enabled or disabled（0.disabled, 1.enabled）
-     */
-    private String mockEnabledMc;
-
-    /**
-     * Marks if the service method is deleted（0.not deleted, 1.deleted）
+     * Marks if the mock data is deleted（0.not deleted, 1.deleted）
      */
     private Integer deleted;
 
@@ -91,29 +62,20 @@ public class MockitServiceMethodVO extends BaseDTO {
     private String remarks;
 
     /**
-     * Date and time when the service method was created
+     * Date and time when the mock data was created
      */
     private Date createAt;
 
     /**
-     * Date and time when the service class was created
-     */
-    private String createTime;
-
-    /**
-     * Date and time when the service method was updated
+     * Date and time when the mock data was updated
      */
     private Date updateAt;
 
-    private String alias;
+    private String serviceId;
 
     private String className;
 
-    private String methodInfo;
+    private String methodName;
 
-    private String mockValue;
-
-    private List<String> parameterList;
-
-    private MockitMethodMockDataDTO mockDataDTO;
+    private List<String> methodIdList;
 }

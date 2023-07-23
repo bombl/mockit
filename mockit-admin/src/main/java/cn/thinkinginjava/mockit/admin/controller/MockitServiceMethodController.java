@@ -16,9 +16,13 @@
 package cn.thinkinginjava.mockit.admin.controller;
 
 import cn.thinkinginjava.mockit.admin.model.dto.*;
+import cn.thinkinginjava.mockit.admin.model.entity.MockitMethodMockData;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceClass;
+import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceMethod;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceRegistry;
+import cn.thinkinginjava.mockit.admin.model.enums.EnabledStatusEnum;
 import cn.thinkinginjava.mockit.admin.model.vo.MockitServiceMethodVO;
+import cn.thinkinginjava.mockit.admin.service.IMockitMethodMockDataService;
 import cn.thinkinginjava.mockit.admin.service.IMockitServiceClassService;
 import cn.thinkinginjava.mockit.admin.service.IMockitServiceMethodService;
 import cn.thinkinginjava.mockit.admin.service.IMockitServiceRegistryService;
@@ -26,8 +30,10 @@ import cn.thinkinginjava.mockit.common.constant.MockConstants;
 import cn.thinkinginjava.mockit.common.exception.MockitException;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.github.pagehelper.PageInfo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,9 +42,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -57,6 +61,9 @@ public class MockitServiceMethodController {
     @Resource
     private IMockitServiceRegistryService iMockitServiceRegistryService;
 
+    @Resource
+    private IMockitMethodMockDataService iMockitMethodMockDataService;
+
     /**
      * Saves or updates a MockitServiceMethod based on the provided MockitServiceMethodDTO.
      *
@@ -68,10 +75,6 @@ public class MockitServiceMethodController {
     public MockitResult<Void> saveOrUpdate(@Valid @RequestBody MockitMethodDTO mockitMethodDTO) {
         List<MockitServiceMethodDTO> mockitMethodList = mockitMethodDTO.getMockitMethodList();
         for (MockitServiceMethodDTO mockitServiceMethodDTO : mockitMethodList) {
-//            MockitMethodMockDataDTO mockDataDTO = mockitServiceMethodDTO.getMockDataDTO();
-//            if (mockDataDTO == null || StringUtils.isEmpty(mockDataDTO.getMockValue())) {
-//                throw new MockitException("Mock value can not empty.");
-//            }
             iMockitServiceMethodService.saveOrUpdateMethod(mockitServiceMethodDTO);
         }
         return MockitResult.successful();
@@ -94,7 +97,7 @@ public class MockitServiceMethodController {
         }
         LambdaQueryWrapper<MockitServiceClass> queryWrapper = new LambdaQueryWrapper<>();
         if (StringUtils.isNotBlank(mockitServiceMethodDTO.getServiceId())) {
-            queryWrapper.eq(MockitServiceClass::getServiceId, mockitServiceMethodDTO.getClassId());
+            queryWrapper.eq(MockitServiceClass::getServiceId, mockitServiceMethodDTO.getServiceId());
         }
         queryWrapper.eq(MockitServiceClass::getDeleted, MockConstants.NO);
         List<MockitServiceClass> mockitServiceClassList = iMockitServiceClassService.list(queryWrapper);
@@ -115,6 +118,26 @@ public class MockitServiceMethodController {
         page.convert(mockitServiceMethod -> {
             MockitServiceMethodVO mockitServiceMethodVO = new MockitServiceMethodVO();
             BeanUtils.copyProperties(mockitServiceMethod, mockitServiceMethodVO);
+            if (mockitServiceMethodDTO.getIsMockData() != null && mockitServiceMethodDTO.getIsMockData()) {
+                LambdaQueryWrapper<MockitMethodMockData> dataQueryWrapper = new LambdaQueryWrapper<>();
+                dataQueryWrapper.eq(MockitMethodMockData::getMethodId,mockitServiceMethod.getId());
+                dataQueryWrapper.eq(MockitMethodMockData::getDeleted,MockConstants.NO);
+                if (mockitServiceMethodDTO.getMockEnabled() != null) {
+                    dataQueryWrapper.eq(MockitMethodMockData::getMockEnabled, mockitServiceMethodDTO.getMockEnabled());
+                }
+                dataQueryWrapper.last("limit 1");
+                MockitMethodMockData mockData = iMockitMethodMockDataService.getOne(dataQueryWrapper);
+                if (mockData != null) {
+                    mockitServiceMethodVO.setMockEnabledMc(EnabledStatusEnum.getByValue(mockData.getMockEnabled()));
+                    mockitServiceMethodVO.setCreateTime(DateFormatUtils.format(mockData.getCreateAt(), MockConstants.Y_M_D));
+                    mockitServiceMethodVO.setRemarks(mockData.getRemarks());
+                    mockitServiceMethodVO.setMockValue(mockData.getMockValue());
+                } else {
+                    mockitServiceMethodVO.setMockEnabledMc("");
+                    mockitServiceMethodVO.setRemarks("");
+                    mockitServiceMethodVO.setCreateTime("");
+                }
+            }
             MockitServiceClass mockitServiceClass = iMockitServiceClassService.getById(mockitServiceMethod.getClassId());
             if (mockitServiceClass != null) {
                 mockitServiceMethodVO.setClassName(mockitServiceClass.getClassName());
@@ -154,5 +177,22 @@ public class MockitServiceMethodController {
     public MockitResult<Void> delete(@Valid @RequestBody BatchCommonDTO batchCommonDTO) {
         iMockitServiceMethodService.batchDelete(batchCommonDTO);
         return MockitResult.successful();
+    }
+
+    @RequestMapping("/listMethod")
+    @ResponseBody
+    public MockitResult<List<MockitServiceMethodVO>> listMethod(@RequestBody MockitServiceMethodDTO mockitServiceMethodDTO) {
+        LambdaQueryWrapper<MockitServiceMethod> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(MockitServiceMethod::getClassId,mockitServiceMethodDTO.getClassId());
+        queryWrapper.eq(MockitServiceMethod::getDeleted,MockConstants.NO);
+        List<MockitServiceMethod> mockitServiceMethodList = iMockitServiceMethodService.list(queryWrapper);
+        List<MockitServiceMethodVO> dataList = new ArrayList<>();
+        mockitServiceMethodList.forEach(mockitServiceMethod -> {
+            MockitServiceMethodVO mockitServiceMethodVO = new MockitServiceMethodVO();
+            BeanUtils.copyProperties(mockitServiceMethod,mockitServiceMethodVO);
+            mockitServiceMethodVO.setParameterList(Arrays.asList(mockitServiceMethod.getParameters().split("-")));
+            dataList.add(mockitServiceMethodVO);
+        });
+        return MockitResult.successful(dataList);
     }
 }

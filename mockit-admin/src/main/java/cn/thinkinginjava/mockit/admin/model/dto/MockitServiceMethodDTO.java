@@ -99,5 +99,7 @@ public class MockitServiceMethodDTO extends BaseDTO {
 
     private List<String> classIdList;
 
+    private Boolean isMockData;
+
     private MockitMethodMockDataDTO mockDataDTO;
 }
