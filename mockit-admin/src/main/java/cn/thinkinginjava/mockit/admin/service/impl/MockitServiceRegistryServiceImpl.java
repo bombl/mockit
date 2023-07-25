@@ -367,7 +367,7 @@ public class MockitServiceRegistryServiceImpl extends ServiceImpl<MockitServiceR
             }
             MethodMockData mockData = new MethodMockData();
             mockData.setMethodName(mockitServiceMethod.getMethodName());
-            mockData.setParameters(Lists.newArrayList(mockitServiceMethod.getParameters().split(",")));
+            mockData.setParameters(Lists.newArrayList(mockitServiceMethod.getParameters().split("-")));
             mockData.setMockValue(serviceMethodMockData.getMockValue());
             methodMockDataList.add(mockData);
         });

@@ -68,17 +68,4 @@ public class MockitConfiguration {
         mockitClient.setAlias(mockitPluginConfig.getAlias());
         return mockitClient;
     }
-
-    /**
-     * Creates a Bean named "mockitPluginConfig" that is bound to the configuration properties with the prefix "mockit.plugin".
-     * The properties under this prefix will be automatically mapped to the fields of the MockitPluginConfig object.
-     * This allows accessing the configuration values from the configuration file.
-     *
-     * @return The MockitPluginConfig object populated with the configuration properties.
-     */
-//    @Bean
-//    @ConfigurationProperties(prefix = "mockit.plugin")
-//    public MockitPluginConfig mockitPluginConfig() {
-//        return new MockitPluginConfig();
-//    }
 }
