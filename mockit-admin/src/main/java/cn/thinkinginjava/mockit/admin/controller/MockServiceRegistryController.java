@@ -15,18 +15,15 @@
 
 package cn.thinkinginjava.mockit.admin.controller;
 
-import cn.thinkinginjava.mockit.admin.mapper.MockitServiceMethodMapper;
-import cn.thinkinginjava.mockit.admin.mapper.MockitServiceMethodMockDataMapper;
 import cn.thinkinginjava.mockit.admin.model.dto.BatchCommonDTO;
 import cn.thinkinginjava.mockit.admin.model.dto.MockitResult;
 import cn.thinkinginjava.mockit.admin.model.dto.MockitServiceRegistryDTO;
-import cn.thinkinginjava.mockit.admin.model.entity.MockitMethodMockData;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceClass;
-import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceMethod;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceRegistry;
 import cn.thinkinginjava.mockit.admin.model.vo.MockitServiceRegistryVO;
 import cn.thinkinginjava.mockit.admin.service.IMockitServiceClassService;
 import cn.thinkinginjava.mockit.admin.service.IMockitServiceRegistryService;
+import cn.thinkinginjava.mockit.admin.service.impl.MockitManager;
 import cn.thinkinginjava.mockit.common.constant.MockConstants;
 import cn.thinkinginjava.mockit.common.exception.MockitException;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -55,16 +52,13 @@ import java.util.stream.Collectors;
 public class MockServiceRegistryController {
 
     @Resource
+    private MockitManager mockitManager;
+
+    @Resource
     private IMockitServiceRegistryService iMockitServiceRegistryService;
 
     @Resource
     private IMockitServiceClassService iMockitServiceClassService;
-
-    @Resource
-    private MockitServiceMethodMapper mockitServiceMethodMapper;
-
-    @Resource
-    private MockitServiceMethodMockDataMapper mockitServiceMethodMockDataMapper;
 
     /**
      * Retrieves a list of MockitServiceRegistryVO objects based on the provided MockitServiceRegistryDTO.
@@ -119,41 +113,23 @@ public class MockServiceRegistryController {
         BeanUtils.copyProperties(mockitServiceRegistryDTO, mockitServiceRegistry);
         mockitServiceRegistry.setUpdateAt(new Date());
         iMockitServiceRegistryService.updateById(mockitServiceRegistry);
-
-        if (MockConstants.NO.intValue() == mockitServiceRegistryDTO.getDeleted()) {
-            LambdaQueryWrapper<MockitServiceClass> queryWrapper = new LambdaQueryWrapper();
-            queryWrapper.eq(MockitServiceClass::getServiceId,mockitServiceRegistryDTO.getId());
-            queryWrapper.eq(MockitServiceClass::getDeleted,MockConstants.NO);
-            List<MockitServiceClass> classes = iMockitServiceClassService.list(queryWrapper);
-            if (CollectionUtils.isNotEmpty(classes)) {
-                List<String> classIdList = classes.stream().map(MockitServiceClass::getId).collect(Collectors.toList());
-                BatchCommonDTO batchCommonDTO = new BatchCommonDTO();
-                batchCommonDTO.setIds(classIdList);
-                batchCommonDTO.setEnabled(Boolean.TRUE);
-                iMockitServiceClassService.batchDelete(batchCommonDTO);
-
-                LambdaQueryWrapper<MockitServiceMethod> methodWrapper = new LambdaQueryWrapper<>();
-                methodWrapper.in(MockitServiceMethod::getClassId,batchCommonDTO.getIds());
-                methodWrapper.eq(MockitServiceMethod::getDeleted,MockConstants.NO);
-                List<MockitServiceMethod> mockDataList = mockitServiceMethodMapper.selectList(methodWrapper);
-                mockDataList.forEach(mockitServiceMethod -> {
-                    mockitServiceMethod.setDeleted(MockConstants.YES);
-                    mockitServiceMethod.setUpdateAt(new Date());
-                    mockitServiceMethodMapper.updateById(mockitServiceMethod);
-                });
-
-                LambdaQueryWrapper<MockitMethodMockData> dataWrapper = new LambdaQueryWrapper<>();
-                dataWrapper.in(MockitMethodMockData::getMethodId, batchCommonDTO.getIds());
-                dataWrapper.eq(MockitMethodMockData::getDeleted, MockConstants.NO);
-                List<MockitMethodMockData> dataList = mockitServiceMethodMockDataMapper.selectList(dataWrapper);
-                dataList.forEach(mockitMethodMockData -> {
-                    mockitMethodMockData.setDeleted(MockConstants.YES);
-                    mockitMethodMockData.setUpdateAt(new Date());
-                    mockitServiceMethodMockDataMapper.updateById(mockitMethodMockData);
-                });
-            }
-
+        if (MockConstants.NO.intValue() != mockitServiceRegistryDTO.getDeleted()) {
+            return MockitResult.successful();
         }
+        LambdaQueryWrapper<MockitServiceClass> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(MockitServiceClass::getServiceId, mockitServiceRegistryDTO.getId());
+        queryWrapper.eq(MockitServiceClass::getDeleted, MockConstants.NO);
+        List<MockitServiceClass> classes = iMockitServiceClassService.list(queryWrapper);
+        if (CollectionUtils.isEmpty(classes)) {
+            return MockitResult.successful();
+        }
+        List<String> classIdList = classes.stream().map(MockitServiceClass::getId).collect(Collectors.toList());
+        BatchCommonDTO batchCommonDTO = new BatchCommonDTO();
+        batchCommonDTO.setIds(classIdList);
+        batchCommonDTO.setEnabled(Boolean.TRUE);
+        iMockitServiceClassService.batchDelete(batchCommonDTO);
+        mockitManager.batchDeleteMethod(batchCommonDTO);
+        mockitManager.batchDeleteMockData(batchCommonDTO);
         return MockitResult.successful();
     }
 
@@ -183,6 +159,12 @@ public class MockServiceRegistryController {
         return MockitResult.successful();
     }
 
+    /**
+     * Handles requests with the "/alias" path.
+     * Retrieves a list of MockitServiceRegistryVO objects and returns it as JSON.
+     *
+     * @return List of MockitServiceRegistryVO objects in JSON format.
+     */
     @RequestMapping("/alias")
     @ResponseBody
     public List<MockitServiceRegistryVO> alias() {

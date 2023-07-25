@@ -16,19 +16,12 @@
 package cn.thinkinginjava.mockit.admin.service.impl;
 
 import cn.thinkinginjava.mockit.admin.mapper.MockitServiceClassMapper;
-import cn.thinkinginjava.mockit.admin.mapper.MockitServiceMethodMapper;
-import cn.thinkinginjava.mockit.admin.mapper.MockitServiceMethodMockDataMapper;
 import cn.thinkinginjava.mockit.admin.model.dto.BatchCommonDTO;
 import cn.thinkinginjava.mockit.admin.model.dto.MockitServiceClassDTO;
-import cn.thinkinginjava.mockit.admin.model.entity.MockitMethodMockData;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceClass;
-import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceMethod;
-import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceRegistry;
 import cn.thinkinginjava.mockit.admin.model.enums.EnabledStatusEnum;
-import cn.thinkinginjava.mockit.admin.model.enums.OnlineStatusEnum;
 import cn.thinkinginjava.mockit.admin.model.vo.MockitServiceClassVO;
 import cn.thinkinginjava.mockit.admin.service.IMockitServiceClassService;
-import cn.thinkinginjava.mockit.admin.service.IMockitServiceRegistryService;
 import cn.thinkinginjava.mockit.admin.utils.UUIDUtils;
 import cn.thinkinginjava.mockit.common.constant.MockConstants;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -39,13 +32,11 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Implementation of the service for managing Mockit service classes.
@@ -55,10 +46,7 @@ import java.util.stream.Collectors;
 public class MockitServiceClassServiceImpl extends ServiceImpl<MockitServiceClassMapper, MockitServiceClass> implements IMockitServiceClassService {
 
     @Resource
-    private MockitServiceMethodMapper mockitServiceMethodMapper;
-
-    @Resource
-    private MockitServiceMethodMockDataMapper mockitServiceMethodMockDataMapper;
+    private MockitManager mockitManager;
 
     /**
      * Adds a MockitServiceClass based on the provided MockitServiceClassDTO.
@@ -142,25 +130,7 @@ public class MockitServiceClassServiceImpl extends ServiceImpl<MockitServiceClas
             mockitServiceRegistry.setUpdateAt(new Date());
         });
         updateBatchById(mockitServiceClassList);
-
-        LambdaQueryWrapper<MockitServiceMethod> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(MockitServiceMethod::getClassId,batchCommonDTO.getIds());
-        queryWrapper.eq(MockitServiceMethod::getDeleted,MockConstants.NO);
-        List<MockitServiceMethod> mockDataList = mockitServiceMethodMapper.selectList(queryWrapper);
-        mockDataList.forEach(mockitServiceRegistry -> {
-            mockitServiceRegistry.setDeleted(MockConstants.YES);
-            mockitServiceRegistry.setUpdateAt(new Date());
-            mockitServiceMethodMapper.updateById(mockitServiceRegistry);
-        });
-
-        LambdaQueryWrapper<MockitMethodMockData> dataWrapper = new LambdaQueryWrapper<>();
-        dataWrapper.in(MockitMethodMockData::getMethodId, batchCommonDTO.getIds());
-        dataWrapper.eq(MockitMethodMockData::getDeleted, MockConstants.NO);
-        List<MockitMethodMockData> dataList = mockitServiceMethodMockDataMapper.selectList(dataWrapper);
-        dataList.forEach(mockitServiceRegistry -> {
-            mockitServiceRegistry.setDeleted(MockConstants.YES);
-            mockitServiceRegistry.setUpdateAt(new Date());
-            mockitServiceMethodMockDataMapper.updateById(mockitServiceRegistry);
-        });
+        mockitManager.batchDeleteMethod(batchCommonDTO);
+        mockitManager.batchDeleteMockData(batchCommonDTO);
     }
 }

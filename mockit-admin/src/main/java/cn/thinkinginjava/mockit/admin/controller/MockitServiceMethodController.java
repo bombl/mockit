@@ -119,31 +119,9 @@ public class MockitServiceMethodController {
             MockitServiceMethodVO mockitServiceMethodVO = new MockitServiceMethodVO();
             BeanUtils.copyProperties(mockitServiceMethod, mockitServiceMethodVO);
             if (mockitServiceMethodDTO.getIsMockData() != null && mockitServiceMethodDTO.getIsMockData()) {
-                LambdaQueryWrapper<MockitMethodMockData> dataQueryWrapper = new LambdaQueryWrapper<>();
-                dataQueryWrapper.eq(MockitMethodMockData::getMethodId,mockitServiceMethod.getId());
-                dataQueryWrapper.eq(MockitMethodMockData::getDeleted,MockConstants.NO);
-                if (mockitServiceMethodDTO.getMockEnabled() != null) {
-                    dataQueryWrapper.eq(MockitMethodMockData::getMockEnabled, mockitServiceMethodDTO.getMockEnabled());
-                }
-                dataQueryWrapper.last("limit 1");
-                MockitMethodMockData mockData = iMockitMethodMockDataService.getOne(dataQueryWrapper);
-                if (mockData != null) {
-                    mockitServiceMethodVO.setMockEnabledMc(EnabledStatusEnum.getByValue(mockData.getMockEnabled()));
-                    mockitServiceMethodVO.setCreateTime(DateFormatUtils.format(mockData.getCreateAt(), MockConstants.Y_M_D));
-                    mockitServiceMethodVO.setRemarks(mockData.getRemarks());
-                    mockitServiceMethodVO.setMockValue(mockData.getMockValue());
-                } else {
-                    mockitServiceMethodVO.setMockEnabledMc("");
-                    mockitServiceMethodVO.setRemarks("");
-                    mockitServiceMethodVO.setCreateTime("");
-                }
+                assembleMockDataInfo(mockitServiceMethodDTO, mockitServiceMethod, mockitServiceMethodVO);
             }
-            MockitServiceClass mockitServiceClass = iMockitServiceClassService.getById(mockitServiceMethod.getClassId());
-            if (mockitServiceClass != null) {
-                mockitServiceMethodVO.setClassName(mockitServiceClass.getClassName());
-                MockitServiceRegistry mockitService = iMockitServiceRegistryService.getById(mockitServiceClass.getServiceId());
-                mockitServiceMethodVO.setAlias(mockitService.getAlias());
-            }
+            assembleAliasInfo(mockitServiceMethod, mockitServiceMethodVO);
             return mockitServiceMethodVO;
         });
         Map<String, Object> map = new HashMap<>();
@@ -179,20 +157,70 @@ public class MockitServiceMethodController {
         return MockitResult.successful();
     }
 
+    /**
+     * Handles requests with the "/listMethod" path.
+     * Retrieves a list of MockitServiceMethodVO objects based on the provided MockitServiceMethodDTO.
+     *
+     * @param mockitServiceMethodDTO The DTO object containing the criteria for filtering the list of MockitServiceMethodVO objects.
+     * @return MockitResult object containing a list of MockitServiceMethodVO objects in JSON format.
+     */
     @RequestMapping("/listMethod")
     @ResponseBody
     public MockitResult<List<MockitServiceMethodVO>> listMethod(@RequestBody MockitServiceMethodDTO mockitServiceMethodDTO) {
         LambdaQueryWrapper<MockitServiceMethod> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(MockitServiceMethod::getClassId,mockitServiceMethodDTO.getClassId());
-        queryWrapper.eq(MockitServiceMethod::getDeleted,MockConstants.NO);
+        queryWrapper.eq(MockitServiceMethod::getClassId, mockitServiceMethodDTO.getClassId());
+        queryWrapper.eq(MockitServiceMethod::getDeleted, MockConstants.NO);
         List<MockitServiceMethod> mockitServiceMethodList = iMockitServiceMethodService.list(queryWrapper);
         List<MockitServiceMethodVO> dataList = new ArrayList<>();
         mockitServiceMethodList.forEach(mockitServiceMethod -> {
             MockitServiceMethodVO mockitServiceMethodVO = new MockitServiceMethodVO();
-            BeanUtils.copyProperties(mockitServiceMethod,mockitServiceMethodVO);
+            BeanUtils.copyProperties(mockitServiceMethod, mockitServiceMethodVO);
             mockitServiceMethodVO.setParameterList(Arrays.asList(mockitServiceMethod.getParameters().split("-")));
             dataList.add(mockitServiceMethodVO);
         });
         return MockitResult.successful(dataList);
+    }
+
+    /**
+     * Assembles the mock data information by populating the MockitServiceMethodVO object with data from the MockitServiceMethodDTO object.
+     *
+     * @param mockitServiceMethodDTO The DTO object containing the data to be assembled.
+     * @param mockitServiceMethod    The target MockitServiceMethodVO object to be populated.
+     * @param mockitServiceMethodVO  The source MockitServiceMethodVO object containing data to be copied.
+     */
+    private void assembleMockDataInfo(MockitServiceMethodDTO mockitServiceMethodDTO, MockitServiceMethodVO mockitServiceMethod, MockitServiceMethodVO mockitServiceMethodVO) {
+        LambdaQueryWrapper<MockitMethodMockData> dataQueryWrapper = new LambdaQueryWrapper<>();
+        dataQueryWrapper.eq(MockitMethodMockData::getMethodId, mockitServiceMethod.getId());
+        dataQueryWrapper.eq(MockitMethodMockData::getDeleted, MockConstants.NO);
+        if (mockitServiceMethodDTO.getMockEnabled() != null) {
+            dataQueryWrapper.eq(MockitMethodMockData::getMockEnabled, mockitServiceMethodDTO.getMockEnabled());
+        }
+        dataQueryWrapper.last("limit 1");
+        MockitMethodMockData mockData = iMockitMethodMockDataService.getOne(dataQueryWrapper);
+        if (mockData != null) {
+            mockitServiceMethodVO.setMockEnabledMc(EnabledStatusEnum.getByValue(mockData.getMockEnabled()));
+            mockitServiceMethodVO.setCreateTime(DateFormatUtils.format(mockData.getCreateAt(), MockConstants.Y_M_D));
+            mockitServiceMethodVO.setRemarks(mockData.getRemarks());
+            mockitServiceMethodVO.setMockValue(mockData.getMockValue());
+            return;
+        }
+        mockitServiceMethodVO.setMockEnabledMc("");
+        mockitServiceMethodVO.setRemarks("");
+        mockitServiceMethodVO.setCreateTime("");
+    }
+
+    /**
+     * Assembles the alias information by copying data from one MockitServiceMethodVO object to another.
+     *
+     * @param mockitServiceMethod   The target MockitServiceMethodVO object to be populated.
+     * @param mockitServiceMethodVO The source MockitServiceMethodVO object containing data to be copied.
+     */
+    private void assembleAliasInfo(MockitServiceMethodVO mockitServiceMethod, MockitServiceMethodVO mockitServiceMethodVO) {
+        MockitServiceClass mockitServiceClass = iMockitServiceClassService.getById(mockitServiceMethod.getClassId());
+        if (mockitServiceClass != null) {
+            mockitServiceMethodVO.setClassName(mockitServiceClass.getClassName());
+            MockitServiceRegistry mockitService = iMockitServiceRegistryService.getById(mockitServiceClass.getServiceId());
+            mockitServiceMethodVO.setAlias(mockitService.getAlias());
+        }
     }
 }

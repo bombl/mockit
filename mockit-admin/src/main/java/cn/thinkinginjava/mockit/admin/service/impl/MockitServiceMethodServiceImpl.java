@@ -54,7 +54,7 @@ import java.util.stream.Collectors;
 public class MockitServiceMethodServiceImpl extends ServiceImpl<MockitServiceMethodMapper, MockitServiceMethod> implements IMockitServiceMethodService {
 
     @Resource
-    private MockitServiceMethodMockDataMapper mockitServiceMethodMockDataMapper;
+    private MockitManager mockitManager;
 
     /**
      * Saves or updates the method mock data based on the provided MockitServiceMethodDTO.
@@ -151,15 +151,6 @@ public class MockitServiceMethodServiceImpl extends ServiceImpl<MockitServiceMet
             mockitServiceRegistry.setUpdateAt(new Date());
         });
         updateBatchById(mockitServiceMethodList);
-
-        LambdaQueryWrapper<MockitMethodMockData> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(MockitMethodMockData::getMethodId, batchCommonDTO.getIds());
-        queryWrapper.eq(MockitMethodMockData::getDeleted, MockConstants.NO);
-        List<MockitMethodMockData> mockDataList = mockitServiceMethodMockDataMapper.selectList(queryWrapper);
-        mockDataList.forEach(mockitServiceRegistry -> {
-            mockitServiceRegistry.setDeleted(MockConstants.YES);
-            mockitServiceRegistry.setUpdateAt(new Date());
-            mockitServiceMethodMockDataMapper.updateById(mockitServiceRegistry);
-        });
+        mockitManager.batchDeleteMockData(batchCommonDTO);
     }
 }

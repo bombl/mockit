@@ -57,9 +57,6 @@ import java.util.stream.Collectors;
 public class MockitMockValueController {
 
     @Resource
-    private IMockitServiceMethodService iMockitServiceMethodService;
-
-    @Resource
     private IMockitMethodMockDataService iMockitMethodMockDataService;
 
     /**

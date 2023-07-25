@@ -39,6 +39,13 @@ import java.util.List;
 @Service
 public class MockitMethodMockDataServiceImpl extends ServiceImpl<MockitServiceMethodMockDataMapper, MockitMethodMockData> implements IMockitMethodMockDataService {
 
+    /**
+     * This method is used to save or update mock data for a specific method.
+     * It takes a MockitMethodMockDataDTO as input, which contains the information
+     * needed to create or update the mock data for the method.
+     *
+     * @param mockitMethodMockDataDTO The MockitMethodMockDataDTO containing the mock data details.
+     */
     @Override
     public void saveOrUpdateMethod(MockitMethodMockDataDTO mockitMethodMockDataDTO) {
         MockitMethodMockData mockitMethodMockData = new MockitMethodMockData();
@@ -56,6 +63,11 @@ public class MockitMethodMockDataServiceImpl extends ServiceImpl<MockitServiceMe
         saveOrUpdate(mockitMethodMockData, queryWrapper);
     }
 
+    /**
+     * Enables or disables multiple items in batch.
+     *
+     * @param batchCommonDTO The BatchCommonDTO object containing the information of items to be enabled or disabled.
+     */
     @Override
     public void batchEnabled(BatchCommonDTO batchCommonDTO) {
         List<MockitMethodMockData> mockDataList = queryMockData(batchCommonDTO);
@@ -69,6 +81,11 @@ public class MockitMethodMockDataServiceImpl extends ServiceImpl<MockitServiceMe
         updateBatchById(mockDataList);
     }
 
+    /**
+     * Deletes multiple items in batch.
+     *
+     * @param batchCommonDTO The BatchCommonDTO object containing the information of items to be deleted.
+     */
     @Override
     public void batchDelete(BatchCommonDTO batchCommonDTO) {
         List<MockitMethodMockData> mockDataList = queryMockData(batchCommonDTO);
@@ -82,6 +99,12 @@ public class MockitMethodMockDataServiceImpl extends ServiceImpl<MockitServiceMe
         updateBatchById(mockDataList);
     }
 
+    /**
+     * Queries mock data based on the given BatchCommonDTO criteria.
+     *
+     * @param batchCommonDTO The BatchCommonDTO object containing the criteria for querying mock data.
+     * @return A list of MockitMethodMockData objects that match the criteria.
+     */
     private List<MockitMethodMockData> queryMockData(BatchCommonDTO batchCommonDTO) {
         LambdaQueryWrapper<MockitMethodMockData> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.in(MockitMethodMockData::getMethodId, batchCommonDTO.getIds());
