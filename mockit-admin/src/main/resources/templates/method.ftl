@@ -336,6 +336,7 @@
             }
         });
     }
+
     function updateClassNames() {
         debugger
         // 给服务名下拉框添加事件监听器
@@ -662,6 +663,12 @@
     }
 
     $(document).ready(function () {
+        $("#selectServiceName").on('change', function() {
+            debugger
+            // 获取选中的服务名
+            var serviceId =$("#selectServiceName option:selected").val();
+            updateClassNameOptions(serviceId);
+        });
         // 调用函数来启动功能
         updateClassNames();
         $.ajax({
