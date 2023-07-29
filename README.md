@@ -21,7 +21,7 @@ Mockit是一个非侵入性的Mock框架，其核心设计目标是提供了一�
 <dependency>
     <groupId>cn.thinkinginjava</groupId>
     <artifactId>mockit-spring-boot-starter</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
 </dependency>
 ```
 
@@ -61,9 +61,11 @@ Mockit是一个非侵入性的Mock框架，其核心设计目标是提供了一�
 - Non-intrusive: Java probe-based mock frameworks offer a convenient, flexible, and powerful way to simulate and test code, helping developers build reliable and high-quality applications;
 - Persistence: Mock data persistence and support for canceling mocks (not yet implemented)；
 - Unified Management: Unified management of mock data for multiple projects (not yet implemented)；
+- Automated Mock Data Generation: Automatically generate mock data based on the return data type.
 - 无侵入性：基于Java探针的mock框架提供了一种方便、灵活且强大的方式来模拟和测试代码，帮助开发人员构建可靠和高质量的应用程序；
-- 持久化：Mock数据持久化(暂未实现)；
-- 统一管理：多项目Mock数据统一管理(暂未实现)；
+- 持久化：Mock数据持久化；
+- 统一管理：多项目Mock数据统一管理；
+- 自动生成Mock数据：根据返回数据类型自动生成Mock数据。
 
 ## Contributing
 Contributions are welcome! Open a pull request to fix a bug, or open an [Issue](https://github.com/bombl/mockit/issues/) to discuss a new feature or change.
