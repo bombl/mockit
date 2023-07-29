@@ -33,7 +33,7 @@ public interface IMockitServiceMethodService extends IService<MockitServiceMetho
      *
      * @param mockitServiceMethodDTO The DTO object containing the method mock data to be saved or updated.
      */
-    void saveOrUpdateMethod(MockitServiceMethodDTO mockitServiceMethodDTO);
+    MockitServiceMethod saveOrUpdateMethod(MockitServiceMethodDTO mockitServiceMethodDTO);
 
     /**
      * Retrieves a paginated list of MockitServiceMethodVO objects based on the provided MockitServiceMethodDTO.

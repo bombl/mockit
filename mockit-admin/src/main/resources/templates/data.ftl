@@ -177,7 +177,7 @@
                         <label for="jsonInput">模拟数据</label>
                         <textarea id="mockValueInput" class="form-control" rows="5"></textarea>
                         <span id="classNameError" class="text-danger"></span>
-                        <button id="formatButton" class="btn btn-primary" style="position: absolute; top: 33px; right: 0;background-color: #e83e8c;">格式化</button>
+                        <button id="formatButton" class="btn btn-primary" style="position: absolute; top: 33px; right: 0;background-color: #e83e8c;">重新生成</button>
                     </div>
                     <div class="form-group">
                         <label for="remarksInput">备注</label>
@@ -546,8 +546,9 @@
         $('#methodNameInput').val(rowData.methodInfo);
         $('#enabledStatusInput').val(rowData.mockEnabled);
         $('#remarksInput').val(rowData.remarks);
-        $('#mockValueInput').val(rowData.mockValue);
-
+        const formattedJSON = JSON.stringify(JSON.parse(rowData.mockValue), null, 2);
+        // Update the textarea with the formatted JSON
+        $('#mockValueInput').val(formattedJSON);
         // 弹出修改弹框
         $('#myModal').modal('show');
     }
@@ -655,18 +656,35 @@
 
     $(document).ready(function () {
         $('#formatButton').click(function () {
-            // Get the JSON input from the textarea
-            const jsonInput = $('#mockValueInput').val();
-
-            try {
-                // Parse the JSON and format it with proper indentation
-                const formattedJSON = JSON.stringify(JSON.parse(jsonInput), null, 2);
-                debugger
-                // Update the textarea with the formatted JSON
-                $('#mockValueInput').val(formattedJSON);
-            } catch (error) {
-                alert(error)
-            }
+            var serviceName =  $('#serviceNameInput').val();
+            var className = $('#selectClassName option:selected').text();
+            var id = $('#recordIdInput').val();
+            var obj = {};
+            obj.methodId = id;
+            obj.alias = serviceName;
+            debugger;
+            var data = JSON.stringify(obj);
+            $.ajax({
+                url: "${request.contextPath}/api/generateData",
+                type: "post",
+                contentType: "application/json",
+                data: data,
+                success: function(response) {
+                    try {
+                        // Parse the JSON and format it with proper indentation
+                        const formattedJSON = JSON.stringify(JSON.parse(response.data), null, 2);
+                        debugger
+                        // Update the textarea with the formatted JSON
+                        $('#mockValueInput').val(formattedJSON);
+                    } catch (error) {
+                        alert(error)
+                    }
+                },
+                error: function() {
+                    // 处理请求错误
+                    console.log('请求后台接口失败');
+                }
+            });
         });
         // 调用函数来启动功能
         updateClassNames();

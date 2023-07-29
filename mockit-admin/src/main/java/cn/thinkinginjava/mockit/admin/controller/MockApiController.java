@@ -18,16 +18,17 @@ package cn.thinkinginjava.mockit.admin.controller;
 import cn.thinkinginjava.mockit.admin.context.ResponseCallback;
 import cn.thinkinginjava.mockit.admin.model.dto.MockitResult;
 import cn.thinkinginjava.mockit.admin.model.dto.Session;
+import cn.thinkinginjava.mockit.admin.model.entity.MockitMethodMockData;
+import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceMethod;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceRegistry;
+import cn.thinkinginjava.mockit.admin.service.IMockitMethodMockDataService;
+import cn.thinkinginjava.mockit.admin.service.IMockitServiceMethodService;
 import cn.thinkinginjava.mockit.admin.service.IMockitServiceRegistryService;
 import cn.thinkinginjava.mockit.admin.session.SessionHolder;
 import cn.thinkinginjava.mockit.admin.utils.MessageUtil;
 import cn.thinkinginjava.mockit.common.constant.MockConstants;
 import cn.thinkinginjava.mockit.common.exception.MockitException;
-import cn.thinkinginjava.mockit.common.model.dto.CancelMockData;
-import cn.thinkinginjava.mockit.common.model.dto.Message;
-import cn.thinkinginjava.mockit.common.model.dto.MethodInfo;
-import cn.thinkinginjava.mockit.common.model.dto.MockData;
+import cn.thinkinginjava.mockit.common.model.dto.*;
 import cn.thinkinginjava.mockit.common.model.enums.MessageTypeEnum;
 import cn.thinkinginjava.mockit.common.utils.GsonUtil;
 import org.apache.commons.collections4.CollectionUtils;
@@ -52,6 +53,9 @@ public class MockApiController {
 
     @Resource
     private IMockitServiceRegistryService iMockitServiceRegistryService;
+
+    @Resource
+    private IMockitServiceMethodService iMockitServiceMethodService;
 
     /**
      * retrieves a list of method information based on the provided mock data.
@@ -126,6 +130,26 @@ public class MockApiController {
         sessions.forEach(sessionConsumer);
         CompletableFuture.allOf(all.toArray(new CompletableFuture[0])).join();
         return MockitResult.successful();
+    }
+
+    /**
+     * retrieves a list of method information based on the provided mock data.
+     *
+     * @param generateData The mock data containing the necessary information.
+     * @return The result containing a list of method information.
+     */
+    @PostMapping("/generateData")
+    public MockitResult<String> generateData(@RequestBody GenerateData generateData) {
+        MockitServiceMethod serviceMethod = iMockitServiceMethodService.getById(generateData.getMethodId());
+        Message<String> sendMessage = new Message<>();
+        sendMessage.setData(serviceMethod.getReturnType());
+        sendMessage.setMessageType(MessageTypeEnum.GENERATE_DATA.getType());
+        List<Session> sessions = getSessions(generateData.getAlias());
+        Session session = sessions.get(0);
+        ResponseCallback responseCallback = MessageUtil.sendMessage(session.getChannel(), sendMessage);
+        String response = responseCallback.getResponse();
+        Message<String> repMessage = GsonUtil.fromJsonToMessage(response, String.class);
+        return MockitResult.successful(repMessage.getData());
     }
 
     /**

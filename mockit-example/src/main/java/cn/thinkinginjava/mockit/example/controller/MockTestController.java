@@ -65,4 +65,12 @@ public class MockTestController {
     public Map<String,Object> hello5(String name) {
         return mockTestService.say5(name);
     }
+    @GetMapping("hello6")
+    public List<Map<String,Map<String,List<Map<String,Object>>>>> hello6(String name) {
+        return null;
+    }
+    @GetMapping("hello7")
+    public Map<String,Map<String,Map<String,Object>>> hello7(String name) {
+        return null;
+    }
 }

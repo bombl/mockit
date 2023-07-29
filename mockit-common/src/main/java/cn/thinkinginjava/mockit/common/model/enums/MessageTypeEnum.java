@@ -35,6 +35,11 @@ public enum MessageTypeEnum {
      */
     GET_METHODS("1003"),
 
+    /**
+     * generate mock data
+     */
+    GENERATE_DATA("1004"),
+
     ;
 
     private String type;

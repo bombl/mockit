@@ -97,8 +97,12 @@ public class ResultMockClassFileTransformer extends AbstractClassFileTransformer
                     continue;
                 }
                 Class<?> returnType = Class.forName(ctMethod.getReturnType().getName());
-                if (ClassUtils.isPrimitiveOrWrapper(returnType) || ClassUtils.isAssignable(returnType, String.class)) {
+                if (ClassUtils.isPrimitiveOrWrapper(returnType)) {
                     ctMethod.insertAt(0, "return \"" + mockValue + "\";");
+                    continue;
+                }
+                if (ClassUtils.isAssignable(returnType, String.class)) {
+                    ctMethod.insertAt(0, "return " + mockValue + ";");
                     continue;
                 }
                 if (!JsonUtil.isJson(mockValue)) {

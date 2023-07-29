@@ -34,6 +34,8 @@ public class MockitMethodDTO extends BaseDTO {
 
     private static final long serialVersionUID = 1L;
 
+    private String alias;
+
     private List<MockitServiceMethodDTO> mockitMethodList;
 
 }

@@ -15,6 +15,7 @@
 
 package cn.thinkinginjava.mockit.admin.controller;
 
+import cn.thinkinginjava.mockit.admin.context.ResponseCallback;
 import cn.thinkinginjava.mockit.admin.model.dto.*;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitMethodMockData;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceClass;
@@ -26,12 +27,18 @@ import cn.thinkinginjava.mockit.admin.service.IMockitMethodMockDataService;
 import cn.thinkinginjava.mockit.admin.service.IMockitServiceClassService;
 import cn.thinkinginjava.mockit.admin.service.IMockitServiceMethodService;
 import cn.thinkinginjava.mockit.admin.service.IMockitServiceRegistryService;
+import cn.thinkinginjava.mockit.admin.session.SessionHolder;
+import cn.thinkinginjava.mockit.admin.utils.MessageUtil;
 import cn.thinkinginjava.mockit.common.constant.MockConstants;
 import cn.thinkinginjava.mockit.common.exception.MockitException;
+import cn.thinkinginjava.mockit.common.model.dto.Message;
+import cn.thinkinginjava.mockit.common.model.enums.MessageTypeEnum;
+import cn.thinkinginjava.mockit.common.utils.GsonUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.BeanUtils;
@@ -75,7 +82,23 @@ public class MockitServiceMethodController {
     public MockitResult<Void> saveOrUpdate(@Valid @RequestBody MockitMethodDTO mockitMethodDTO) {
         List<MockitServiceMethodDTO> mockitMethodList = mockitMethodDTO.getMockitMethodList();
         for (MockitServiceMethodDTO mockitServiceMethodDTO : mockitMethodList) {
-            iMockitServiceMethodService.saveOrUpdateMethod(mockitServiceMethodDTO);
+            MockitServiceMethod mockitServiceMethod = iMockitServiceMethodService.saveOrUpdateMethod(mockitServiceMethodDTO);
+
+            Message<String> sendMessage = new Message<>();
+            sendMessage.setData(mockitServiceMethod.getReturnType());
+            sendMessage.setMessageType(MessageTypeEnum.GENERATE_DATA.getType());
+            List<Session> sessions = getSessions(mockitMethodDTO.getAlias());
+            Session session = sessions.get(0);
+            ResponseCallback responseCallback = MessageUtil.sendMessage(session.getChannel(), sendMessage);
+            String response = responseCallback.getResponse();
+            Message<String> repMessage = GsonUtil.fromJsonToMessage(response, String.class);
+            String data = repMessage.getData();
+
+            MockitMethodMockDataDTO mockData = new MockitMethodMockDataDTO();
+            mockData.setMethodId(mockitServiceMethod.getId());
+            mockData.setMockValue(data);
+            mockData.setMockEnabled(mockData.getMockEnabled());
+            iMockitMethodMockDataService.saveOrUpdateMethod(mockData);
         }
         return MockitResult.successful();
     }
@@ -222,5 +245,20 @@ public class MockitServiceMethodController {
             MockitServiceRegistry mockitService = iMockitServiceRegistryService.getById(mockitServiceClass.getServiceId());
             mockitServiceMethodVO.setAlias(mockitService.getAlias());
         }
+    }
+
+    /**
+     * Retrieves a list of sessions based on the given alias.
+     *
+     * @param alias The alias used to filter and identify the sessions.
+     * @return A list of Session objects matching the provided alias.
+     */
+    private List<Session> getSessions(String alias) {
+        Map<String, List<Session>> sessionMap = SessionHolder.getSessionMap();
+        if (MapUtils.isEmpty(sessionMap)
+                || CollectionUtils.isEmpty(sessionMap.get(alias))) {
+            throw new MockitException("Alias is not online.");
+        }
+        return sessionMap.get(alias);
     }
 }

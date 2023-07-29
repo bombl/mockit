@@ -321,7 +321,7 @@
                     var option = $('<option></option>').attr('value', item.id).text(item.className);
                     $('#selectClassName').append(option);
                 });
-
+                var id = $('#recordIdInput').val();
                 var serviceName =  $('#selectServiceName option:selected').text();
                 var className = $('#selectClassName option:selected').text();
                 var obj = {};
@@ -378,10 +378,12 @@
             $("#inputClassName").removeClass("is-invalid"); // Remove the red border from the input field
         }
 
+        var alias = $('#selectServiceName').text()
         debugger
 
         // 构造请求参数
         var requestData = {
+            alias: alias,
             mockitMethodList: mockitMethodList
         };
         var data = JSON.stringify(requestData);

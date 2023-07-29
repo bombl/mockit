@@ -16,15 +16,11 @@
 package cn.thinkinginjava.mockit.admin.service.impl;
 
 import cn.thinkinginjava.mockit.admin.mapper.MockitServiceMethodMapper;
-import cn.thinkinginjava.mockit.admin.mapper.MockitServiceMethodMockDataMapper;
 import cn.thinkinginjava.mockit.admin.model.dto.BatchCommonDTO;
-import cn.thinkinginjava.mockit.admin.model.dto.MockitMethodMockDataDTO;
 import cn.thinkinginjava.mockit.admin.model.dto.MockitServiceMethodDTO;
-import cn.thinkinginjava.mockit.admin.model.entity.MockitMethodMockData;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceMethod;
 import cn.thinkinginjava.mockit.admin.model.enums.EnabledStatusEnum;
 import cn.thinkinginjava.mockit.admin.model.vo.MockitServiceMethodVO;
-import cn.thinkinginjava.mockit.admin.service.IMockitMethodMockDataService;
 import cn.thinkinginjava.mockit.admin.service.IMockitServiceMethodService;
 import cn.thinkinginjava.mockit.admin.utils.UUIDUtils;
 import cn.thinkinginjava.mockit.common.constant.MockConstants;
@@ -32,8 +28,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -41,10 +35,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Implementation of the service for managing Mockit service methods.
@@ -62,7 +54,7 @@ public class MockitServiceMethodServiceImpl extends ServiceImpl<MockitServiceMet
      * @param mockitServiceMethodDTO The DTO object containing the method mock data to be saved or updated.
      */
     @Override
-    public void saveOrUpdateMethod(MockitServiceMethodDTO mockitServiceMethodDTO) {
+    public MockitServiceMethod saveOrUpdateMethod(MockitServiceMethodDTO mockitServiceMethodDTO) {
         LambdaQueryWrapper<MockitServiceMethod> mockDataLambdaQueryWrapper = new LambdaQueryWrapper<>();
         mockDataLambdaQueryWrapper.eq(MockitServiceMethod::getDeleted, MockConstants.NO);
         if (StringUtils.isNotBlank(mockitServiceMethodDTO.getId())) {
@@ -81,6 +73,7 @@ public class MockitServiceMethodServiceImpl extends ServiceImpl<MockitServiceMet
         mockitServiceMethod.setCreateAt(new Date());
         mockitServiceMethod.setUpdateAt(new Date());
         saveOrUpdate(mockitServiceMethod, mockDataLambdaQueryWrapper);
+        return mockitServiceMethod;
     }
 
     /**

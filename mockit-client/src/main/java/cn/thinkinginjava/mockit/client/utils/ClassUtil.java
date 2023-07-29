@@ -4,6 +4,7 @@ import cn.thinkinginjava.mockit.core.utils.ClassPoolHolder;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
@@ -28,4 +29,38 @@ public class ClassUtil {
         }
         return ctClasses;
     }
+
+    /**
+     * Retrieves the Class object based on the given class name.
+     *
+     * @param className The fully qualified name of the class.
+     * @return The Class object representing the specified class, or null if the class is not found.
+     */
+    public static Class<?> getClassByName(String className) {
+        try {
+            return Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Checks if the given class name represents the Object class.
+     *
+     * @param className The fully qualified name of the class to be checked.
+     * @return true if the class name represents the Object class, false otherwise.
+     */
+    public static boolean isObjectClass(String className) {
+        if (StringUtils.isBlank(className)) {
+            return false;
+        }
+        try {
+            Class<?> clazz = Class.forName(className);
+            return clazz.equals(Object.class);
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
 }
