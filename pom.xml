@@ -5,7 +5,7 @@
     <groupId>cn.thinkinginjava</groupId>
     <artifactId>mockit</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
     <name>mockit</name>
     <description>Non-invasive mock framework</description>
     <url>https://github.com/bombl/mockit</url>
@@ -94,25 +94,25 @@
             <dependency>
                 <groupId>cn.thinkinginjava</groupId>
                 <artifactId>mockit-core</artifactId>
-                <version>0.0.3</version>
+                <version>0.0.4</version>
             </dependency>
 
             <dependency>
                 <groupId>cn.thinkinginjava</groupId>
                 <artifactId>mockit-spring-boot-starter</artifactId>
-                <version>0.0.3</version>
+                <version>0.0.4</version>
             </dependency>
 
             <dependency>
                 <groupId>cn.thinkinginjava</groupId>
                 <artifactId>mockit-common</artifactId>
-                <version>0.0.3</version>
+                <version>0.0.4</version>
             </dependency>
 
             <dependency>
                 <groupId>cn.thinkinginjava</groupId>
                 <artifactId>mockit-client</artifactId>
-                <version>0.0.3</version>
+                <version>0.0.4</version>
             </dependency>
 
             <dependency>
@@ -124,7 +124,7 @@
             <dependency>
                 <groupId>cn.thinkinginjava</groupId>
                 <artifactId>mockit-admin</artifactId>
-                <version>0.0.3</version>
+                <version>0.0.4</version>
             </dependency>
 
             <dependency>
