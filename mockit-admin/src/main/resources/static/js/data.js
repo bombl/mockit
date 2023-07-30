@@ -554,7 +554,7 @@ $(document).ready(function () {
             },
             {"data": "className", "orderable": false},
             {"data": "methodInfo", "orderable": false},
-            {"data": "mockValue", "orderable": false},
+            {"data": "mockValue", "className": 'text-left', "orderable": false},
             {"data": "mockEnabledMc", "orderable": false},
             {"data": "remarks", "orderable": false},
             {"data": "createTime", "orderable": false},

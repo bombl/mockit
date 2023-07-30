@@ -596,6 +596,7 @@ $(document).ready(function () {
             {"data": "className", "orderable": false},
             {
                 data: "methodInfo",
+                className: 'text-left',
                 render: function (data, type, full, meta) {
                     // Escape the special characters before displaying
                     var escapedData = escapeHtml(data);
