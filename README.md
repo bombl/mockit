@@ -21,7 +21,7 @@ Mockit是一个非侵入性的Mock框架，其核心设计目标是提供了一�
 <dependency>
     <groupId>cn.thinkinginjava</groupId>
     <artifactId>mockit-spring-boot-starter</artifactId>
-    <version>0.0.4</version>
+    <version>0.0.5</version>
 </dependency>
 ```
 
