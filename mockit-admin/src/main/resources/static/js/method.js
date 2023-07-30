@@ -9,7 +9,7 @@ function updateMethodNameOptions(obj) {
             $('#selectMethodName').empty();
             // 填充方法名下拉框选项
             response.data.forEach(function(item) {
-                debugger
+                
                 var modifiedParameters = [];
                 for (var i = 0; i < item.parameters.length; i++) {
                     var parameter = item.parameters[i];
@@ -63,7 +63,7 @@ function updateClassNameOptions(serviceId) {
         contentType: "application/json",
         data: data,
         success: function(response) {
-            debugger
+            
             if (response.data.length === 0) {
                 return;
             }
@@ -89,7 +89,7 @@ function updateClassNameOptions(serviceId) {
 }
 
 function updateClassNames() {
-    debugger
+    
     // 给服务名下拉框添加事件监听器
     $("#selectServiceName").on('change', function() {
         // 获取选中的服务名
@@ -130,7 +130,7 @@ function addClass() {
     }
 
     var alias = $('#selectServiceName').text()
-    debugger
+    
 
     // 构造请求参数
     var requestData = {
@@ -138,7 +138,7 @@ function addClass() {
         mockitMethodList: mockitMethodList
     };
     var data = JSON.stringify(requestData);
-    debugger
+    
     $.ajax({
         url: base_url + "/method/saveOrUpdate",
         type: "post",
@@ -166,7 +166,7 @@ function add() {
         success: function(response) {
             // 清空下拉框选项
             $('#selectServiceName').empty();
-            debugger
+            
             if (response.length === 0) {
                 return;
             }
@@ -192,7 +192,7 @@ function searchTableData(event) {
     var methodName = $('#methodName').val().trim();
     var mockEnabled = $('#enabled').val();
     var searchCondition = {};
-    debugger
+    
     if (serviceId) {
         searchCondition.serviceId = serviceId;
     }
@@ -321,7 +321,7 @@ function saveRecord() {
 
     var mockitMethodList = [];
     mockitMethodList.push(obj);
-    debugger
+    
     var requestData = {
         mockitMethodList: mockitMethodList
     };
@@ -369,7 +369,7 @@ function del(me) {
 
 // 执行删除操作的逻辑
 function deleteRecord(me) {
-    debugger
+    
     var rowData = table.rows($(me).parents('tr')).data()[0]; // 选中行数的数据
     var id = rowData.id;
     var ids = [];
@@ -442,7 +442,7 @@ $(document).ready(function () {
         tokenSeparators: [",", " "], // Define separators for custom search terms
     });
     $("#selectServiceName").on('change', function() {
-        debugger
+        
         // 获取选中的服务名
         var serviceId =$("#selectServiceName option:selected").val();
         updateClassNameOptions(serviceId);
@@ -544,7 +544,7 @@ $(document).ready(function () {
             contentType: "application/json",
             data: function (d) {
                 var obj = {};
-                debugger
+                
                 obj.serviceId = $("#selectServiceName0").val();
                 obj.className = $("#className").val();
                 obj.methodName = $("#methodName").val();

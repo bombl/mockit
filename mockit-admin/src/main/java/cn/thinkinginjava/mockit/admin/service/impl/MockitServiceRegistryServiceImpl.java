@@ -90,7 +90,7 @@ public class MockitServiceRegistryServiceImpl extends ServiceImpl<MockitServiceR
         mockitServiceRegistryUpdate.setAlias(session.getAlias());
         mockitServiceRegistryUpdate.setIp(session.getIp());
         mockitServiceRegistryUpdate.setOnline(MockConstants.YES);
-        mockitServiceRegistryUpdate.setEnabled(MockConstants.NO);
+        mockitServiceRegistryUpdate.setEnabled(MockConstants.YES);
         mockitServiceRegistryUpdate.setCreateAt(new Date());
         mockitServiceRegistryUpdate.setUpdateAt(new Date());
         saveOrUpdate(mockitServiceRegistryUpdate, queryWrapper);
@@ -261,29 +261,32 @@ public class MockitServiceRegistryServiceImpl extends ServiceImpl<MockitServiceR
         if (CollectionUtils.isEmpty(mockitServiceRegistryList)) {
             return;
         }
-        mockitServiceRegistryList = mockitServiceRegistryList.stream().filter(this::canMock).collect(Collectors.toList());
-        if (CollectionUtils.isEmpty(mockitServiceRegistryList)) {
-            return;
-        }
-        mockitServiceRegistryList.forEach(mockitServiceRegistry -> mockOrCancelMock(mockitServiceRegistry, batchCommonDTO.getEnabled()));
+        mockitServiceRegistryList.forEach(this::mockOrCancelMock);
     }
 
     /**
      * Initiates or cancels mocking for the given MockitServiceRegistry based on the specified flag.
      *
      * @param mockitServiceRegistry The MockitServiceRegistry object for which to initiate or cancel mocking.
-     * @param isMock                A boolean flag indicating whether to initiate mocking (true) or cancel mocking (false).
      */
-    private void mockOrCancelMock(MockitServiceRegistry mockitServiceRegistry, Boolean isMock) {
+    private void mockOrCancelMock(MockitServiceRegistry mockitServiceRegistry) {
+        if (MockConstants.NO.intValue() == mockitServiceRegistry.getEnabled()) {
+            List<MockitServiceClass> serviceClasses = iMockitServiceClassService.list();
+            serviceClasses.forEach(mockitServiceClass -> cancelMock(mockitServiceRegistry, mockitServiceClass));
+            return;
+        }
         LambdaQueryWrapper<MockitServiceClass> serviceClassLambdaQueryWrapper = new LambdaQueryWrapper<>();
         serviceClassLambdaQueryWrapper.eq(MockitServiceClass::getServiceId, mockitServiceRegistry.getId());
         serviceClassLambdaQueryWrapper.eq(MockitServiceClass::getMockEnabled, MockConstants.YES);
         serviceClassLambdaQueryWrapper.eq(MockitServiceClass::getDeleted, MockConstants.NO);
         List<MockitServiceClass> serviceClassList = iMockitServiceClassService.list(serviceClassLambdaQueryWrapper);
         if (CollectionUtils.isEmpty(serviceClassList)) {
+            List<MockitServiceClass> serviceClasses = iMockitServiceClassService.list();
+            serviceClasses.forEach(mockitServiceClass -> cancelMock(mockitServiceRegistry, mockitServiceClass));
             return;
         }
-        serviceClassList.forEach(mockitServiceClass -> mockOrCancelMock(mockitServiceRegistry, mockitServiceClass, isMock));
+        serviceClassList.forEach(mockitServiceClass -> mockOrCancelMock(mockitServiceRegistry, mockitServiceClass,
+                MockConstants.YES.intValue() == mockitServiceClass.getMockEnabled()));
     }
 
     /**
@@ -301,6 +304,7 @@ public class MockitServiceRegistryServiceImpl extends ServiceImpl<MockitServiceR
             serviceMethodLambdaQueryWrapper.eq(MockitServiceMethod::getDeleted, MockConstants.NO);
             List<MockitServiceMethod> serviceMethodList = iMockitServiceMethodService.list(serviceMethodLambdaQueryWrapper);
             if (CollectionUtils.isEmpty(serviceMethodList)) {
+                cancelMock(mockitServiceRegistry, mockitServiceClass);
                 return;
             }
             mock(mockitServiceRegistry, mockitServiceClass, serviceMethodList);
@@ -319,6 +323,7 @@ public class MockitServiceRegistryServiceImpl extends ServiceImpl<MockitServiceR
     private void mock(MockitServiceRegistry mockitServiceRegistry, MockitServiceClass mockitServiceClass, List<MockitServiceMethod> serviceMethodList) {
         List<MethodMockData> methodMockDataList = getMethodMockDataList(serviceMethodList);
         if (CollectionUtils.isEmpty(methodMockDataList)) {
+            cancelMock(mockitServiceRegistry, mockitServiceClass);
             return;
         }
         Session session = getSession(mockitServiceRegistry.getAlias(), mockitServiceRegistry.getIp());
@@ -334,13 +339,6 @@ public class MockitServiceRegistryServiceImpl extends ServiceImpl<MockitServiceR
         sendMessage.setMessageType(MessageTypeEnum.MOCK.getType());
         ResponseCallback responseCallback = MessageUtil.sendMessage(session.getChannel(), sendMessage);
         CompletableFuture<String> completableFuture = responseCallback.getFuture().whenComplete((response, throwable) -> {
-            if (MockitResult.isSuccess(response)) {
-                MockitServiceRegistry serviceRegistry = new MockitServiceRegistry();
-                serviceRegistry.setId(mockitServiceRegistry.getId());
-                serviceRegistry.setEnabled(MockConstants.YES);
-                serviceRegistry.setUpdateAt(new Date());
-                updateById(serviceRegistry);
-            }
         }).exceptionally(throwable -> {
             logger.error(throwable.getMessage());
             return null;
@@ -393,13 +391,6 @@ public class MockitServiceRegistryServiceImpl extends ServiceImpl<MockitServiceR
         sendMessage.setMessageType(MessageTypeEnum.CANCEL_MOCK.getType());
         ResponseCallback responseCallback = MessageUtil.sendMessage(session.getChannel(), sendMessage);
         CompletableFuture<String> completableFuture = responseCallback.getFuture().whenComplete((response, throwable) -> {
-            if (MockitResult.isSuccess(response)) {
-                MockitServiceRegistry serviceRegistry = new MockitServiceRegistry();
-                serviceRegistry.setId(mockitServiceRegistry.getId());
-                serviceRegistry.setEnabled(MockConstants.NO);
-                serviceRegistry.setUpdateAt(new Date());
-                updateById(serviceRegistry);
-            }
         }).exceptionally(throwable -> {
             logger.error(throwable.getMessage());
             return null;

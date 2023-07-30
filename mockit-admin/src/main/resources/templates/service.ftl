@@ -47,13 +47,13 @@
                                 <div class="box-header">
                                     <div class="input-group">
                                         <a class="btn btn-primary dialog" style="margin-right: 3px;background-color: #3c8dbc;" href="javascript:;" data-url="/system/user/add"
-                                           data-title="模拟" data-width="850" data-height="550" onclick="enableAll()"><i class="fa fa-check"></i>模拟</a>
+                                           data-title="模拟" data-width="850" data-height="550" onclick="enableAll()"><i class="fa fa-check"></i>启用</a>
                                     </div>
                                 </div>
                                 <div class="box-header">
                                     <div class="input-group">
                                         <a class="btn btn-primary dialog" style="margin-right: 3px;background-color: #dd4b39;" href="javascript:;" href="javascript:;" data-url="/system/user/add"
-                                           data-title="取消模拟" data-width="850" data-height="550" onclick="disableAll()"><i class="fa fa-times"></i>取消模拟</a>
+                                           data-title="取消模拟" data-width="850" data-height="550" onclick="disableAll()"><i class="fa fa-times"></i>禁用</a>
                                     </div>
                                 </div>
                                 <div class="input-group">

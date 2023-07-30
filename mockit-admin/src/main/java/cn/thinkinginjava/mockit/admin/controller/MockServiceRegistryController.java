@@ -32,16 +32,14 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -113,7 +111,7 @@ public class MockServiceRegistryController {
         BeanUtils.copyProperties(mockitServiceRegistryDTO, mockitServiceRegistry);
         mockitServiceRegistry.setUpdateAt(new Date());
         iMockitServiceRegistryService.updateById(mockitServiceRegistry);
-        if (MockConstants.NO.intValue() != mockitServiceRegistryDTO.getDeleted()) {
+        if (MockConstants.YES.intValue() != mockitServiceRegistryDTO.getDeleted()) {
             return MockitResult.successful();
         }
         LambdaQueryWrapper<MockitServiceClass> queryWrapper = new LambdaQueryWrapper<>();
@@ -130,6 +128,10 @@ public class MockServiceRegistryController {
         iMockitServiceClassService.batchDelete(batchCommonDTO);
         mockitManager.batchDeleteMethod(batchCommonDTO);
         mockitManager.batchDeleteMockData(batchCommonDTO);
+        List<String> ids = new ArrayList<>();
+        ids.add(mockitServiceRegistryDTO.getId());
+        batchCommonDTO.setIds(ids);
+        iMockitServiceRegistryService.cancelMock(batchCommonDTO);
         return MockitResult.successful();
     }
 

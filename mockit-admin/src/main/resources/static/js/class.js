@@ -34,7 +34,7 @@ function addClass() {
     requestData.remarks = remarksValue;
     requestData.mockEnabled = addEnabledStatusInput;
     var data = JSON.stringify(requestData);
-    debugger
+    
     $.ajax({
         url: base_url + "/class/add",
         type: "post",
@@ -84,7 +84,7 @@ function searchTableData(event) {
     var className = $('#className').val().trim();
     var enabled = $('#enabled').val();
     var searchCondition = {};
-    debugger
+    
     if (serviceId) {
         searchCondition.serviceId = serviceId;
     }
@@ -378,7 +378,7 @@ $(document).ready(function () {
             contentType: "application/json",
             data: function (d) {
                 var obj = {};
-                debugger
+                
                 // obj.serviceId = $("#selectServiceName0").options[serviceNameElement.selectedIndex].value;
                 obj.serviceId = $("#selectServiceName0").val();
                 obj.className = $("#className").val();

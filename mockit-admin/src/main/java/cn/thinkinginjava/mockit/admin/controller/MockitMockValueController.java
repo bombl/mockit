@@ -21,6 +21,7 @@ import cn.thinkinginjava.mockit.admin.model.dto.MockitResult;
 import cn.thinkinginjava.mockit.admin.model.dto.MockitServiceMethodDTO;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitMethodMockData;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceClass;
+import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceMethod;
 import cn.thinkinginjava.mockit.admin.model.entity.MockitServiceRegistry;
 import cn.thinkinginjava.mockit.admin.model.enums.EnabledStatusEnum;
 import cn.thinkinginjava.mockit.admin.model.vo.MockitMethodMockDataVO;
@@ -44,6 +45,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +61,15 @@ public class MockitMockValueController {
     @Resource
     private IMockitMethodMockDataService iMockitMethodMockDataService;
 
+    @Resource
+    private IMockitServiceMethodService iMockitServiceMethodService;
+
+    @Resource
+    private IMockitServiceClassService iMockitServiceClassService;
+
+    @Resource
+    private IMockitServiceRegistryService iMockitServiceRegistryService;
+
     /**
      * Saves or updates a MockitServiceMethod based on the provided MockitServiceMethodDTO.
      *
@@ -69,6 +80,13 @@ public class MockitMockValueController {
     @ResponseBody
     public MockitResult<Void> saveOrUpdate(@Valid @RequestBody MockitMethodMockDataDTO mockitMethodMockDataDTO) {
         iMockitMethodMockDataService.saveOrUpdateMethod(mockitMethodMockDataDTO);
+        MockitServiceMethod mockitServiceMethod = iMockitServiceMethodService.getById(mockitMethodMockDataDTO.getMethodId());
+        MockitServiceClass serviceClass = iMockitServiceClassService.getById(mockitServiceMethod.getClassId());
+        List<String> ids = new ArrayList<>();
+        ids.add(serviceClass.getServiceId());
+        BatchCommonDTO batchCommonDTO = new BatchCommonDTO();
+        batchCommonDTO.setIds(ids);
+        iMockitServiceRegistryService.mock(batchCommonDTO);
         return MockitResult.successful();
     }
 
@@ -82,6 +100,12 @@ public class MockitMockValueController {
     @ResponseBody
     public MockitResult<Void> enabled(@Valid @RequestBody BatchCommonDTO batchCommonDTO) {
         iMockitMethodMockDataService.batchEnabled(batchCommonDTO);
+        List<MockitServiceMethod> methodList = iMockitServiceMethodService.listByIds(batchCommonDTO.getIds());
+        List<String> classIds = methodList.stream().map(MockitServiceMethod::getClassId).collect(Collectors.toList());
+        List<MockitServiceClass> serviceClassList = iMockitServiceClassService.listByIds(classIds);
+        List<String> serviceIds = serviceClassList.stream().map(MockitServiceClass::getServiceId).collect(Collectors.toList());
+        batchCommonDTO.setIds(serviceIds);
+        iMockitServiceRegistryService.mock(batchCommonDTO);
         return MockitResult.successful();
     }
 
@@ -95,6 +119,12 @@ public class MockitMockValueController {
     @ResponseBody
     public MockitResult<Void> delete(@Valid @RequestBody BatchCommonDTO batchCommonDTO) {
         iMockitMethodMockDataService.batchDelete(batchCommonDTO);
+        List<MockitServiceMethod> methodList = iMockitServiceMethodService.listByIds(batchCommonDTO.getIds());
+        List<String> classIds = methodList.stream().map(MockitServiceMethod::getClassId).collect(Collectors.toList());
+        List<MockitServiceClass> serviceClassList = iMockitServiceClassService.listByIds(classIds);
+        List<String> serviceIds = serviceClassList.stream().map(MockitServiceClass::getServiceId).collect(Collectors.toList());
+        batchCommonDTO.setIds(serviceIds);
+        iMockitServiceRegistryService.mock(batchCommonDTO);
         return MockitResult.successful();
     }
 }

@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Represents a controller for managing MockitServiceClass.
@@ -61,6 +62,11 @@ public class MockitServiceClassController {
     @ResponseBody
     public MockitResult<Void> addClass(@Valid @RequestBody MockitServiceClassDTO mockitServiceClassDTO) {
         iMockitServiceClassService.addClass(mockitServiceClassDTO);
+        List<String> ids = new ArrayList<>();
+        ids.add(mockitServiceClassDTO.getServiceId());
+        BatchCommonDTO batchCommonDTO = new BatchCommonDTO();
+        batchCommonDTO.setIds(ids);
+        iMockitServiceRegistryService.mock(batchCommonDTO);
         return MockitResult.successful();
     }
 
@@ -106,12 +112,18 @@ public class MockitServiceClassController {
     @ResponseBody
     public MockitResult<Void> update(@RequestBody MockitServiceClassDTO mockitServiceClassDTO) {
         if (StringUtils.isEmpty(mockitServiceClassDTO.getId())) {
-            throw new MockitException("service id can not empty.");
+            throw new MockitException("class id can not empty.");
         }
         MockitServiceClass mockitServiceClass = new MockitServiceClass();
         BeanUtils.copyProperties(mockitServiceClassDTO, mockitServiceClass);
         mockitServiceClass.setUpdateAt(new Date());
         iMockitServiceClassService.updateById(mockitServiceClass);
+        MockitServiceClass serviceClass = iMockitServiceClassService.getById(mockitServiceClass.getId());
+        List<String> ids = new ArrayList<>();
+        ids.add(serviceClass.getServiceId());
+        BatchCommonDTO batchCommonDTO = new BatchCommonDTO();
+        batchCommonDTO.setIds(ids);
+        iMockitServiceRegistryService.mock(batchCommonDTO);
         return MockitResult.successful();
     }
 
@@ -125,6 +137,10 @@ public class MockitServiceClassController {
     @ResponseBody
     public MockitResult<Void> enabled(@Valid @RequestBody BatchCommonDTO batchCommonDTO) {
         iMockitServiceClassService.batchEnabled(batchCommonDTO);
+        List<MockitServiceClass> mockitServiceClasses = iMockitServiceClassService.listByIds(batchCommonDTO.getIds());
+        List<String> ids = mockitServiceClasses.stream().map(MockitServiceClass::getServiceId).collect(Collectors.toList());
+        batchCommonDTO.setIds(ids);
+        iMockitServiceRegistryService.mock(batchCommonDTO);
         return MockitResult.successful();
     }
 
@@ -138,6 +154,10 @@ public class MockitServiceClassController {
     @ResponseBody
     public MockitResult<Void> delete(@Valid @RequestBody BatchCommonDTO batchCommonDTO) {
         iMockitServiceClassService.batchDelete(batchCommonDTO);
+        List<MockitServiceClass> mockitServiceClasses = iMockitServiceClassService.listByIds(batchCommonDTO.getIds());
+        List<String> ids = mockitServiceClasses.stream().map(MockitServiceClass::getServiceId).collect(Collectors.toList());
+        batchCommonDTO.setIds(ids);
+        iMockitServiceRegistryService.mock(batchCommonDTO);
         return MockitResult.successful();
     }
 

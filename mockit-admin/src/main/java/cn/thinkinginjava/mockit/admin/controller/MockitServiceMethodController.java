@@ -99,6 +99,16 @@ public class MockitServiceMethodController {
             mockData.setMockValue(data);
             mockData.setMockEnabled(mockData.getMockEnabled());
             iMockitMethodMockDataService.saveOrUpdateMethod(mockData);
+
+            MockitServiceClass mockitServiceClass = iMockitServiceClassService.getById(mockitServiceMethod.getClassId());
+            if (mockitServiceClass == null) {
+                continue;
+            }
+            List<String> ids = new ArrayList<>();
+            ids.add(mockitServiceClass.getServiceId());
+            BatchCommonDTO batchCommonDTO = new BatchCommonDTO();
+            batchCommonDTO.setIds(ids);
+            iMockitServiceRegistryService.mock(batchCommonDTO);
         }
         return MockitResult.successful();
     }
@@ -164,6 +174,12 @@ public class MockitServiceMethodController {
     @ResponseBody
     public MockitResult<Void> enabled(@Valid @RequestBody BatchCommonDTO batchCommonDTO) {
         iMockitServiceMethodService.batchEnabled(batchCommonDTO);
+        List<MockitServiceMethod> methodList = iMockitServiceMethodService.listByIds(batchCommonDTO.getIds());
+        List<String> classIds = methodList.stream().map(MockitServiceMethod::getClassId).collect(Collectors.toList());
+        List<MockitServiceClass> serviceClassList = iMockitServiceClassService.listByIds(classIds);
+        List<String> serviceIds = serviceClassList.stream().map(MockitServiceClass::getServiceId).collect(Collectors.toList());
+        batchCommonDTO.setIds(serviceIds);
+        iMockitServiceRegistryService.mock(batchCommonDTO);
         return MockitResult.successful();
     }
 
@@ -177,6 +193,12 @@ public class MockitServiceMethodController {
     @ResponseBody
     public MockitResult<Void> delete(@Valid @RequestBody BatchCommonDTO batchCommonDTO) {
         iMockitServiceMethodService.batchDelete(batchCommonDTO);
+        List<MockitServiceMethod> methodList = iMockitServiceMethodService.listByIds(batchCommonDTO.getIds());
+        List<String> classIds = methodList.stream().map(MockitServiceMethod::getClassId).collect(Collectors.toList());
+        List<MockitServiceClass> serviceClassList = iMockitServiceClassService.listByIds(classIds);
+        List<String> serviceIds = serviceClassList.stream().map(MockitServiceClass::getServiceId).collect(Collectors.toList());
+        batchCommonDTO.setIds(serviceIds);
+        iMockitServiceRegistryService.mock(batchCommonDTO);
         return MockitResult.successful();
     }
 
