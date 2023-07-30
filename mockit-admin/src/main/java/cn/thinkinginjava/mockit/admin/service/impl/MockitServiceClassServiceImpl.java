@@ -55,6 +55,14 @@ public class MockitServiceClassServiceImpl extends ServiceImpl<MockitServiceClas
      */
     @Override
     public void addClass(MockitServiceClassDTO mockitServiceClassDTO) {
+        LambdaQueryWrapper<MockitServiceClass> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(MockitServiceClass::getServiceId,mockitServiceClassDTO.getServiceId());
+        queryWrapper.eq(MockitServiceClass::getClassName,mockitServiceClassDTO.getClassName());
+        queryWrapper.eq(MockitServiceClass::getDeleted,MockConstants.NO);
+        List<MockitServiceClass> mockitServiceClasses = list(queryWrapper);
+        if (CollectionUtils.isNotEmpty(mockitServiceClasses)) {
+            return;
+        }
         MockitServiceClass mockitServiceClass = new MockitServiceClass();
         BeanUtils.copyProperties(mockitServiceClassDTO, mockitServiceClass);
         mockitServiceClass.setId(UUIDUtils.getUuid());

@@ -54,20 +54,12 @@
         </div>
         <!-- /.content-header -->
         <!-- Main content -->
-
-        <!-- Main content -->
         <section class="content">
             <div class="row">
                 <div class="col-12">
                     <div class="col-xs-12">
                         <div class="box">
                             <form id="myForm" method="post" class="form-inline">
-<#--                                <div class="box-header">-->
-<#--                                    <div class="input-group">-->
-<#--                                        <a class="btn btn-primary dialog" style="margin-right: 3px;background-color: #3c8dbc;" href="javascript:;" data-url="/system/user/add"-->
-<#--                                           data-title="新增" data-width="850" data-height="550" onclick="add()"><i class="fa fa-check"></i>新增</a>-->
-<#--                                    </div>-->
-<#--                                </div>-->
                                 <div class="box-header">
                                     <div class="input-group">
                                         <a class="btn btn-primary dialog" style="margin-right: 3px;background-color: #3c8dbc;" href="javascript:;" data-url="/system/user/add"
@@ -213,64 +205,6 @@
             </div>
         </div>
     </div>
-
-    <!-- 新增 -->
-    <#--<div class="modal fade" id="addNewModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog custom-dialog" role="document">
-            <div class="modal-content custom-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="myModalLabel">新增</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="selectServiceName1">服务名</label>
-                                <select class="form-control custom-select" id="selectServiceName" style="height: 38px;">
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="selectClassName">类名</label>
-                                <select class="form-control custom-select" id="selectClassName" style="width: 766px;">
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="selectMethodName">方法名</label>
-                                <select class="form-control custom-select" id="selectMethodName" style="width: 766px;">
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="addEnabledStatusInput">启用状态</label>
-                                <select id="addStatusInput" class="form-control">
-                                    <option value="1">启用</option>
-                                    <option value="0">禁用</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group" style="position: relative;">
-                        <label for="jsonInput">模拟数据</label>
-                        <textarea id="mockValue" class="form-control" rows="5"></textarea>
-                        <span id="classNameError" class="text-danger"></span>
-                        <button id="formatButton" class="btn btn-primary" style="position: absolute; top: 33px; right: 0;background-color: #e83e8c;">格式化</button>
-                    </div>
-                    <div class="form-group">
-                        <label for="remarksInput">备注</label>
-                        <textarea id="remarks" class="form-control"></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
-                    <button type="button" class="btn btn-primary" onclick="addClass()">保存</button>
-                </div>
-            </div>
-        </div>
-    </div>-->
     <!-- footer -->
     <@netCommon.commonFooter />
 

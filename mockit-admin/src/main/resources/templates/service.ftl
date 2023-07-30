@@ -38,8 +38,6 @@
         </div>
         <!-- /.content-header -->
         <!-- Main content -->
-
-        <!-- Main content -->
         <section class="content">
             <div class="row">
                 <div class="col-12">
@@ -170,9 +168,6 @@
             </div>
         </div>
     </div>
-
-
-
     <!-- 删除确认框 -->
     <div id="confirmDeleteModal" class="modal fade">
         <div class="modal-dialog">
