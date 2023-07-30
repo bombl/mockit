@@ -1,3 +1,24 @@
+function zkgd() {
+    const modalContent = document.getElementById('modal-content');
+    const mockValueInput = document.getElementById('mockValueInput');
+    const mjsj = document.getElementById('mjsj');
+    const isExpanded = mockValueInput.style.height === '430px';
+    mockValueInput.style.height = isExpanded ? '172px' : '430px';
+    if (isExpanded) {
+        mjsj.style.height = '172px';
+    } else {
+        mjsj.style.height = '430px';
+    }
+    const expandIcon = document.getElementById("expandIcon");
+    if (expandIcon.classList.contains("fa-chevron-down")) {
+        expandIcon.classList.remove("fa-chevron-down");
+        expandIcon.classList.add("fa-chevron-up");
+    } else {
+        expandIcon.classList.remove("fa-chevron-up");
+        expandIcon.classList.add("fa-chevron-down");
+    }
+    modalContent.style.height = '798px';
+}
 function updateMethodNameOptions(obj) {
     $.ajax({
         url: '${request.contextPath}/method/listMethod',
@@ -9,7 +30,7 @@ function updateMethodNameOptions(obj) {
             $('#selectMethodName').empty();
             // 填充方法名下拉框选项
             response.data.forEach(function(item) {
-                debugger
+                
                 var modifiedParameters = [];
                 for (var i = 0; i < item.parameterList.length; i++) {
                     var parameter = item.parameterList[i];
@@ -46,7 +67,7 @@ function updateClassNameOptions(serviceId) {
         contentType: "application/json",
         data: data,
         success: function(response) {
-            debugger
+            
             if (response.data.length === 0) {
                 return;
             }
@@ -71,7 +92,7 @@ function updateClassNameOptions(serviceId) {
     });
 }
 function updateClassNames() {
-    debugger
+    
     // 给服务名下拉框添加事件监听器
     $("#selectServiceName").on('change', function() {
         // 获取选中的服务名
@@ -88,7 +109,7 @@ function addClass() {
     // 获取输入的备注
     var mockEnabled = $("#addStatusInput").val();
 
-    debugger
+    
 
     // 构造请求参数
     var requestData = {
@@ -98,7 +119,7 @@ function addClass() {
         remarks: remarksValue
     };
     var data = JSON.stringify(requestData);
-    debugger
+    
     $.ajax({
         url: base_url + "/mock/saveOrUpdate",
         type: "post",
@@ -126,7 +147,7 @@ function add() {
         success: function(response) {
             // 清空下拉框选项
             $('#selectServiceName').empty();
-            debugger
+            
             if (response.length === 0) {
                 return;
             }
@@ -152,7 +173,7 @@ function searchTableData(event) {
     var methodName = $('#methodName').val().trim();
     var mockEnabled = $('#enabled').val();
     var searchCondition = {};
-    debugger
+    
     searchCondition.isMockData = true;
     if (serviceId) {
         searchCondition.serviceId = serviceId;
@@ -328,7 +349,7 @@ function del(me) {
 
 // 执行删除操作的逻辑
 function deleteRecord(me) {
-    debugger
+    
     var rowData = table.rows($(me).parents('tr')).data()[0]; // 选中行数的数据
     var id = rowData.id;
     var ids = [];
@@ -382,7 +403,7 @@ $(document).ready(function () {
         var obj = {};
         obj.methodId = id;
         obj.alias = serviceName;
-        debugger;
+        
         var data = JSON.stringify(obj);
         $.ajax({
             url: base_url + "/api/generateData",
@@ -393,7 +414,7 @@ $(document).ready(function () {
                 try {
                     // Parse the JSON and format it with proper indentation
                     const formattedJSON = JSON.stringify(JSON.parse(response.data), null, 2);
-                    debugger
+                    
                     // Update the textarea with the formatted JSON
                     $('#mockValueInput').val(formattedJSON);
                 } catch (error) {
@@ -502,7 +523,7 @@ $(document).ready(function () {
             contentType: "application/json",
             data: function (d) {
                 var obj = {};
-                debugger
+                
                 obj.serviceId = $("#selectServiceName0").val();
                 obj.className = $("#className").val();
                 obj.methodName = $("#methodName").val();

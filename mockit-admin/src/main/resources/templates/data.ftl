@@ -140,7 +140,8 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="row">
+                    <div class="collapse show" id="additionalInfoCollapse">
+                        <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="serviceNameInput">服务名</label>
@@ -150,12 +151,12 @@
                                 <label for="classNameInput">类名</label>
                                 <input id="classNameInput" type="text" class="form-control" style="width: 766px;"  readonly>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" style="max-width: 766px; overflow-x: auto;width: 766px;">
                                 <label for="methodNameInput">方法信息</label>
                                 <input id="methodNameInput" type="text" class="form-control" style="width: 766px;"  readonly>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6" style="height: 70px;">
                             <div class="form-group">
                                 <label for="enabledStatusInput">启用状态</label>
                                 <select id="enabledStatusInput" class="form-control">
@@ -165,16 +166,21 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group" style="position: relative;">
+                    </div>
+                    <div class="form-group" id = "mjsj" style="position: relative;">
                         <label for="jsonInput">模拟数据</label>
+                        <button onclick="zkgd()" class="btn btn-link" type="button" data-toggle="collapse" data-target="#additionalInfoCollapse"
+                                aria-expanded="false" aria-controls="additionalInfoCollapse" style="padding-left: 669px;">
+                            <i id="expandIcon" class="fas fa-chevron-up"></i>
+                        </button>
                         <textarea id="mockValueInput" class="form-control" rows="5"></textarea>
                         <span id="classNameError" class="text-danger"></span>
                         <button id="formatButton" class="btn btn-primary" style="position: absolute; top: 33px; right: 0;background-color: #e83e8c;">重新生成</button>
                     </div>
-                    <div class="form-group">
-                        <label for="remarksInput">备注</label>
-                        <textarea id="remarksInput" class="form-control"></textarea>
-                    </div>
+                </div>
+                <div class="modal-body">
+                    <label for="remarksInput">备注</label>
+                    <textarea id="remarksInput" class="form-control"></textarea>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" onclick="saveRecord(this)">保存</button>
