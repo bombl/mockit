@@ -125,7 +125,7 @@ public class MockitServiceMethodController {
         queryWrapper.eq(MockitServiceClass::getDeleted, MockConstants.NO);
         List<MockitServiceClass> mockitServiceClassList = iMockitServiceClassService.list(queryWrapper);
         if (CollectionUtils.isEmpty(mockitServiceClassList)) {
-            return new HashMap<>();
+            return getDefaultResult();
         }
         List<String> classIdList = mockitServiceClassList.stream().filter(mockitServiceClass -> {
             if (StringUtils.isNotBlank(mockitServiceMethodDTO.getClassName())) {
@@ -135,7 +135,7 @@ public class MockitServiceMethodController {
         }).map(MockitServiceClass::getId).collect(Collectors.toList());
         mockitServiceMethodDTO.setClassIdList(classIdList);
         if (CollectionUtils.isEmpty(classIdList)) {
-            return new HashMap<>();
+            return getDefaultResult();
         }
         IPage<MockitServiceMethodVO> page = iMockitServiceMethodService.listByPage(mockitServiceMethodDTO);
         page.convert(mockitServiceMethod -> {
@@ -260,5 +260,18 @@ public class MockitServiceMethodController {
             throw new MockitException("Alias is not online.");
         }
         return sessionMap.get(alias);
+    }
+
+    /**
+     * Get the default result map containing empty data list and record count information.
+     *
+     * @return The default result map with three key-value pairs: "recordsTotal" for total records,
+     */
+    private Map<String, Object> getDefaultResult() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("recordsTotal", 0);
+        map.put("recordsFiltered", 0);
+        map.put("data", new ArrayList<>());
+        return map;
     }
 }
