@@ -36,7 +36,6 @@ import cn.thinkinginjava.mockit.common.model.enums.MessageTypeEnum;
 import cn.thinkinginjava.mockit.common.utils.GsonUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.github.pagehelper.PageInfo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -174,12 +173,7 @@ public class MockitServiceMethodController {
     @ResponseBody
     public MockitResult<Void> enabled(@Valid @RequestBody BatchCommonDTO batchCommonDTO) {
         iMockitServiceMethodService.batchEnabled(batchCommonDTO);
-        List<MockitServiceMethod> methodList = iMockitServiceMethodService.listByIds(batchCommonDTO.getIds());
-        List<String> classIds = methodList.stream().map(MockitServiceMethod::getClassId).collect(Collectors.toList());
-        List<MockitServiceClass> serviceClassList = iMockitServiceClassService.listByIds(classIds);
-        List<String> serviceIds = serviceClassList.stream().map(MockitServiceClass::getServiceId).collect(Collectors.toList());
-        batchCommonDTO.setIds(serviceIds);
-        iMockitServiceRegistryService.mock(batchCommonDTO);
+        doMock(batchCommonDTO);
         return MockitResult.successful();
     }
 
@@ -193,12 +187,7 @@ public class MockitServiceMethodController {
     @ResponseBody
     public MockitResult<Void> delete(@Valid @RequestBody BatchCommonDTO batchCommonDTO) {
         iMockitServiceMethodService.batchDelete(batchCommonDTO);
-        List<MockitServiceMethod> methodList = iMockitServiceMethodService.listByIds(batchCommonDTO.getIds());
-        List<String> classIds = methodList.stream().map(MockitServiceMethod::getClassId).collect(Collectors.toList());
-        List<MockitServiceClass> serviceClassList = iMockitServiceClassService.listByIds(classIds);
-        List<String> serviceIds = serviceClassList.stream().map(MockitServiceClass::getServiceId).collect(Collectors.toList());
-        batchCommonDTO.setIds(serviceIds);
-        iMockitServiceRegistryService.mock(batchCommonDTO);
+        doMock(batchCommonDTO);
         return MockitResult.successful();
     }
 
@@ -295,5 +284,21 @@ public class MockitServiceMethodController {
         map.put("recordsFiltered", 0);
         map.put("data", new ArrayList<>());
         return map;
+    }
+
+    /**
+     * Private method to perform mock functionality using the provided BatchCommonDTO object.
+     *
+     * @param batchCommonDTO The BatchCommonDTO object obtained from the HTTP request body.
+     *                       This object will be validated using the Spring validation framework
+     *                       due to the @Valid annotation.
+     */
+    private void doMock(BatchCommonDTO batchCommonDTO) {
+        List<MockitServiceMethod> methodList = iMockitServiceMethodService.listByIds(batchCommonDTO.getIds());
+        List<String> classIds = methodList.stream().map(MockitServiceMethod::getClassId).collect(Collectors.toList());
+        List<MockitServiceClass> serviceClassList = iMockitServiceClassService.listByIds(classIds);
+        List<String> serviceIds = serviceClassList.stream().map(MockitServiceClass::getServiceId).collect(Collectors.toList());
+        batchCommonDTO.setIds(serviceIds);
+        iMockitServiceRegistryService.mock(batchCommonDTO);
     }
 }

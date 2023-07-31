@@ -91,9 +91,8 @@ public class MockApiController {
         List<CompletableFuture<String>> all = new ArrayList<>();
         Consumer<Session> sessionConsumer = session -> {
             ResponseCallback responseCallback = MessageUtil.sendMessage(session.getChannel(), sendMessage);
-            CompletableFuture<String> completableFuture = responseCallback.getFuture().whenComplete((response, throwable) -> {
-                updateRegistry(session, response, MockConstants.YES);
-            }).exceptionally(throwable -> {
+            CompletableFuture<String> completableFuture = responseCallback.getFuture().whenComplete((response, throwable) ->
+                    updateRegistry(session, response, MockConstants.YES)).exceptionally(throwable -> {
                 logger.error(throwable.getMessage());
                 return null;
             });
@@ -119,9 +118,8 @@ public class MockApiController {
         List<CompletableFuture<String>> all = new ArrayList<>();
         Consumer<Session> sessionConsumer = session -> {
             ResponseCallback responseCallback = MessageUtil.sendMessage(session.getChannel(), sendMessage);
-            CompletableFuture<String> completableFuture = responseCallback.getFuture().whenComplete((response, throwable) -> {
-                updateRegistry(session, response, MockConstants.NO);
-            }).exceptionally(throwable -> {
+            CompletableFuture<String> completableFuture = responseCallback.getFuture().whenComplete((response, throwable) ->
+                    updateRegistry(session, response, MockConstants.NO)).exceptionally(throwable -> {
                 logger.error(throwable.getMessage());
                 return null;
             });
